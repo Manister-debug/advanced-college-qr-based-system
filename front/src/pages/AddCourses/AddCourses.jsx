@@ -11,6 +11,7 @@ function AddCourse() {
     const [courseType, setCourseType] = useState('theory-practical');
     const [courseName, setCourseName] = useState('');
     const [courseCode, setCourseCode] = useState('');
+    const [academicHours, setAcademicHours] = useState(2); // New field: Academic hours
     const [weeks, setWeeks] = useState(15);
     const [theorySections, setTheorySections] = useState(1);
     const [practicalSections, setPracticalSections] = useState(2);
@@ -201,6 +202,7 @@ function AddCourse() {
             id: Date.now().toString(),
             name: courseName.trim(),
             code: courseCode.trim(),
+            academicHours: Number(academicHours), // Added academic hours
             type: courseType,
             weeks: Number(weeks),
             theorySections: courseType === 'practical-only' ? 0 : Number(theorySections),
@@ -242,6 +244,7 @@ function AddCourse() {
         // Reset fields
         setCourseName('');
         setCourseCode('');
+        setAcademicHours(2); // Reset to default value
         setCourseType('theory-practical');
         setWeeks(15);
         setTheorySections(1);
@@ -347,6 +350,28 @@ function AddCourse() {
                                     required
                                     disabled={loading}
                                 />
+                            </div>
+
+                            {/* New: Subject Academic Hours */}
+                            <div className="form-group">
+                                <label className="form-label">
+                                    <i className="fas fa-clock"></i>
+                                    Subject Academic Hours
+                                </label>
+                                <select
+                                    className="form-input"
+                                    value={academicHours}
+                                    onChange={(e) => setAcademicHours(Number(e.target.value))}
+                                    disabled={loading}
+                                >
+                                    <option value="1">1 hour</option>
+                                    <option value="2">2 hours</option>
+                                    <option value="3">3 hours</option>
+                                    <option value="4">4 hours</option>
+                                </select>
+                                <small style={{ color: 'var(--primary-light)', display: 'block', marginTop: '5px' }}>
+                                    Weekly academic hours for this subject
+                                </small>
                             </div>
 
                             <div className="form-group">
@@ -779,6 +804,7 @@ function AddCourse() {
                             <button type="button" className="btn btn-secondary" onClick={() => {
                                 setCourseName('');
                                 setCourseCode('');
+                                setAcademicHours(2); // Reset academic hours
                                 setCourseType('theory-practical');
                                 setWeeks(15);
                                 setTheorySections(1);
@@ -808,6 +834,7 @@ function AddCourse() {
                                     <tr>
                                         <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Code</th>
                                         <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Course Name</th>
+                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Academic Hours</th>
                                         <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Type</th>
                                         <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Sections</th>
                                         <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Professors</th>
@@ -821,6 +848,9 @@ function AddCourse() {
                                                 <strong>{course.code}</strong>
                                             </td>
                                             <td style={{ padding: '12px', textAlign: 'left' }}>{course.name}</td>
+                                            <td style={{ padding: '12px', textAlign: 'left' }}>
+                                                {course.academicHours} hour{course.academicHours !== 1 ? 's' : ''}
+                                            </td>
                                             <td style={{ padding: '12px', textAlign: 'left' }}>
                                                 {course.type === 'theory-only' && 'Theory Only'}
                                                 {course.type === 'practical-only' && 'Practical Only'}

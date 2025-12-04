@@ -33,20 +33,8 @@ code {
 }
 
 /* Main App container */
-.App {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
 
-/* Main content area - flexes to fill space */
-.main-content {
-  flex: 1;
-  padding: 2rem;
-  margin-top: 60px; /* Adjust based on your navbar height */
-  background: linear-gradient(135deg, var(--prussian-blue) 0%, var(--oxford-navy) 100%);
-  min-height: calc(100vh - 60px);
-}
+
 
 /* Updated #root for your layout */
 #root {
@@ -272,59 +260,9 @@ code {
   font-weight: bold;
 }
 
-/* Navbar specific - you might have this in Navbar.css, but adding basic styles */
-.navbar {
-  background: rgba(11, 37, 69, 0.9);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  border-bottom: 1px solid rgba(141, 169, 196, 0.3);
-}
-
-.nav-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav-links {
-  display: flex;
-  list-style: none;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.nav-item {
-  color: var(--white);
-  text-decoration: none;
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.nav-item:hover {
-  background-color: rgba(141, 169, 196, 0.2);
-}
-
-.nav-item.active {
-  background-color: var(--powder-blue);
-  color: var(--prussian-blue);
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
-  .main-content {
-    padding: 1rem;
-    margin-top: 50px;
-  }
+
   
   .page-container {
     padding: 1.5rem;
@@ -357,9 +295,7 @@ code {
 }
 
 @media (max-width: 480px) {
-  .main-content {
-    padding: 0.5rem;
-  }
+  
   
   .page-container {
     padding: 1rem;

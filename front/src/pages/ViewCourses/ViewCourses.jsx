@@ -62,7 +62,8 @@ function ViewCourses() {
         const filtered = courses.filter(course => 
             course.name.toLowerCase().includes(term) ||
             course.code.toLowerCase().includes(term) ||
-            (course.type && course.type.toLowerCase().includes(term))
+            (course.type && course.type.toLowerCase().includes(term)) ||
+            (course.academicHours && course.academicHours.toString().includes(term))
         );
         
         setFilteredCourses(filtered);
@@ -130,6 +131,23 @@ function ViewCourses() {
         }
     };
 
+    // Format academic hours
+    const formatAcademicHours = (hours) => {
+        if (!hours) return 'Not specified';
+        return `${hours} hour${hours !== 1 ? 's' : ''}`;
+    };
+
+    // Get academic hours color based on value
+    const getAcademicHoursColor = (hours) => {
+        switch(hours) {
+            case 1: return '#4ECDC4'; // Teal for 1 hour
+            case 2: return '#45B7D1'; // Blue for 2 hours
+            case 3: return '#96CEB4'; // Green for 3 hours
+            case 4: return '#FFA69E'; // Coral for 4 hours
+            default: return '#8DA9C4'; // Default
+        }
+    };
+
     return (
         <div className="courses-page">
             <div className="page-header">
@@ -158,7 +176,7 @@ function ViewCourses() {
                                 <input
                                     type="text"
                                     className="search-input"
-                                    placeholder="Search by course name, code, or type..."
+                                    placeholder="Search by course name, code, type, or academic hours..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -178,6 +196,23 @@ function ViewCourses() {
                                 <option value="theory-only">Theory Only</option>
                                 <option value="practical-only">Practical Only</option>
                                 <option value="theory-practical">Theory + Practical</option>
+                            </select>
+                            <select
+                                className="filter-select"
+                                onChange={(e) => {
+                                    const hours = e.target.value;
+                                    if (hours === 'all') {
+                                        setFilteredCourses(courses);
+                                    } else {
+                                        setFilteredCourses(courses.filter(course => course.academicHours === parseInt(hours)));
+                                    }
+                                }}
+                            >
+                                <option value="all">All Academic Hours</option>
+                                <option value="1">1 Hour</option>
+                                <option value="2">2 Hours</option>
+                                <option value="3">3 Hours</option>
+                                <option value="4">4 Hours</option>
                             </select>
                         </div>
                     </div>
@@ -234,18 +269,24 @@ function ViewCourses() {
                                                     <i className={`fas ${getCourseTypeIcon(course.type)}`}></i>
                                                     {getCourseTypeDisplay(course.type)}
                                                 </span>
+                                                <span className="academic-hours-badge" style={{
+                                                    backgroundColor: 'rgba(20, 64, 116, 0.3)',
+                                                    color: getAcademicHoursColor(course.academicHours || 2),
+                                                    padding: '4px 12px',
+                                                    borderRadius: '20px',
+                                                    fontSize: '0.85rem',
+                                                    fontWeight: '600',
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center',
+                                                    gap: '5px',
+                                                    border: `1px solid ${getAcademicHoursColor(course.academicHours || 2)}`
+                                                }}>
+                                                    <i className="fas fa-clock"></i>
+                                                    {formatAcademicHours(course.academicHours || 2)}
+                                                </span>
                                             </div>
                                             <h3 style={{ margin: '10px 0', color: 'var(--accent)' }}>{course.name}</h3>
-                                            <div className="course-stats" style={{ 
-                                                display: 'flex', 
-                                                gap: '20px',
-                                                color: 'var(--primary-light)',
-                                                fontSize: '0.9rem'
-                                            }}>
-                                                <span><i className="fas fa-calendar-alt"></i> {course.weeks} weeks</span>
-                                                <span><i className="fas fa-chalkboard-teacher"></i> {course.theorySections || 0} theory sections</span>
-                                                <span><i className="fas fa-flask"></i> {course.practicalSections || 0} practical sections</span>
-                                            </div>
+                                            
                                         </div>
                                         <div className="course-actions">
                                             <button 
@@ -309,6 +350,15 @@ function ViewCourses() {
                                                             <span style={{ color: 'var(--accent)' }}>{course.name}</span>
                                                         </div>
                                                         <div className="info-item" style={{ marginBottom: '10px' }}>
+                                                            <strong style={{ color: 'var(--primary-light)', display: 'block' }}>Academic Hours:</strong>
+                                                            <span style={{ 
+                                                                color: getAcademicHoursColor(course.academicHours || 2),
+                                                                fontWeight: '600'
+                                                            }}>
+                                                                {formatAcademicHours(course.academicHours || 2)} per week
+                                                            </span>
+                                                        </div>
+                                                        <div className="info-item" style={{ marginBottom: '10px' }}>
                                                             <strong style={{ color: 'var(--primary-light)', display: 'block' }}>Course Type:</strong>
                                                             <span style={{ color: 'var(--accent)' }}>{getCourseTypeDisplay(course.type)}</span>
                                                         </div>
@@ -333,6 +383,8 @@ function ViewCourses() {
                                                         <div className="info-item" style={{ marginBottom: '10px' }}>
                                                             <strong style={{ color: 'var(--primary-light)', display: 'block' }}>Practical Sections:</strong>
                                                             <span style={{ color: 'var(--accent)' }}>{course.practicalSections || 0}</span>
+                                                        </div>
+                                                        <div className="info-item" style={{ marginBottom: '10px' }}>
                                                         </div>
                                                         {course.type === 'theory-practical' && (
                                                             <div className="info-item" style={{ marginBottom: '10px' }}>
@@ -473,28 +525,7 @@ function ViewCourses() {
                                                 )}
 
                                                 {/* Course Metadata */}
-                                                <div className="info-section">
-                                                    <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                        <i className="fas fa-history"></i>
-                                                        Course Metadata
-                                                    </h4>
-                                                    <div className="info-list">
-                                                        <div className="info-item" style={{ marginBottom: '10px' }}>
-                                                            <strong style={{ color: 'var(--primary-light)', display: 'block' }}>Created:</strong>
-                                                            <span style={{ color: 'var(--accent)' }}>
-                                                                {course.createdAt ? new Date(course.createdAt).toLocaleDateString() : 'Unknown'}
-                                                            </span>
-                                                        </div>
-                                                        <div className="info-item" style={{ marginBottom: '10px' }}>
-                                                            <strong style={{ color: 'var(--primary-light)', display: 'block' }}>Course ID:</strong>
-                                                            <span style={{ 
-                                                                color: 'var(--primary-light)', 
-                                                                fontSize: '0.8rem',
-                                                                fontFamily: 'monospace'
-                                                            }}>{course.id}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                
                                             </div>
                                         </div>
                                     )}
@@ -507,6 +538,13 @@ function ViewCourses() {
                         <div className="table-footer">
                             <div className="table-info">
                                 Showing {filteredCourses.length} of {courses.length} courses
+                                {courses.length > 0 && (
+                                    <span style={{ marginLeft: '20px', color: 'var(--primary-light)' }}>
+                                        Total Academic Hours: {courses.reduce((total, course) => 
+                                            total + ((course.academicHours || 2) * (course.weeks || 15)), 0
+                                        )} hours across all courses
+                                    </span>
+                                )}
                             </div>
                             <div className="pagination">
                                 <button className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>

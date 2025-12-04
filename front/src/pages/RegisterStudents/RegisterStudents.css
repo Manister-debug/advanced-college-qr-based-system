@@ -54,12 +54,6 @@
   font-weight: 500;
 }
 
-.main-content {
-  padding: 2rem;
-  max-width: 1400px;
-  width: 1200px;
-  margin: 0 auto;
-}
 
 .alert {
   padding: 1rem 1.5rem;
@@ -543,10 +537,6 @@
     flex-direction: column;
     gap: 1rem;
     text-align: center;
-  }
-  
-  .main-content {
-    padding: 1rem;
   }
   
   .form-container, .view-container {

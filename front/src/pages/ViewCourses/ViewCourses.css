@@ -21,18 +21,15 @@
 .courses-page {
   min-height: 100vh;
   background: linear-gradient(135deg, var(--prussian-blue) 0%, var(--oxford-navy) 100%);
-  color: var(--white);
   padding: 2rem;
 }
 
 /* Page Header */
 .page-header {
-  background-color: rgba(11, 37, 69, 0.9);
   padding: 1.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(141, 169, 196, 0.3);
   border-radius: 12px;
@@ -58,14 +55,6 @@
   align-items: center;
   gap: 15px;
   font-weight: 500;
-}
-
-.main-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 /* View Container */
