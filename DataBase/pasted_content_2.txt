@@ -1,0 +1,88 @@
+USE QR_Code_Attendees;
+GO
+
+---------------------------------------------------------
+-- 1. Students
+---------------------------------------------------------
+INSERT INTO Students (UNI_ID, PASS, Full_Name, Phone_Number, email, Branch)
+VALUES
+('20230001', 'pass123', 'Ali Hassan', '0599000001', 'ali.hassan@example.com', 'Computer Science'),
+('20230002', 'pass456', 'Sara Ahmad', '0599000002', 'sara.ahmad@example.com', 'Information Technology'),
+('20230003', 'pass789', 'Omar Khalid', NULL, 'omar.khalid@example.com', 'Software Engineering'),
+('20230004', 'pass999', 'Lina Samer', '0599000004', 'lina.samer@example.com', 'Cyber Security');
+
+---------------------------------------------------------
+-- 2. Lecturer
+---------------------------------------------------------
+INSERT INTO lecturer (Full_Name, Specialization, Role, Phone_Number, email)
+VALUES
+('Dr. Mohammed Saleh', 'Networks', 'Professor', '0599111111', 'm.saleh@example.com'),
+('Dr. Aisha Younis', 'Programming', 'Lecturer', '0599222222', 'a.younis@example.com'),
+('Eng. Hadi Nasser', 'Databases', 'Assistant', NULL, 'h.nasser@example.com');
+
+---------------------------------------------------------
+-- 3. Courses
+---------------------------------------------------------
+INSERT INTO Courses (ID_course, Cours_Name, Symbol_course, Credt_Hour, Courses_type)
+VALUES
+('CS101', 'Introduction to Programming', 'PRG101', 3, 'T'),
+('CS202', 'Database Systems', 'DB202', 4, 'T'),
+('CS303', 'Networks Lab', 'NT303', 1, 'P'),
+('CS404', 'Operating Systems', 'OS404', 3, 'T');
+
+---------------------------------------------------------
+-- 4. Dean of colleges Admin
+---------------------------------------------------------
+INSERT INTO Dean_of_colleges_Admin (Full_Name, Specialization, Role, Phone_Number, email)
+VALUES
+('Prof. Adnan Qasem', 'Management', 'Dean', '0599333333', 'a.qasem@example.com');
+
+---------------------------------------------------------
+-- 5. Coordinators Sub Admin
+---------------------------------------------------------
+INSERT INTO coordinators_Sub_Admin (Full_Name, Specialization, Role, Phone_Number, email)
+VALUES
+('Mahmoud Ziad', 'IT', 'Coordinator', '0599444444', 'm.ziad@example.com');
+
+---------------------------------------------------------
+-- 6. Lecture Time
+---------------------------------------------------------
+INSERT INTO Lecture_Time (ID_course, ID_lecturer, Lecture_Date, Start_Time, End_Time)
+VALUES
+('CS101', 1, '2025-01-12', '09:00', '10:30'),
+('CS202', 3, '2025-01-12', '11:00', '12:30'),
+('CS303', 2, '2025-01-13', '08:00', '10:00'),
+('CS404', 1, '2025-01-13', '13:00', '14:30');
+
+---------------------------------------------------------
+-- 7. Student-Course Enrollment
+---------------------------------------------------------
+INSERT INTO Name_Student_Cours (UNI_ID, ID_course)
+VALUES
+('20230001', 'CS101'),
+('20230001', 'CS202'),
+('20230002', 'CS101'),
+('20230003', 'CS303'),
+('20230004', 'CS404');
+
+---------------------------------------------------------
+-- 8. Attendance
+---------------------------------------------------------
+INSERT INTO Attendees_Name (UNI_ID, Lecture_ID)
+VALUES
+('20230001', 1),
+('20230002', 1),
+('20230001', 2),
+('20230003', 3);
+
+---------------------------------------------------------
+-- 9. Users (فقط غير الطلاب)
+---------------------------------------------------------
+INSERT INTO Users (Username, Password, Role)
+VALUES
+('admin', 'admin123', 'Admin'),
+('dr_mohammed', 'net123', 'Lecturer'),
+('dr_aisha', 'prog123', 'Lecturer'),
+('eng_hadi', 'db123', 'Lecturer'),
+('coord_ziad', 'coord2024', 'Coordinator'),
+('dean_adnan', 'dean2024', 'Dean');
