@@ -20,7 +20,7 @@
   padding: 0 1rem;
 }
 
-/* Logo styling */
+
 .nav-logo {
   margin-right: auto;
   text-decoration: none;
@@ -64,7 +64,7 @@
   transform: scale(1.05);
 }
 
-/* Nav links container */
+
 .nav-links {
   display: flex;
   list-style: none;
@@ -81,7 +81,7 @@
   position: relative;
 }
 
-/* Nav items - full height highlight boxes */
+
 .nav-item {
   display: flex;
   align-items: center;
@@ -145,7 +145,7 @@
   background-color: #4a90e2;
 }
 
-/* Auth section */
+
 .nav-auth-item {
   margin-left: auto !important;
   height: 100%;
@@ -153,7 +153,7 @@
   align-items: center;
 }
 
-/* Login button styles */
+
 .nav-login {
   display: flex;
   align-items: center;
@@ -269,6 +269,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   transition: all 0.3s ease;
+  max-width: 1000px;
 }
 
 .user-toggle:hover .user-name {
@@ -288,7 +289,7 @@
   transform: rotate(180deg);
 }
 
-/* User Dropdown menu - positioned directly under user button */
+
 .user-dropdown .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -299,10 +300,12 @@
   border-radius: 8px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   min-width: 220px;
+  width: 220px;
   z-index: 1001;
   opacity: 0;
   visibility: hidden;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden; 
 }
 
 .user-dropdown:hover .dropdown-menu {
@@ -360,6 +363,7 @@
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   overflow: hidden;
+  box-sizing: border-box; 
 }
 
 .dropdown-item::before {
@@ -368,7 +372,7 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: 3px;
+  width: 3px; 
   background-color: #3b82f6;
   transform: scaleY(0);
   transform-origin: center;
@@ -379,6 +383,7 @@
   background-color: #f3f4f6;
   color: #111827;
   padding-left: 1.5rem;
+  padding-right: 1.25rem; 
 }
 
 .dropdown-item:hover::before {
@@ -396,7 +401,7 @@
   color: #b91c1c;
 }
 
-/* Students Dropdown */
+
 .nav-dropdown {
   position: relative;
   height: 100%;
@@ -462,21 +467,23 @@
   background-color: #134074;
 }
 
-/* Students dropdown menu - positioned directly under Students button */
+
 .nav-dropdown .dropdown-menu {
   position: absolute;
   top: 100%;
-  left: -30%;
+  left: 5%;
   transform: translateX(-50%) translateY(-10px);
   background: #13315c;
   border: 1px solid #8da9c4;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   min-width: 220px;
+  width: 220px; 
   z-index: 1001;
   opacity: 0;
   visibility: hidden;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden; 
 }
 
 .nav-dropdown:hover .dropdown-menu {
@@ -506,21 +513,38 @@
   align-items: center;
   gap: 10px;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-sizing: border-box; /* Keep padding within width */
+  position: relative;
+  overflow: hidden;
+  width: 100%; /* Ensure it takes full width of parent */
 }
 
 .nav-dropdown .dropdown-item:last-child {
   border-bottom: none;
-  border-radius: 0 0 8px 8px;
 }
 
-.nav-dropdown .dropdown-item:first-child {
-  border-radius: 8px 8px 0 0;
+.nav-dropdown .dropdown-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px; /* Reduced from 1px to make it more subtle */
+  background-color: #8da9c4;
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .nav-dropdown .dropdown-item:hover {
   background-color: #134074;
   color: #eef4ed;
   padding-left: 1.5rem;
+  padding-right: 1.25rem; /* Keep right padding fixed */
+}
+
+.nav-dropdown .dropdown-item:hover::before {
+  transform: scaleY(1);
 }
 
 .nav-dropdown .dropdown-item i {
@@ -528,6 +552,7 @@
   text-align: center;
   color: #8da9c4;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0; /* Prevent icon from affecting layout */
 }
 
 .nav-dropdown .dropdown-item:hover i {
@@ -656,4 +681,193 @@ body {
 
 .dropdown-menu {
   animation: fadeInUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Styles for NavbarLogin (centered logo only) */
+
+/* Center the entire nav container */
+.navbar-login .nav-container {
+  justify-content: center !important;
+}
+
+/* Centered logo styling for login page */
+.nav-logo-centered {
+  margin: 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 15px !important;
+  text-decoration: none !important;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+
+
+/* Logo text styling */
+.logo-text {
+  color: #eef4ed !important;
+  font-size: 1.8rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 1px !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: color 0.3s ease !important;
+}
+
+.nav-logo-centered:hover .logo-text {
+  color: #8da9c4 !important;
+}
+
+/* Adjust logo image for centered version */
+.nav-logo-centered .logo-image {
+  height: 50px !important;
+  margin-right: 0 !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)) !important;
+  
+}
+
+.nav-logo-centered:hover .logo-image {
+  transform: rotate(-5deg) scale(1.1) !important;
+}
+
+/* Hide other elements in login navbar */
+.navbar-login .nav-links {
+  display: none !important;
+}
+
+/* Optional: Make navbar slightly transparent for login page */
+.navbar-login {
+  background-color: rgba(19, 49, 92, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2) !important;
+}
+
+/* Ensure no hover effects interfere with centering */
+.navbar-login .nav-logo::after {
+  display: none !important;
+}
+
+/* Responsive adjustments for login navbar */
+@media (max-width: 768px) {
+  .nav-logo-centered {
+    gap: 10px !important;
+  }
+  
+  .logo-text {
+    font-size: 1.5rem !important;
+  }
+  
+  .nav-logo-centered .logo-image {
+    height: 40px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 1.3rem !important;
+  }
+  
+  .nav-logo-centered .logo-image {
+    height: 35px !important;
+  }
+}
+
+/* Add to existing Navbar.css */
+
+.user-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.user-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-icon {
+  font-size: 18px;
+}
+
+.user-name {
+  margin-right: 4px;
+}
+
+.nav-login {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdown-header {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-header strong {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.user-role {
+  font-size: 12px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 10px;
+  align-self: flex-start;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 8px 0;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  color: #e74c3c;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #f8f9fa;
+  color: #c0392b;
+}
+
+/* Ensure dropdown menu has proper width */
+.dropdown-menu {
+  min-width: 200px;
+  max-width: 250px;
+}
+
+/* Remove any old styles for dropdown items that might interfere */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: #333;
+  padding: 10px 16px;
+  transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
 }

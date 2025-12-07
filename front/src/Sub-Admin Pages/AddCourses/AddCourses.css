@@ -1,0 +1,590 @@
+/* AddCourses.css - Scoped to Add Courses page only */
+.add-courses-page {
+  min-height: 100vh;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(141, 169, 196, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(19, 52, 116, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #0b2545 0%, #13315c 100%);
+  color: #eef4ed;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.add-courses-page * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.add-courses-page .page-header {
+  background: rgba(11, 37, 69, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  padding: 0.875rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.add-courses-page .header-content h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  color: #eef4ed;
+}
+
+.add-courses-page .page-subtitle {
+  color: #8da9c4;
+  font-size: 0.8125rem;
+}
+
+.add-courses-page .user-info {
+  background: rgba(141, 169, 196, 0.1);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #eef4ed;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+}
+
+.add-courses-page .main-content {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Alert Styles */
+.add-courses-page .alert {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+  backdrop-filter: blur(10px);
+  animation: slideIn 0.3s ease;
+  border: 1px solid;
+}
+
+.add-courses-page .alert-success {
+  background: rgba(78, 205, 196, 0.15);
+  border-color: rgba(78, 205, 196, 0.3);
+  color: #4ecdc4;
+}
+
+.add-courses-page .alert-error {
+  background: rgba(255, 107, 107, 0.15);
+  border-color: rgba(255, 107, 107, 0.3);
+  color: #ff6b6b;
+}
+
+/* Form Container */
+.add-courses-page .form-container {
+  background: rgba(19, 50, 92, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.add-courses-page .form-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #eef4ed;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Form Styles */
+.add-courses-page .form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.add-courses-page .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.add-courses-page .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.add-courses-page .form-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #8da9c4;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-courses-page .form-input {
+  padding: 0.75rem 1rem;
+  background: rgba(11, 37, 69, 0.7);
+  border: 1px solid rgba(141, 169, 196, 0.3);
+  border-radius: 0.5rem;
+  color: #eef4ed;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.add-courses-page .form-input:focus {
+  border-color: #8da9c4;
+  box-shadow: 0 0 0 2px rgba(141, 169, 196, 0.2);
+  background: rgba(11, 37, 69, 0.9);
+}
+
+.add-courses-page .form-input::placeholder {
+  color: rgba(141, 169, 196, 0.7);
+}
+
+.add-courses-page .form-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.add-courses-page select.form-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238da9c4' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+
+.add-courses-page small {
+  color: #8da9c4;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+/* Professor Assignment Sections */
+.add-courses-page .professor-assignment-section {
+  margin: 2rem 0;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.add-courses-page .professor-assignment-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #8da9c4;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-courses-page .professor-assignment-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  background: rgba(11, 37, 69, 0.5);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+}
+
+@media (max-width: 1024px) {
+  .add-courses-page .professor-assignment-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.add-courses-page .professor-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.add-courses-page .professor-list-container h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #8da9c4;
+  margin-bottom: 0.5rem;
+}
+
+.add-courses-page .professor-list {
+  max-height: 300px;
+  overflow-y: auto;
+  background: rgba(19, 49, 92, 0.3);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+/* Custom Scrollbar for Professor Lists */
+.add-courses-page .professor-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.add-courses-page .professor-list::-webkit-scrollbar-track {
+  background: rgba(11, 37, 69, 0.3);
+  border-radius: 3px;
+}
+
+.add-courses-page .professor-list::-webkit-scrollbar-thumb {
+  background: rgba(141, 169, 196, 0.3);
+  border-radius: 3px;
+}
+
+.add-courses-page .professor-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(141, 169, 196, 0.5);
+}
+
+.add-courses-page .available-professor-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: rgba(141, 169, 196, 0.1);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  transition: all 0.2s ease;
+}
+
+.add-courses-page .available-professor-item:hover {
+  background: rgba(141, 169, 196, 0.15);
+  border-color: #8da9c4;
+}
+
+.add-courses-page .available-professor-item span {
+  color: #8da9c4;
+  font-weight: 500;
+}
+
+.add-courses-page .assign-button {
+  background: transparent;
+  border: none;
+  color: #8da9c4;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.add-courses-page .assign-button:hover:not(:disabled) {
+  color: #eef4ed;
+  background: rgba(141, 169, 196, 0.2);
+  transform: translateX(2px);
+}
+
+.add-courses-page .assign-button:disabled {
+  color: rgba(141, 169, 196, 0.3);
+  cursor: not-allowed;
+}
+
+.add-courses-page .assigned-professor-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: rgba(78, 205, 196, 0.1);
+  border-radius: 0.5rem;
+  border: 1px solid #4ecdc4;
+  transition: all 0.2s ease;
+}
+
+.add-courses-page .assigned-professor-item.unassigned {
+  background: rgba(141, 169, 196, 0.05);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+.add-courses-page .assigned-professor-item.unassigned .professor-name {
+  color: rgba(141, 169, 196, 0.7);
+}
+
+.add-courses-page .professor-slot-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.add-courses-page .professor-slot-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #8da9c4;
+}
+
+.add-courses-page .professor-name {
+  color: #eef4ed;
+  font-size: 0.9rem;
+}
+
+.add-courses-page .remove-button {
+  background: rgba(255, 107, 107, 0.2);
+  border: 1px solid #ff6b6b;
+  color: #ff6b6b;
+  cursor: pointer;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.add-courses-page .remove-button:hover {
+  background: rgba(255, 107, 107, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Form Actions */
+.add-courses-page .form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(141, 169, 196, 0.2);
+  margin-top: 1rem;
+}
+
+.add-courses-page .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  outline: none;
+}
+
+.add-courses-page .btn-primary {
+  background: #8da9c4;
+  color: #0b2545;
+  font-weight: 600;
+}
+
+.add-courses-page .btn-primary:hover:not(:disabled) {
+  background: #9fb7d0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(141, 169, 196, 0.3);
+}
+
+.add-courses-page .btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.add-courses-page .btn-secondary {
+  background: rgba(141, 169, 196, 0.1);
+  color: #8da9c4;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+}
+
+.add-courses-page .btn-secondary:hover:not(:disabled) {
+  background: rgba(141, 169, 196, 0.2);
+  border-color: #8da9c4;
+  transform: translateY(-2px);
+}
+
+.add-courses-page .btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Info Card (Recently Added Courses) */
+.add-courses-page .info-card {
+  background: rgba(19, 50, 92, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.add-courses-page .info-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #eef4ed;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-courses-page table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.add-courses-page th {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.3);
+  color: #8da9c4;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.add-courses-page td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+  color: #eef4ed;
+  font-size: 0.875rem;
+}
+
+.add-courses-page tr:hover {
+  background: rgba(141, 169, 196, 0.05);
+}
+
+.add-courses-page table strong {
+  color: #8da9c4;
+}
+
+.add-courses-page table div {
+  margin: 0.125rem 0;
+}
+
+/* Loading Spinner */
+.add-courses-page .fa-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .add-courses-page .form-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .add-courses-page .main-content {
+    padding: 1rem;
+  }
+  
+  .add-courses-page .form-container {
+    padding: 1.25rem;
+  }
+  
+  .add-courses-page .form-actions {
+    flex-direction: column;
+  }
+  
+  .add-courses-page .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .add-courses-page .professor-assignment-section {
+    margin: 1.5rem 0;
+  }
+  
+  .add-courses-page table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-courses-page .page-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+  
+  .add-courses-page .user-info {
+    align-self: stretch;
+    text-align: center;
+  }
+  
+  .add-courses-page .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Custom Scrollbar */
+.add-courses-page ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.add-courses-page ::-webkit-scrollbar-track {
+  background: rgba(11, 37, 69, 0.5);
+}
+
+.add-courses-page ::-webkit-scrollbar-thumb {
+  background: rgba(141, 169, 196, 0.3);
+  border-radius: 4px;
+}
+
+.add-courses-page ::-webkit-scrollbar-thumb:hover {
+  background: #8da9c4;
+}
+
+/* Focus states */
+.add-courses-page .form-input:focus-visible,
+.add-courses-page .btn:focus-visible,
+.add-courses-page .assign-button:focus-visible,
+.add-courses-page .remove-button:focus-visible {
+  outline: 2px solid #8da9c4;
+  outline-offset: 2px;
+}
+
+/* Selection color */
+.add-courses-page ::selection {
+  background: rgba(141, 169, 196, 0.3);
+  color: #eef4ed;
+}
+
+/* Alert animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Icon styling */
+.add-courses-page .fas {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}

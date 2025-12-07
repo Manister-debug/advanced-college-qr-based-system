@@ -4,7 +4,8 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true); // Added loading state
 
   useEffect(() => {
     // Check for existing auth on app load
@@ -12,19 +13,31 @@ export function AuthProvider({ children }) {
     const savedToken = localStorage.getItem('token');
     
     if (savedUser && savedToken) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+        setToken(savedToken);
+      } catch (error) {
+        console.error('Error parsing saved user:', error);
+        clearAuth();
+      }
     }
     setLoading(false);
   }, []);
 
-  const login = (userData, token) => {
+  const login = (userData, authToken) => {
     setUser(userData);
+    setToken(authToken);
     localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('token', token);
+    localStorage.setItem('token', authToken);
   };
 
   const logout = () => {
+    clearAuth();
+  };
+
+  const clearAuth = () => {
     setUser(null);
+    setToken(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
   };
@@ -39,14 +52,33 @@ export function AuthProvider({ children }) {
     return roles.includes(user?.role);
   };
 
+  // Get user's display name
+  const getDisplayName = () => {
+    return user?.name || user?.username || 'User';
+  };
+
+  // Check if user is authenticated
+  const isAuthenticated = () => {
+    return !!user && !!token;
+  };
+
+  // Get user role (convenience method)
+  const getUserRole = () => {
+    return user?.role;
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
+      token,
       login, 
       logout, 
-      loading,
+      loading, // Export loading state
       hasRole,
-      hasAnyRole
+      hasAnyRole,
+      getDisplayName,
+      isAuthenticated,
+      getUserRole
     }}>
       {children}
     </AuthContext.Provider>

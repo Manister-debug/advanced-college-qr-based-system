@@ -1,0 +1,485 @@
+/* ViewStudents.css - Scoped to View Students page only */
+.view-students-page {
+  min-height: 100vh;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(141, 169, 196, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(19, 52, 116, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #0b2545 0%, #13315c 100%);
+  color: #eef4ed;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.view-students-page * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.view-students-page .page-header {
+  background: rgba(11, 37, 69, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  padding: 0.875rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.view-students-page .header-content h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  color: #eef4ed;
+}
+
+.view-students-page .page-subtitle {
+  color: #8da9c4;
+  font-size: 0.8125rem;
+}
+
+.view-students-page .user-info {
+  background: rgba(141, 169, 196, 0.1);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #eef4ed;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+}
+
+.view-students-page .main-content {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.view-students-page .view-container {
+  background: rgba(19, 50, 92, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.view-students-page .view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.view-students-page .view-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #eef4ed;
+}
+
+.view-students-page .view-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.view-students-page .search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.view-students-page .search-box i {
+  position: absolute;
+  left: 12px;
+  color: #8da9c4;
+  font-size: 0.9rem;
+}
+
+.view-students-page .search-input {
+  padding: 0.625rem 12px 0.625rem 40px;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+  border-radius: 0.5rem;
+  background: rgba(11, 37, 69, 0.7);
+  color: #eef4ed;
+  font-size: 0.875rem;
+  width: 300px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.view-students-page .search-input:focus {
+  border-color: #8da9c4;
+  box-shadow: 0 0 0 2px rgba(141, 169, 196, 0.2);
+  background: rgba(11, 37, 69, 0.9);
+}
+
+.view-students-page .search-input::placeholder {
+  color: rgba(141, 169, 196, 0.7);
+  font-size: 0.85rem;
+}
+
+.view-students-page .filter-select {
+  padding: 0.625rem 12px;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+  border-radius: 0.5rem;
+  background: rgba(11, 37, 69, 0.7);
+  color: #eef4ed;
+  font-size: 0.875rem;
+  min-width: 160px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.view-students-page .filter-select:hover,
+.view-students-page .filter-select:focus {
+  border-color: #8da9c4;
+  background: rgba(11, 37, 69, 0.9);
+}
+
+/* Students Table Container */
+.view-students-page .students-table-container {
+  background: rgba(11, 37, 69, 0.5);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+/* Table Styles */
+.view-students-page .students-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.view-students-page .students-table th {
+  background: linear-gradient(rgba(141, 169, 196, 0.15), rgba(141, 169, 196, 0.1));
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #eef4ed;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  position: sticky;
+  top: 0;
+}
+
+.view-students-page .students-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+
+.view-students-page .students-table tr {
+  transition: all 0.2s ease;
+}
+
+.view-students-page .students-table tr:not(:last-child) {
+  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+}
+
+.view-students-page .students-table tr:hover {
+  background: rgba(141, 169, 196, 0.08);
+}
+
+/* Student Info Cells */
+.view-students-page .student-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.view-students-page .student-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8da9c4 0%, #134074 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #0b2545;
+}
+
+.view-students-page .student-name {
+  font-weight: 600;
+  color: #eef4ed;
+  margin-bottom: 0.125rem;
+}
+
+.view-students-page .student-dob {
+  font-size: 0.75rem;
+  color: #8da9c4;
+}
+
+/* Action Buttons */
+.view-students-page .action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.view-students-page .btn-action {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+  background: rgba(141, 169, 196, 0.1);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+.view-students-page .btn-view {
+  color: #8da9c4;
+}
+
+.view-students-page .btn-view:hover {
+  background: #8da9c4;
+  color: #0b2545;
+  border-color: #8da9c4;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(141, 169, 196, 0.3);
+}
+
+.view-students-page .btn-edit {
+  color: #ffd166;
+}
+
+.view-students-page .btn-edit:hover {
+  background: #ffd166;
+  color: #0b2545;
+  border-color: #ffd166;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(255, 209, 102, 0.3);
+}
+
+.view-students-page .btn-delete {
+  color: #ff6b6b;
+}
+
+.view-students-page .btn-delete:hover {
+  background: #ff6b6b;
+  color: #eef4ed;
+  border-color: #ff6b6b;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+/* No Data State */
+.view-students-page .no-data {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #8da9c4;
+}
+
+.view-students-page .no-data i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #8da9c4;
+  opacity: 0.7;
+}
+
+.view-students-page .no-data h3 {
+  font-size: 1.25rem;
+  color: #eef4ed;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.view-students-page .no-data p {
+  font-size: 0.95rem;
+  color: #8da9c4;
+  margin-bottom: 1rem;
+}
+
+.view-students-page .no-data .btn {
+  padding: 0.75rem 1.5rem;
+  background: #8da9c4;
+  color: #0b2545;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.view-students-page .no-data .btn:hover {
+  background: #9fb7d0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(141, 169, 196, 0.3);
+}
+
+/* Table Footer */
+.view-students-page .table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+.view-students-page .table-info {
+  color: #8da9c4;
+  font-size: 0.875rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .view-students-page .view-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .view-students-page .view-controls {
+    flex-wrap: wrap;
+  }
+  
+  .view-students-page .search-input {
+    width: 100%;
+  }
+  
+  .view-students-page .filter-select {
+    min-width: calc(50% - 0.375rem);
+  }
+  
+  .view-students-page .students-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .view-students-page .students-table th,
+  .view-students-page .students-table td {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .view-students-page .main-content {
+    padding: 1rem;
+  }
+  
+  .view-students-page .view-container {
+    padding: 1rem;
+  }
+  
+  .view-students-page .view-controls {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .view-students-page .search-input,
+  .view-students-page .filter-select {
+    width: 100%;
+  }
+  
+  .view-students-page .table-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .view-students-page .action-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .view-students-page .btn-action {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .view-students-page .page-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+  
+  .view-students-page .user-info {
+    align-self: stretch;
+    text-align: center;
+  }
+  
+  .view-students-page .view-title {
+    font-size: 1rem;
+    text-align: center;
+  }
+  
+  .view-students-page .student-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .view-students-page .student-avatar {
+    display: none;
+  }
+}
+
+/* Custom Scrollbar */
+.view-students-page ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.view-students-page ::-webkit-scrollbar-track {
+  background: rgba(11, 37, 69, 0.5);
+}
+
+.view-students-page ::-webkit-scrollbar-thumb {
+  background: rgba(141, 169, 196, 0.3);
+  border-radius: 4px;
+}
+
+.view-students-page ::-webkit-scrollbar-thumb:hover {
+  background: #8da9c4;
+}
+
+/* Focus states */
+.view-students-page .search-input:focus-visible,
+.view-students-page .filter-select:focus-visible,
+.view-students-page .btn-action:focus-visible,
+.view-students-page .btn:focus-visible {
+  outline: 2px solid #8da9c4;
+  outline-offset: 2px;
+}
+
+/* Selection color */
+.view-students-page ::selection {
+  background: rgba(141, 169, 196, 0.3);
+  color: #eef4ed;
+}
+
+/* Icon styling */
+.view-students-page .fas {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}
