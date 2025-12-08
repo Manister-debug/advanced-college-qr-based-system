@@ -246,7 +246,7 @@ function AddCourse() {
         setCourseCode('');
         setAcademicHours(2); // Reset to default value
         setCourseType('theory-practical');
-        setWeeks(15);
+        setWeeks(14);
         setTheorySections(1);
         setPracticalSections(2);
         setNumTheoryProfessors(1);

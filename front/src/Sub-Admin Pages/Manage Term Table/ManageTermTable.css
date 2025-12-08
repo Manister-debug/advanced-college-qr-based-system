@@ -1,0 +1,889 @@
+/* ManageTermTable.css */
+.manage-term-table-page {
+  min-height: 100vh;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(141, 169, 196, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(19, 52, 116, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #0b2545 0%, #13315c 100%);
+  color: #eef4ed;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.manage-term-table-page * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Header Styles */
+.manage-term-table-page .page-header {
+  background: rgba(11, 37, 69, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  padding: 0.875rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.manage-term-table-page .header-content h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  color: #eef4ed;
+}
+
+.manage-term-table-page .page-subtitle {
+  color: #8da9c4;
+  font-size: 0.8125rem;
+}
+
+.manage-term-table-page .user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.manage-term-table-page .week-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(141, 169, 196, 0.1);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+}
+
+.manage-term-table-page .week-select {
+  background: transparent;
+  border: none;
+  color: #eef4ed;
+  font-size: 0.875rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.manage-term-table-page .week-select option {
+  background: #0b2545;
+  color: #eef4ed;
+}
+
+/* Main Content */
+.manage-term-table-page .main-content {
+  padding: 1.5rem;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.manage-term-table-page .term-table-container {
+  background: rgba(19, 50, 92, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.manage-term-table-page .term-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.manage-term-table-page .view-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #eef4ed;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Layout */
+.manage-term-table-page .term-table-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  min-height: 600px;
+}
+
+@media (max-width: 1200px) {
+  .manage-term-table-page .term-table-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Courses Sidebar */
+.manage-term-table-page .courses-sidebar {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+}
+
+.manage-term-table-page .courses-card {
+  background: rgba(11, 37, 69, 0.8);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  backdrop-filter: blur(10px);
+}
+
+.manage-term-table-page .courses-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #eef4ed;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+/* Courses List */
+.manage-term-table-page .courses-list {
+  max-height: 500px;
+  overflow-y: auto;
+  margin: 1rem 0;
+  padding-right: 0.5rem;
+}
+
+.manage-term-table-page .course-section-item {
+  background: rgba(19, 50, 92, 0.5);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  cursor: move;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.manage-term-table-page .course-section-item:hover {
+  border-color: #8da9c4;
+  background: rgba(19, 50, 92, 0.7);
+  transform: translateX(4px);
+}
+
+.manage-term-table-page .course-section-item.dragging {
+  opacity: 0.5;
+}
+
+.manage-term-table-page .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.manage-term-table-page .section-type-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.manage-term-table-page .section-number {
+  background: rgba(141, 169, 196, 0.2);
+  color: #8da9c4;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.manage-term-table-page .section-details {
+  margin-bottom: 0.75rem;
+}
+
+.manage-term-table-page .course-code {
+  font-weight: 600;
+  color: #eef4ed;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.manage-term-table-page .course-name {
+  color: #8da9c4;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.manage-term-table-page .section-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: #8da9c4;
+}
+
+.manage-term-table-page .section-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.manage-term-table-page .section-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.manage-term-table-page .drag-hint {
+  font-size: 0.75rem;
+  color: #8da9c4;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.7;
+}
+
+/* Schedule Grid */
+.manage-term-table-page .schedule-grid {
+  background: rgba(11, 37, 69, 0.6);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  overflow-x: auto;
+}
+
+/* Day Tabs */
+.manage-term-table-page .day-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  padding-bottom: 1rem;
+}
+
+.manage-term-table-page .day-tab {
+  padding: 0.75rem 1.25rem;
+  background: rgba(141, 169, 196, 0.1);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.5rem;
+  color: #8da9c4;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.manage-term-table-page .day-tab:hover {
+  background: rgba(141, 169, 196, 0.15);
+  border-color: #8da9c4;
+}
+
+.manage-term-table-page .day-tab.active {
+  background: #8da9c4;
+  color: #0b2545;
+  border-color: #8da9c4;
+  font-weight: 600;
+}
+
+/* Time Grid Container */
+.manage-term-table-page .time-grid-container {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 0;
+  min-height: 400px;
+}
+
+/* Time Labels */
+.manage-term-table-page .time-labels {
+  border-right: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+.manage-term-table-page .time-label-header {
+  padding: 1rem;
+  background: rgba(19, 50, 92, 0.8);
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  font-weight: 600;
+  color: #8da9c4;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 60px;
+}
+
+.manage-term-table-page .time-label {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+  font-size: 0.875rem;
+  color: #8da9c4;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(11, 37, 69, 0.5);
+}
+
+/* Day Columns */
+.manage-term-table-page .day-columns {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  overflow-x: auto;
+}
+
+.manage-term-table-page .day-column {
+  border-right: 1px solid rgba(141, 169, 196, 0.2);
+  position: relative;
+}
+
+.manage-term-table-page .day-column:last-child {
+  border-right: none;
+}
+
+.manage-term-table-page .day-header {
+  padding: 1rem;
+  background: rgba(19, 50, 92, 0.8);
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.manage-term-table-page .day-header h4 {
+  font-size: 0.95rem;
+  color: #eef4ed;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.manage-term-table-page .section-count {
+  font-size: 0.75rem;
+  color: #8da9c4;
+}
+
+/* Time Slots */
+.manage-term-table-page .time-slots {
+  position: relative;
+}
+
+.manage-term-table-page .time-slot {
+  height: 40px;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+  position: relative;
+  transition: all 0.2s ease;
+  background: rgba(11, 37, 69, 0.3);
+}
+
+.manage-term-table-page .time-slot:hover {
+  background: rgba(141, 169, 196, 0.1);
+}
+
+.manage-term-table-page .time-slot.drag-over {
+  background: rgba(78, 205, 196, 0.2);
+  border: 2px dashed #4ecdc4;
+}
+
+.manage-term-table-page .time-slot.occupied {
+  background: transparent;
+}
+
+.manage-term-table-page .time-slot.section-start {
+  border-top: 2px solid rgba(141, 169, 196, 0.3);
+}
+
+/* Scheduled Section */
+.manage-term-table-page .scheduled-section {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 0;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  z-index: 2;
+  cursor: move;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.manage-term-table-page .scheduled-section:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  z-index: 3;
+}
+
+.manage-term-table-page .section-info {
+  flex: 1;
+}
+
+.manage-term-table-page .section-code-type {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.manage-term-table-page .section-code-type strong {
+  color: #0b2545;
+  font-size: 1rem;
+}
+
+.manage-term-table-page .section-type-tag {
+  background: rgba(255, 255, 255, 0.9);
+  color: #0b2545;
+  padding: 0.125rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.manage-term-table-page .section-time {
+  font-size: 0.85rem;
+  color: #0b2545;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.manage-term-table-page .section-professor,
+.manage-term-table-page .section-duration {
+  font-size: 0.75rem;
+  color: #0b2545;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  opacity: 0.9;
+}
+
+.manage-term-table-page .section-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.manage-term-table-page .section-action-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.manage-term-table-page .section-action-btn.edit:hover {
+  background: #ffd166;
+  color: #0b2545;
+}
+
+.manage-term-table-page .section-action-btn.delete:hover {
+  background: #ff6b6b;
+  color: white;
+}
+
+.manage-term-table-page .resize-handle {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ns-resize;
+  font-size: 0.75rem;
+  color: #0b2545;
+}
+
+.manage-term-table-page .resize-handle:hover {
+  background: #8da9c4;
+  color: white;
+}
+
+/* Drop Hint */
+.manage-term-table-page .drop-hint {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #8da9c4;
+  font-size: 0.75rem;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.manage-term-table-page .time-slot:hover:not(.occupied) .drop-hint {
+  display: block;
+}
+
+/* Legend */
+.manage-term-table-page .schedule-legend {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(11, 37, 69, 0.5);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.5rem;
+}
+
+.manage-term-table-page .legend-title {
+  font-weight: 600;
+  color: #8da9c4;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.manage-term-table-page .legend-items {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.manage-term-table-page .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #8da9c4;
+}
+
+.manage-term-table-page .legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.manage-term-table-page .legend-color.theory {
+  background: rgba(141, 169, 196, 0.8);
+  border: 1px solid rgba(141, 169, 196, 1);
+}
+
+.manage-term-table-page .legend-color.practical {
+  background: rgba(78, 205, 196, 0.8);
+  border: 1px solid rgba(78, 205, 196, 1);
+}
+
+.manage-term-table-page .legend-color.conflict {
+  background: rgba(255, 107, 107, 0.8);
+  border: 1px solid rgba(255, 107, 107, 1);
+}
+
+/* Schedule Summary */
+.manage-term-table-page .schedule-summary {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(11, 37, 69, 0.6);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+}
+
+.manage-term-table-page .schedule-summary h3 {
+  font-size: 1.1rem;
+  color: #eef4ed;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.manage-term-table-page .summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.manage-term-table-page .day-summary {
+  background: rgba(19, 50, 92, 0.5);
+  border: 1px solid rgba(141, 169, 196, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.manage-term-table-page .day-summary-title {
+  font-size: 0.95rem;
+  color: #8da9c4;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+.manage-term-table-page .no-sections {
+  color: #8da9c4;
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 1rem;
+  opacity: 0.7;
+}
+
+.manage-term-table-page .day-sections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.manage-term-table-page .summary-section {
+  background: rgba(141, 169, 196, 0.1);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+.manage-term-table-page .summary-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.manage-term-table-page .section-time {
+  font-size: 0.8rem;
+  color: #8da9c4;
+  font-weight: 500;
+}
+
+.manage-term-table-page .summary-remove-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.7rem;
+}
+
+.manage-term-table-page .summary-section-details {
+  font-size: 0.85rem;
+  color: #eef4ed;
+}
+
+.manage-term-table-page .summary-section-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #8da9c4;
+}
+
+/* Instructions */
+.manage-term-table-page .instructions-card {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(11, 37, 69, 0.6);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+}
+
+.manage-term-table-page .instructions-card h3 {
+  font-size: 1.1rem;
+  color: #eef4ed;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.manage-term-table-page .instructions-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.manage-term-table-page .instruction-step {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.manage-term-table-page .step-number {
+  width: 32px;
+  height: 32px;
+  background: #8da9c4;
+  color: #0b2545;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.manage-term-table-page .step-content {
+  flex: 1;
+}
+
+.manage-term-table-page .step-content strong {
+  display: block;
+  color: #eef4ed;
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.manage-term-table-page .step-content p {
+  color: #8da9c4;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* Button Styles */
+.manage-term-table-page .btn {
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.manage-term-table-page .btn-primary {
+  background: #8da9c4;
+  color: #0b2545;
+  border: 1px solid #8da9c4;
+}
+
+.manage-term-table-page .btn-primary:hover {
+  background: #9fb5cc;
+  border-color: #9fb5cc;
+}
+
+.manage-term-table-page .btn-secondary {
+  background: rgba(141, 169, 196, 0.1);
+  color: #8da9c4;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+}
+
+.manage-term-table-page .btn-secondary:hover {
+  background: rgba(141, 169, 196, 0.2);
+  border-color: #8da9c4;
+}
+
+/* Loading States */
+.manage-term-table-page .loading-small {
+  text-align: center;
+  padding: 2rem;
+  color: #8da9c4;
+}
+
+.manage-term-table-page .no-courses {
+  text-align: center;
+  padding: 2rem;
+  color: #8da9c4;
+}
+
+.manage-term-table-page .no-courses i {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.5;
+}
+
+/* Stats */
+.manage-term-table-page .courses-stats {
+  background: rgba(19, 50, 92, 0.5);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border: 1px solid rgba(141, 169, 196, 0.1);
+}
+
+.manage-term-table-page .stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+}
+
+.manage-term-table-page .stat-item:last-child {
+  border-bottom: none;
+}
+
+.manage-term-table-page .stat-label {
+  color: #8da9c4;
+  font-size: 0.875rem;
+}
+
+.manage-term-table-page .stat-value {
+  color: #eef4ed;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .manage-term-table-page .day-columns {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .manage-term-table-page .main-content {
+    padding: 1rem;
+  }
+  
+  .manage-term-table-page .term-table-container {
+    padding: 1rem;
+  }
+  
+  .manage-term-table-page .day-columns {
+    grid-template-columns: 1fr;
+  }
+  
+  .manage-term-table-page .summary-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .manage-term-table-page .instructions-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Custom Scrollbar */
+.manage-term-table-page ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.manage-term-table-page ::-webkit-scrollbar-track {
+  background: rgba(11, 37, 69, 0.5);
+}
+
+.manage-term-table-page ::-webkit-scrollbar-thumb {
+  background: rgba(141, 169, 196, 0.3);
+  border-radius: 4px;
+}
+
+.manage-term-table-page ::-webkit-scrollbar-thumb:hover {
+  background: #8da9c4;
+}

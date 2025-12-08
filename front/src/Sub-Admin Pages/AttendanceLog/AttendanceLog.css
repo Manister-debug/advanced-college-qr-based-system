@@ -1,0 +1,1194 @@
+/* AttendanceLog.css - Styling for Attendance Log page */
+.attendance-log-page {
+  min-height: 100vh;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(141, 169, 196, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(19, 52, 116, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #0b2545 0%, #13315c 100%);
+  color: #eef4ed;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.attendance-log-page * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.attendance-log-page .page-header {
+  background: rgba(11, 37, 69, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  padding: 0.875rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.attendance-log-page .header-content h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  color: #eef4ed;
+}
+
+.attendance-log-page .page-subtitle {
+  color: #8da9c4;
+  font-size: 0.8125rem;
+}
+
+.attendance-log-page .user-info {
+  background: rgba(141, 169, 196, 0.1);
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  color: #eef4ed;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+}
+
+.attendance-log-page .main-content {
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.attendance-log-page .attendance-container {
+  background: rgba(19, 50, 92, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.attendance-log-page .attendance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.attendance-log-page .view-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #eef4ed;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .view-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.attendance-log-page .date-filter {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.attendance-log-page .date-filter i {
+  position: absolute;
+  right: 12px;
+  color: #8da9c4;
+  font-size: 0.9rem;
+}
+
+.attendance-log-page .search-input {
+  padding: 0.625rem 12px;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+  border-radius: 0.5rem;
+  background: rgba(11, 37, 69, 0.7);
+  color: #eef4ed;
+  font-size: 0.875rem;
+  width: 250px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.attendance-log-page .search-input:focus {
+  border-color: #8da9c4;
+  box-shadow: 0 0 0 2px rgba(141, 169, 196, 0.2);
+  background: rgba(11, 37, 69, 0.9);
+}
+
+.attendance-log-page .search-input::placeholder {
+  color: rgba(141, 169, 196, 0.7);
+  font-size: 0.85rem;
+}
+
+/* Layout */
+.attendance-log-page .attendance-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 1.5rem;
+  min-height: 600px;
+}
+
+@media (max-width: 1024px) {
+  .attendance-log-page .attendance-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Filters Sidebar */
+.attendance-log-page .filters-sidebar {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.attendance-log-page .filters-card {
+  background: rgba(11, 37, 69, 0.8);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  backdrop-filter: blur(10px);
+}
+
+.attendance-log-page .filters-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #eef4ed;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+.attendance-log-page .filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.attendance-log-page .filter-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #8da9c4;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .filter-option {
+  padding: 0.75rem 1rem;
+  background: rgba(141, 169, 196, 0.1);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.5rem;
+  color: #8da9c4;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+  position: relative;
+}
+
+.attendance-log-page .filter-option:hover:not(:disabled) {
+  background: rgba(141, 169, 196, 0.15);
+  border-color: #8da9c4;
+}
+
+.attendance-log-page .filter-option.active {
+  background: #8da9c4;
+  color: #0b2545;
+  border-color: #8da9c4;
+  font-weight: 600;
+}
+
+.attendance-log-page .filter-option:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.attendance-log-page .coming-soon {
+  margin-left: auto;
+  font-size: 0.7rem;
+  background: rgba(255, 209, 102, 0.2);
+  color: #ffd166;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+.attendance-log-page .filter-select {
+  padding: 0.75rem 1rem;
+  background: rgba(11, 37, 69, 0.7);
+  border: 1px solid rgba(141, 169, 196, 0.3);
+  border-radius: 0.5rem;
+  color: #eef4ed;
+  font-size: 0.875rem;
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.attendance-log-page .filter-select:focus {
+  border-color: #8da9c4;
+  background: rgba(11, 37, 69, 0.9);
+}
+
+.attendance-log-page .course-list-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.attendance-log-page .course-filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.attendance-log-page .course-code {
+  font-weight: 600;
+  color: #eef4ed;
+  font-size: 0.9rem;
+}
+
+.attendance-log-page .course-name {
+  font-size: 0.8rem;
+  color: #8da9c4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attendance-log-page .course-sections-count {
+  font-size: 0.75rem;
+  color: #4ecdc4;
+  background: rgba(78, 205, 196, 0.1);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  align-self: flex-start;
+  margin-top: 0.125rem;
+}
+
+.attendance-log-page .filter-stats {
+  background: rgba(19, 50, 92, 0.5);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  border: 1px solid rgba(141, 169, 196, 0.1);
+}
+
+.attendance-log-page .stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+}
+
+.attendance-log-page .stat-item:last-child {
+  border-bottom: none;
+}
+
+.attendance-log-page .stat-label {
+  color: #8da9c4;
+  font-size: 0.875rem;
+}
+
+.attendance-log-page .stat-value {
+  color: #eef4ed;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: right;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.attendance-log-page .btn-block {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Main Content - Sections */
+.attendance-log-page .sections-main {
+  min-height: 600px;
+}
+
+.attendance-log-page .selected-course-info {
+  background: rgba(11, 37, 69, 0.6);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.attendance-log-page .course-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.attendance-log-page .course-title h3 {
+  font-size: 1.25rem;
+  color: #eef4ed;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .course-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.attendance-log-page .course-type-badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .course-hours {
+  color: #8da9c4;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Sections Grid */
+.attendance-log-page .sections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.attendance-log-page .section-card {
+  background: rgba(11, 37, 69, 0.7);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+
+.attendance-log-page .section-card:hover {
+  border-color: #8da9c4;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  background: rgba(11, 37, 69, 0.8);
+}
+
+.attendance-log-page .section-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #8da9c4 0%, #134074 100%);
+  border-radius: 4px 0 0 4px;
+}
+
+.attendance-log-page .section-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.attendance-log-page .section-type {
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.attendance-log-page .section-course-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .course-code-badge {
+  background: rgba(19, 50, 92, 0.5);
+  color: #8da9c4;
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .section-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.attendance-log-page .section-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.attendance-log-page .detail-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.attendance-log-page .detail-row .full-width {
+  grid-column: 1 / -1;
+}
+
+.attendance-log-page .detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(19, 50, 92, 0.3);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(141, 169, 196, 0.1);
+}
+
+.attendance-log-page .detail-item i {
+  color: #8da9c4;
+  font-size: 1rem;
+  margin-top: 0.125rem;
+}
+
+.attendance-log-page .detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.attendance-log-page .detail-label {
+  font-size: 0.75rem;
+  color: #8da9c4;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.attendance-log-page .detail-value {
+  font-size: 0.95rem;
+  color: #eef4ed;
+  font-weight: 500;
+}
+
+/* Attendance Controls */
+.attendance-log-page .attendance-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(141, 169, 196, 0.1);
+}
+
+.attendance-log-page .attendance-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .status-label {
+  color: #8da9c4;
+  font-size: 0.875rem;
+}
+
+.attendance-log-page .status-badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .status-badge.pending {
+  background: rgba(255, 209, 102, 0.2);
+  color: #ffd166;
+}
+
+.attendance-log-page .status-badge.present {
+  background: rgba(78, 205, 196, 0.2);
+  color: #4ecdc4;
+}
+
+.attendance-log-page .status-badge.absent {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+}
+
+.attendance-log-page .attendance-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .attendance-btn {
+  padding: 0.5rem 0.875rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .attendance-btn.present {
+  background: rgba(78, 205, 196, 0.2);
+  color: #4ecdc4;
+  border: 1px solid rgba(78, 205, 196, 0.3);
+}
+
+.attendance-log-page .attendance-btn.present:hover {
+  background: rgba(78, 205, 196, 0.3);
+  border-color: #4ecdc4;
+}
+
+.attendance-log-page .attendance-btn.absent {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.attendance-log-page .attendance-btn.absent:hover {
+  background: rgba(255, 107, 107, 0.3);
+  border-color: #ff6b6b;
+}
+
+/* Loading and No Data States */
+.attendance-log-page .loading-container,
+.attendance-log-page .no-data {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: #8da9c4;
+  grid-column: 1 / -1;
+}
+
+.attendance-log-page .loading-container i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #8da9c4;
+}
+
+.attendance-log-page .no-data i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #8da9c4;
+  opacity: 0.7;
+}
+
+.attendance-log-page .no-data h3 {
+  font-size: 1.25rem;
+  color: #eef4ed;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.attendance-log-page .no-data p {
+  font-size: 0.95rem;
+  color: #8da9c4;
+  margin-bottom: 1rem;
+}
+
+/* Table Footer */
+.attendance-log-page .table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+.attendance-log-page .table-info {
+  color: #8da9c4;
+  font-size: 0.875rem;
+}
+
+/* Help Section */
+.attendance-log-page .help-section {
+  margin-top: 1.5rem;
+}
+
+.attendance-log-page .help-card {
+  background: rgba(11, 37, 69, 0.6);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+.attendance-log-page .help-card h3 {
+  font-size: 1.1rem;
+  color: #eef4ed;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .help-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.attendance-log-page .help-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem;
+  background: rgba(19, 50, 92, 0.3);
+  border-radius: 0.5rem;
+}
+
+.attendance-log-page .help-item i {
+  color: #8da9c4;
+  font-size: 1.25rem;
+  margin-top: 0.125rem;
+}
+
+.attendance-log-page .help-item div {
+  flex: 1;
+}
+
+.attendance-log-page .help-item strong {
+  color: #eef4ed;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.attendance-log-page .help-item p {
+  color: #8da9c4;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Button Styles */
+.attendance-log-page .btn {
+  padding: 0.625rem 1.25rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .btn-primary {
+  background: #8da9c4;
+  color: #0b2545;
+  border: 1px solid #8da9c4;
+}
+
+.attendance-log-page .btn-primary:hover {
+  background: #9fb5cc;
+  border-color: #9fb5cc;
+}
+
+.attendance-log-page .btn-secondary {
+  background: rgba(141, 169, 196, 0.1);
+  color: #8da9c4;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+}
+
+.attendance-log-page .btn-secondary:hover {
+  background: rgba(141, 169, 196, 0.2);
+  border-color: #8da9c4;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .attendance-log-page .sections-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  
+  .attendance-log-page .detail-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .attendance-log-page .main-content {
+    padding: 1rem;
+  }
+  
+  .attendance-log-page .attendance-container {
+    padding: 1rem;
+  }
+  
+  .attendance-log-page .attendance-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .attendance-log-page .search-input {
+    width: 100%;
+  }
+  
+  .attendance-log-page .sections-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .attendance-log-page .attendance-controls {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .attendance-log-page .attendance-actions {
+    flex-direction: column;
+  }
+  
+  .attendance-log-page .table-footer {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .attendance-log-page .page-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+  
+  .attendance-log-page .user-info {
+    align-self: stretch;
+    text-align: center;
+  }
+  
+  .attendance-log-page .course-header {
+    flex-direction: column;
+  }
+  
+  .attendance-log-page .course-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* Custom Scrollbar */
+.attendance-log-page ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.attendance-log-page ::-webkit-scrollbar-track {
+  background: rgba(11, 37, 69, 0.5);
+}
+
+.attendance-log-page ::-webkit-scrollbar-thumb {
+  background: rgba(141, 169, 196, 0.3);
+  border-radius: 4px;
+}
+
+.attendance-log-page ::-webkit-scrollbar-thumb:hover {
+  background: #8da9c4;
+}
+
+/* Focus states */
+.attendance-log-page .search-input:focus-visible,
+.attendance-log-page .filter-option:focus-visible,
+.attendance-log-page .attendance-btn:focus-visible,
+.attendance-log-page .btn:focus-visible {
+  outline: 2px solid #8da9c4;
+  outline-offset: 2px;
+}
+
+/* Selection color */
+.attendance-log-page ::selection {
+  background: rgba(141, 169, 196, 0.3);
+  color: #eef4ed;
+}
+
+/* Icon styling */
+.attendance-log-page .fas {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}
+
+/* AttendanceLog.css - Table Layout Additions */
+
+/* Sections Table Container */
+.attendance-log-page .sections-table-container {
+  background: rgba(11, 37, 69, 0.6);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+/* Sections Table */
+.attendance-log-page .sections-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.attendance-log-page .sections-table thead {
+  background: rgba(19, 50, 92, 0.8);
+  border-bottom: 2px solid rgba(141, 169, 196, 0.2);
+}
+
+.attendance-log-page .sections-table th {
+  padding: 1rem;
+  text-align: left;
+  color: #8da9c4;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.attendance-log-page .sections-table tbody tr {
+  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.attendance-log-page .sections-table tbody tr:hover {
+  background: rgba(141, 169, 196, 0.1);
+}
+
+.attendance-log-page .sections-table tbody tr.expanded {
+  background: rgba(19, 50, 92, 0.4);
+}
+
+.attendance-log-page .sections-table td {
+  padding: 1rem;
+  vertical-align: middle;
+}
+
+/* Table Cell Styles */
+.attendance-log-page .section-type-cell {
+  display: flex;
+  align-items: center;
+}
+
+.attendance-log-page .section-type-badge {
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.attendance-log-page .course-info-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 150px;
+}
+
+.attendance-log-page .course-code {
+  font-weight: 600;
+  color: #eef4ed;
+  font-size: 0.95rem;
+}
+
+.attendance-log-page .course-name {
+  color: #8da9c4;
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.attendance-log-page .datetime-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 180px;
+}
+
+.attendance-log-page .datetime-cell .date {
+  color: #eef4ed;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.attendance-log-page .datetime-cell .time {
+  color: #8da9c4;
+  font-size: 0.85rem;
+}
+
+.attendance-log-page .day-week {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+}
+
+.attendance-log-page .day-week .day {
+  color: #8da9c4;
+}
+
+.attendance-log-page .day-week .week {
+  color: #4ecdc4;
+  font-weight: 600;
+}
+
+.attendance-log-page .professor-cell,
+.attendance-log-page .room-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #8da9c4;
+  min-width: 150px;
+}
+
+.attendance-log-page .professor-cell i,
+.attendance-log-page .room-cell i {
+  color: #8da9c4;
+}
+
+.attendance-log-page .status-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 150px;
+}
+
+.attendance-log-page .attendance-stats {
+  font-size: 0.8rem;
+  color: #8da9c4;
+  background: rgba(141, 169, 196, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  text-align: center;
+}
+
+.attendance-log-page .actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  min-width: 160px;
+}
+
+.attendance-log-page .expand-btn {
+  background: transparent;
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  color: #8da9c4;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.attendance-log-page .expand-btn:hover {
+  background: rgba(141, 169, 196, 0.1);
+  border-color: #8da9c4;
+}
+
+/* Expanded Details Row */
+.attendance-log-page .expanded-details-row td {
+  padding: 0;
+  background: rgba(11, 37, 69, 0.8);
+}
+
+.attendance-log-page .expanded-content {
+  padding: 1.5rem;
+}
+
+.attendance-log-page .expanded-section {
+  background: rgba(19, 50, 92, 0.5);
+  border: 1px solid rgba(141, 169, 196, 0.2);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.attendance-log-page .expanded-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+.attendance-log-page .expanded-header h4 {
+  color: #eef4ed;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .expanded-course-info {
+  color: #8da9c4;
+  font-size: 0.9rem;
+}
+
+.attendance-log-page .expanded-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.attendance-log-page .expanded-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(11, 37, 69, 0.5);
+  border: 1px solid rgba(141, 169, 196, 0.1);
+  border-radius: 0.5rem;
+}
+
+.attendance-log-page .expanded-item i {
+  color: #8da9c4;
+  font-size: 1.25rem;
+  margin-top: 0.25rem;
+}
+
+.attendance-log-page .expanded-item .label {
+  font-size: 0.8rem;
+  color: #8da9c4;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.attendance-log-page .expanded-item .value {
+  font-size: 1rem;
+  color: #eef4ed;
+  font-weight: 500;
+}
+
+.attendance-log-page .expanded-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.attendance-log-page .expanded-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.attendance-log-page .attendance-btn.partial {
+  background: rgba(255, 209, 102, 0.2);
+  color: #ffd166;
+  border: 1px solid rgba(255, 209, 102, 0.3);
+}
+
+.attendance-log-page .attendance-btn.notes {
+  background: rgba(165, 122, 255, 0.2);
+  color: #a57aff;
+  border: 1px solid rgba(165, 122, 255, 0.3);
+}
+
+/* Button Styles for Table */
+.attendance-log-page .attendance-btn {
+  padding: 0.5rem 0.875rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attendance-log-page .attendance-btn.present {
+  background: rgba(78, 205, 196, 0.2);
+  color: #4ecdc4;
+  border: 1px solid rgba(78, 205, 196, 0.3);
+}
+
+.attendance-log-page .attendance-btn.present:hover {
+  background: rgba(78, 205, 196, 0.3);
+  border-color: #4ecdc4;
+}
+
+.attendance-log-page .attendance-btn.absent {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.attendance-log-page .attendance-btn.absent:hover {
+  background: rgba(255, 107, 107, 0.3);
+  border-color: #ff6b6b;
+}
+
+/* Responsive Table */
+@media (max-width: 1200px) {
+  .attendance-log-page .sections-table-container {
+    overflow-x: auto;
+  }
+  
+  .attendance-log-page .sections-table {
+    min-width: 1200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .attendance-log-page .actions-cell {
+    flex-direction: column;
+  }
+  
+  .attendance-log-page .expanded-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .attendance-log-page .expanded-actions {
+    flex-direction: column;
+  }
+}

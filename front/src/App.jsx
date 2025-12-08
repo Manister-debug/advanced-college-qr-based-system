@@ -1,19 +1,27 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import Navbar from "./components/Navbar/Navbar.jsx";
+import Login from "./components/login/Login.jsx";
+import "./App.css";
+{/* Navbars */}
+import Navbar from "./components/SubAdminNavbar/SubAdminNavbar.jsx";
 import NavbarLogin from "./components/Alt-Navbar/NavbarLogin.jsx";
 import StudentNavbar from "./components/StudentsNavbar/StudentsNavbar.jsx";
+{/* Sub-Admin Pages */}
 import Home from "./Sub-Admin Pages/Home/Home.jsx";
-import Login from "./components/Login/Login.jsx";
 import Dashboard from "./Sub-Admin Pages/Dashboard/Dashboard.jsx";
 import RegisterStudents from "./Sub-Admin Pages/RegisterStudents/RegisterStudents.jsx";
 import ViewStudents from "./Sub-Admin Pages/ViewStudents/ViewStudents.jsx";
+
 import AddCourse from "./Sub-Admin Pages/AddCourses/AddCourses.jsx";
 import ViewCourses from "./Sub-Admin Pages/ViewCourses/ViewCourses.jsx";
+import ManageTermTable from "./Sub-Admin Pages/Manage Term Table/ManageTermTable.jsx";
+
 import AddProfessors from "./Sub-Admin Pages/AddProfessors/AddProfessors.jsx";
 import ViewProfessors from "./Sub-Admin Pages/ViewProfessors/ViewProfessors.jsx";
+import AttendanceLog from "./Sub-Admin Pages/AttendanceLog/AttendanceLog.jsx";
+{/* Student Pages */}
 import StudentsHome from "./Student Pages/StudentsHome/StudentsHome.jsx";
-import "./App.css";
+
 
 // Protected Route Component for Sub-Admin/Professional routes
 const ProtectedRoute = ({ children, requiredRole = 'sub-admin' }) => {
@@ -174,6 +182,19 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/manage-term-table" 
+            element={
+              <ProtectedRoute>
+                <div className="App">
+                  <Navbar />
+                  <main className="main-content">
+                    <ManageTermTable />
+                  </main>
+                </div>
+              </ProtectedRoute>
+            } 
+          />
           
           {/* Professor Management */}
           <Route 
@@ -204,7 +225,7 @@ function App() {
             } 
           />
           
-          {/* Other Sub-Admin Pages */}
+          {/* Attendance Log - FIXED TO RENDER ATTENDANCELOG COMPONENT */}
           <Route 
             path="/attendance-log" 
             element={
@@ -212,16 +233,14 @@ function App() {
                 <div className="App">
                   <Navbar />
                   <main className="main-content">
-                    <div className="page-container">
-                      <h1>Attendance Log</h1>
-                      <p>Attendance log functionality will be implemented here.</p>
-                    </div>
+                    <AttendanceLog />
                   </main>
                 </div>
               </ProtectedRoute>
             } 
           />
           
+          {/* Support */}
           <Route 
             path="/support" 
             element={
@@ -239,6 +258,7 @@ function App() {
             } 
           />
           
+          {/* Profile */}
           <Route 
             path="/profile" 
             element={
@@ -256,6 +276,7 @@ function App() {
             } 
           />
           
+          {/* Tickets */}
           <Route 
             path="/tickets" 
             element={
@@ -273,6 +294,7 @@ function App() {
             } 
           />
           
+          {/* Settings */}
           <Route 
             path="/settings" 
             element={
@@ -306,7 +328,7 @@ function App() {
             } 
           />
           
-          {/* Student Profile Pages */}
+          {/* Student Profile */}
           <Route 
             path="/student/profile" 
             element={
@@ -324,6 +346,25 @@ function App() {
             } 
           />
           
+          {/* Student Attendance Log (if needed) */}
+          <Route 
+            path="/student/attendance-log" 
+            element={
+              <StudentProtectedRoute>
+                <div className="App">
+                  <StudentNavbar />
+                  <main className="main-content">
+                    <div className="page-container">
+                      <h1>Student Attendance Log</h1>
+                      <p>Student attendance viewing page will be implemented here.</p>
+                    </div>
+                  </main>
+                </div>
+              </StudentProtectedRoute>
+            } 
+          />
+          
+          {/* Student Tickets */}
           <Route 
             path="/student/tickets" 
             element={
@@ -341,6 +382,7 @@ function App() {
             } 
           />
           
+          {/* Student Settings */}
           <Route 
             path="/student/settings" 
             element={
@@ -351,6 +393,24 @@ function App() {
                     <div className="page-container">
                       <h1>Student Settings</h1>
                       <p>Student settings page will be implemented here.</p>
+                    </div>
+                  </main>
+                </div>
+              </StudentProtectedRoute>
+            } 
+          />
+          
+          {/* Student Support */}
+          <Route 
+            path="/student/support" 
+            element={
+              <StudentProtectedRoute>
+                <div className="App">
+                  <StudentNavbar />
+                  <main className="main-content">
+                    <div className="page-container">
+                      <h1>Student Support</h1>
+                      <p>Student support page will be implemented here.</p>
                     </div>
                   </main>
                 </div>
