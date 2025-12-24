@@ -1,1 +1,392 @@
+name: Next.js CI/CD Pipeline
 
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Manual trigger option
+
+env:
+  NODE_VERSION: '20'  # LTS version
+  PNPM_VERSION: '8'   # Or use npm/yarn
+
+jobs:
+  # Job 1: Setup and Install
+  setup:
+    name: Setup and Install
+    runs-on: windows-latest
+    
+    outputs:
+      cache-key: ${{ steps.cache-deps.outputs.cache-primary-key }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'pnpm'  # Change to 'npm' or 'yarn' if using those
+    
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: ${{ env.PNPM_VERSION }}
+        run_install: false
+    
+    - name: Get Node.js info
+      run: |
+        node --version
+        npm --version
+        pnpm --version
+        echo "Running on Windows: $env:OS"
+    
+    - name: Cache dependencies
+      id: cache-deps
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.pnpm-store
+          node_modules
+          .next/cache
+        key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml', 'package-lock.json', 'yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-nextjs-
+    
+    - name: Install dependencies
+      run: |
+        pnpm install --frozen-lockfile
+        # or: npm ci
+        # or: yarn install --frozen-lockfile
+
+  # Job 2: Lint and Format Check
+  lint:
+    name: Lint and Format
+    runs-on: windows-latest
+    needs: setup
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Restore cached dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          node_modules
+          .next/cache
+        key: ${{ needs.setup.outputs.cache-key }}
+    
+    - name: Run ESLint
+      run: |
+        pnpm lint
+        # or: npm run lint
+      continue-on-error: false
+    
+    - name: Run TypeScript type check
+      run: |
+        pnpm type-check
+        # or: npm run type-check
+        # or: npx tsc --noEmit
+    
+    - name: Check code formatting
+      run: |
+        pnpm format:check
+        # or: npx prettier --check .
+    
+    - name: Run Next.js lint
+      run: |
+        npx next lint --max-warnings=0
+
+  # Job 3: Run Tests
+  test:
+    name: Run Tests
+    runs-on: windows-latest
+    needs: [setup, lint]
+    
+    strategy:
+      matrix:
+        test-type: [unit, integration, e2e]
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Restore cached dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          node_modules
+          .next/cache
+        key: ${{ needs.setup.outputs.cache-key }}
+    
+    - name: Run ${{ matrix.test-type }} tests
+      run: |
+        if ("${{ matrix.test-type }}" -eq "unit") {
+          pnpm test:unit
+        } elseif ("${{ matrix.test-type }}" -eq "integration") {
+          pnpm test:integration
+        } elseif ("${{ matrix.test-type }}" -eq "e2e") {
+          pnpm test:e2e
+        } else {
+          pnpm test
+        }
+      env:
+        NODE_ENV: test
+        NEXT_PUBLIC_API_URL: https://test-api.example.com
+        DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ matrix.test-type }}
+        path: |
+          test-results/
+          coverage/
+          junit.xml
+        if-no-files-found: ignore
+    
+    - name: Generate coverage report
+      if: matrix.test-type == 'unit'
+      run: |
+        pnpm test:coverage
+        # Generate coverage badge
+        $coverage = (Get-Content coverage/coverage-summary.json | ConvertFrom-Json).total.lines.pct
+        echo "COVERAGE=$coverage" >> $env:GITHUB_ENV
+    
+    - name: Upload coverage to Codecov
+      if: matrix.test-type == 'unit'
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+
+  # Job 4: Build and Verify
+  build:
+    name: Build Next.js Application
+    runs-on: windows-latest
+    needs: [lint, test]
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Restore cached dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          node_modules
+        key: ${{ needs.setup.outputs.cache-key }}
+    
+    - name: Build Next.js app
+      run: |
+        pnpm build
+        # or: npm run build
+      env:
+        NODE_ENV: production
+        NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+        NEXT_TELEMETRY_DISABLED: 1
+    
+    - name: Analyze bundle
+      run: |
+        npx @next/bundle-analyzer
+    
+    - name: Check build output
+      run: |
+        Get-ChildItem .next -Recurse -File | Measure-Object -Property Length -Sum | Select-Object Count, @{Name="SizeMB";Expression={[math]::Round($_.Sum/1MB,2)}}
+        echo "Build completed successfully!"
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: nextjs-build
+        path: |
+          .next/
+          public/
+          package.json
+        if-no-files-found: error
+
+  # Job 5: Deploy (Multiple Environments)
+  deploy:
+    name: Deploy to Environment
+    runs-on: windows-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    
+    strategy:
+      matrix:
+        environment: [staging, production]
+        include:
+          - environment: staging
+            if: github.ref == 'refs/heads/develop'
+            deploy_url: https://staging.example.com
+          - environment: production
+            if: github.ref == 'refs/heads/main'
+            deploy_url: https://example.com
+    
+    environment: ${{ matrix.environment }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: nextjs-build
+        path: ./
+    
+    - name: Deploy to Vercel
+      if: matrix.environment == 'production'
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
+        working-directory: ./
+    
+    - name: Deploy to Azure Static Web Apps
+      if: matrix.environment == 'staging'
+      uses: Azure/static-web-apps-deploy@v1
+      with:
+        azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_TOKEN }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        action: "upload"
+        app_location: "./"
+        output_location: ".next"
+    
+    - name: Run Lighthouse Audit
+      run: |
+        npx lhci autorun --upload.target=temporary-public-storage
+      continue-on-error: true
+    
+    - name: Health check deployment
+      run: |
+        $url = "${{ matrix.deploy_url }}/api/health"
+        $maxAttempts = 30
+        $attempt = 1
+        
+        while ($attempt -le $maxAttempts) {
+          try {
+            $response = Invoke-WebRequest -Uri $url -Method GET -TimeoutSec 10
+            if ($response.StatusCode -eq 200) {
+              Write-Host "✅ Deployment healthy at $url"
+              break
+            }
+          } catch {
+            Write-Host "Attempt $attempt failed: $_"
+          }
+          
+          if ($attempt -eq $maxAttempts) {
+            Write-Host "❌ Deployment health check failed after $maxAttempts attempts"
+            exit 1
+          }
+          
+          $attempt++
+          Start-Sleep -Seconds 2
+        }
+
+  # Job 6: Security Scan
+  security:
+    name: Security Scan
+    runs-on: windows-latest
+    needs: build
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Run Snyk security scan
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+    
+    - name: Run npm audit
+      run: |
+        npm audit --audit-level=high
+      continue-on-error: true
+    
+    - name: Check for secrets in code
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  # Job 7: Notification
+  notify:
+    name: Send Notifications
+    runs-on: windows-latest
+    needs: [lint, test, build, deploy, security]
+    if: always()
+    
+    steps:
+    - name: Send Slack notification
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        author_name: Next.js CI/CD
+        fields: workflow,job,commit,repo,ref,author,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    
+    - name: Update PR comment
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: checkRuns } = await github.rest.checks.listForRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: context.payload.pull_request.head.sha,
+          });
+          
+          const summary = {
+            lint: checkRuns.check_runs.find(r => r.name.includes('lint')),
+            test: checkRuns.check_runs.find(r => r.name.includes('test')),
+            build: checkRuns.check_runs.find(r => r.name.includes('build')),
+          };
+          
+          const comment = `## CI/CD Results ✅
+          
+          | Job | Status | Details |
+          |-----|--------|---------|
+          | Lint | ${summary.lint?.conclusion || '❓'} | ${summary.lint?.output?.summary || 'N/A'} |
+          | Test | ${summary.test?.conclusion || '❓'} | ${summary.test?.output?.summary || 'N/A'} |
+          | Build | ${summary.build?.conclusion || '❓'} | ${summary.build?.output?.summary || 'N/A'} |
+          
+          [View Full Logs](${checkRuns.check_runs[0]?.html_url || '#'})`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
