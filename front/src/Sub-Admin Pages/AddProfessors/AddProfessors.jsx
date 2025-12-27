@@ -1,15 +1,19 @@
 import { useState } from 'react';
 import './AddProfessors.css';
 
+// ⭐ استيراد Firestore الصحيح (بدون تكرار)
+import { db } from '../../firebase';
+import { doc, setDoc } from "firebase/firestore";
+
 export default function AddProfessors() {
-  const [userType, setUserType] = useState('professor'); // 'professor' or 'engineer'
+  const [userType, setUserType] = useState('professor');
   const [professorData, setProfessorData] = useState({
     fullName: '',
     specialization: '',
     phone: '',
     email: ''
   });
-  
+
   const [alert, setAlert] = useState({ show: false, type: '', message: '' });
 
   const handleInputChange = (e) => {
@@ -20,55 +24,73 @@ export default function AddProfessors() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validation for required fields
+
     if (!professorData.fullName || !professorData.specialization || !professorData.phone || !professorData.email) {
       setAlert({
         show: true,
         type: 'error',
-        message: 'Please fill in all required fields.'
+        message: 'يرجى ملء جميع الحقول المطلوبة.'
       });
       return;
     }
-    
-    // Email validation
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(professorData.email)) {
       setAlert({
         show: true,
         type: 'error',
-        message: 'Please enter a valid email address.'
+        message: 'يرجى إدخال بريد إلكتروني صالح.'
       });
       return;
     }
-    
-    // Phone validation
+
     const phoneRegex = /^[+]?[\d\s\-\(\)]+$/;
     if (!phoneRegex.test(professorData.phone.replace(/\s+/g, ''))) {
       setAlert({
         show: true,
         type: 'error',
-        message: 'Please enter a valid phone number.'
+        message: 'يرجى إدخال رقم هاتف صحيح.'
       });
       return;
     }
-    
-    // Simulate API call
-    setAlert({
-      show: true,
-      type: 'success',
-      message: `${userType.charAt(0).toUpperCase() + userType.slice(1)} has been successfully added to the system!`
-    });
-    
-    // Reset form
-    setProfessorData({
-      fullName: '',
-      specialization: '',
-      phone: '',
-      email: ''
-    });
+
+    try {
+      // ⭐ تنظيف الاسم ليصبح صالحًا كـ Document ID
+      const cleanName = professorData.fullName.replace(/[\/#?[\]]/g, "").trim();
+
+      // ⭐ إضافة الأستاذ باسم Document = اسم الأستاذ
+      await setDoc(doc(db, "professors", cleanName), {
+        name: professorData.fullName,
+        specialization: professorData.specialization,
+        phone: professorData.phone,
+        email: professorData.email,
+        type: userType === "professor" ? "theory" : "practical",
+        createdAt: new Date().toISOString()
+      });
+
+      setAlert({
+        show: true,
+        type: "success",
+        message: `${userType === 'professor' ? 'Professor' : 'Engineer'} has been successfully added to the system!`
+      });
+
+      setProfessorData({
+        fullName: "",
+        specialization: "",
+        phone: "",
+        email: ""
+      });
+
+    } catch (error) {
+      console.error("Error adding professor:", error);
+      setAlert({
+        show: true,
+        type: "error",
+        message: "حدث خطأ أثناء إضافة الأستاذ. حاول مرة أخرى."
+      });
+    }
   };
 
   const resetForm = () => {
@@ -106,7 +128,9 @@ export default function AddProfessors() {
             <i className="fas fa-chalkboard-teacher"></i>
             Add New {userType.charAt(0).toUpperCase() + userType.slice(1)}
           </h1>
-          <p className="page-subtitle">Add new {userType === 'professor' ? 'professors' : 'engineers'} to the college system</p>
+          <p className="page-subtitle">
+            Add new {userType === 'professor' ? 'professors' : 'engineers'} to the college system
+          </p>
         </div>
         <div className="user-info">
           <span>Administrator</span>
@@ -142,7 +166,9 @@ export default function AddProfessors() {
         </div>
 
         <div className="form-container">
-          <h2 className="form-title">{userType.charAt(0).toUpperCase() + userType.slice(1)} Registration Form</h2>
+          <h2 className="form-title">
+            {userType.charAt(0).toUpperCase() + userType.slice(1)} Registration Form
+          </h2>
           
           <form onSubmit={handleSubmit}>
             <div className="form-grid">
@@ -178,7 +204,9 @@ export default function AddProfessors() {
                 >
                   <option value="">Select Specialization</option>
                   {specializations.map(specialization => (
-                    <option key={specialization} value={specialization}>{specialization}</option>
+                    <option key={specialization} value={specialization}>
+                      {specialization}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -232,12 +260,16 @@ export default function AddProfessors() {
         </div>
 
         <div className="info-card">
-          <h3><i className="fas fa-info-circle"></i> Important Notes</h3>
+          <h3>
+            <i className="fas fa-info-circle"></i> Important Notes
+          </h3>
           <ul>
             <li>All fields marked with * are required</li>
             <li>Phone number should include country code if applicable</li>
             <li>Email should be the official university/work email address</li>
-            <li>{userType.charAt(0).toUpperCase() + userType.slice(1)} will receive system access credentials via email</li>
+            <li>
+              {userType.charAt(0).toUpperCase() + userType.slice(1)} will receive system access credentials via email
+            </li>
             <li>Ensure all information is accurate before submission</li>
           </ul>
         </div>

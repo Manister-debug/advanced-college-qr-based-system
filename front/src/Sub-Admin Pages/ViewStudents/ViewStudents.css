@@ -483,3 +483,95 @@
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
 }
+
+/*--------------mahmod Edit--------------*/
+
+.details-section {
+  margin-top: 25px;
+  padding: 20px;
+  background: #003366; /* خلفية زرقاء داكنة */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: white; /* الخط أبيض */
+}
+
+.details-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.details-list-inline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.details-list-inline li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 15px;
+  color: white;
+}
+
+.details-list-inline strong {
+  color: #ffffff;
+}
+
+.form-group-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-group-inline label {
+  color: white;
+  font-weight: 600;
+}
+
+.form-group-inline input,
+.form-group-inline select {
+  padding: 10px;
+  border: 1px solid #99bbff;
+  border-radius: 6px;
+  background: #0b2545; /* الأزرق الفاتح من الصورة */
+  color: white;
+  font-size: 15px;
+}
+
+/* أزرار داخل قسم التعديل والتفاصيل */
+.btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-primary,
+.btn-secondary {
+  background-color: #003366;
+  color: white;
+}
+
+.btn:hover {
+  background-color: #0055aa;
+}
+
+/* نفس تصميم أزرار الجدول */
+.btn-action {
+  background-color: #003366;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-action:hover {
+  background-color: #0055aa;
+}

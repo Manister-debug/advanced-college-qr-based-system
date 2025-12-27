@@ -610,3 +610,114 @@
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
 }
+/* ===========================
+   صندوق التعديل (Edit Box)
+=========================== */
+.details-box {
+  background: rgba(11, 37, 69, 0.7);
+  border: 1px solid rgba(141, 169, 196, 0.3);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-top: 1rem;
+  color: #eef4ed;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease;
+}
+
+.details-box h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #8da9c4;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+/* ===========================
+   شبكة الحقول
+=========================== */
+.form-group-inline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.form-group-inline label {
+  font-size: 0.85rem;
+  color: #8da9c4;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+/* ===========================
+   الحقول
+=========================== */
+.form-group-inline input,
+.form-group-inline select {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  background: rgba(11, 37, 69, 0.7);
+  border: 1px solid rgba(141, 169, 196, 0.3);
+  border-radius: 0.5rem;
+  color: #eef4ed;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.form-group-inline input:focus,
+.form-group-inline select:focus {
+  border-color: #8da9c4;
+  box-shadow: 0 0 0 2px rgba(141, 169, 196, 0.2);
+  background: rgba(11, 37, 69, 0.9);
+}
+
+/* ===========================
+   أزرار Save / Cancel
+=========================== */
+.btn-primary {
+  background: #8da9c4;
+  color: #0b2545;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-primary:hover {
+  background: #9fb7d0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(141, 169, 196, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(141, 169, 196, 0.1);
+  color: #8da9c4;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(141, 169, 196, 0.3);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(141, 169, 196, 0.2);
+  border-color: #8da9c4;
+}
+
+/* ===========================
+   Animation
+=========================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

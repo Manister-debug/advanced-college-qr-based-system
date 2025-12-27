@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './AddCourses.css';
+import { db } from "../../firebase"; 
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+
 
 const API_BASE = import.meta.env.VITE_API_BASE || '/api';
 
@@ -26,14 +29,27 @@ function AddCourse() {
     const [profLoading, setProfLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
 
-    useEffect(() => {
-        // Load saved courses
-        const savedCourses = localStorage.getItem('cs_courses');
-        if (savedCourses) setCourses(JSON.parse(savedCourses));
-        
-        // Load professors
-        fetchProfessors();
-    }, []);
+   useEffect(() => {
+    const fetchData = async () => {
+        try {
+            // جلب الكورسات من Firestore
+            const snapshot = await getDocs(collection(db, "courses"));
+            const coursesData = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            setCourses(coursesData);
+
+            // جلب الأساتذة من Firestore
+            fetchProfessors();
+        } catch (err) {
+            console.error("Error loading data from Firestore:", err);
+        }
+    };
+
+    fetchData();
+}, []);
+
 
     useEffect(() => {
         localStorage.setItem('cs_courses', JSON.stringify(courses));
@@ -41,37 +57,21 @@ function AddCourse() {
 
     // Load professors from database
     const fetchProfessors = async () => {
-        setProfLoading(true);
-        const token = localStorage.getItem('token');
-        
-        try {
-            const res = await fetch(`${API_BASE}/professors/`, {
-                headers: token ? { Authorization: `Bearer ${token}` } : {},
-            });
-            
-            if (res.ok) {
-                const data = await res.json();
-                if (Array.isArray(data)) {
-                    setProfessors(data);
-                }
-            }
-        } catch (err) {
-            console.warn('Could not fetch professors:', err.message);
-            // Use default professor data
-            setProfessors([
-                { id: 'p1', name: 'Dr. Mohamad Ahmad', type: 'theory' },
-                { id: 'p2', name: 'Dr. Ali Battour', type: 'practical' },
-                { id: 'p3', name: 'Dr. Salah Dawaji', type: 'theory' },
-                { id: 'p4', name: 'Dr. Mahmoud Haidar', type: 'practical' },
-                { id: 'p5', name: 'Dr. Omar Kassem', type: 'both' },
-                { id: 'p6', name: 'Dr. Nour Zaydan', type: 'theory' },
-                { id: 'p7', name: 'Dr. Hassan Rami', type: 'practical' },
-                { id: 'p8', name: 'Dr. Fatima Saleh', type: 'both' },
-            ]);
-        } finally {
-            setProfLoading(false);
-        }
-    };
+    setProfLoading(true);
+    try {
+        const snapshot = await getDocs(collection(db, "professors"));
+        const data = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        setProfessors(data);
+    } catch (err) {
+        console.error("Error fetching professors from Firestore:", err);
+    } finally {
+        setProfLoading(false);
+    }
+};
+
 
     // Filter professors by type
     const theoryProfessors = professors.filter(p => 
@@ -212,31 +212,29 @@ function AddCourse() {
             createdAt: new Date().toISOString(),
         };
         
-        // Try to save to server first
-        const token = localStorage.getItem('token');
-        const payload = {
-            ...newCourse,
-            theoryProfessorNames: assignedTheoryProfessors.map(id => getProfessorName(id) || ''),
-            practicalProfessorNames: assignedPracticalProfessors.map(id => getProfessorName(id) || ''),
-        };
-        
+        // Try to save to server first معدل لتخزين الكورسات 
         try {
-            const res = await fetch(`${API_BASE}/courses/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                },
-                body: JSON.stringify(payload),
-            });
-            
-            if (!res.ok) throw new Error(`Server error: ${res.status}`);
-            
-            const serverCourse = await res.json();
-            newCourse.id = serverCourse.id?.toString() || newCourse.id;
-        } catch (err) {
-            console.warn('Using local storage:', err.message);
-        }
+    const courseRef = doc(db, "courses", courseCode.trim());
+    await setDoc(courseRef, {
+        name: courseName.trim(),
+        code: courseCode.trim(),
+        academicHours: Number(academicHours),
+        type: courseType,
+        weeks: Number(weeks),
+        theorySections: courseType === 'practical-only' ? 0 : Number(theorySections),
+        practicalSections: courseType === 'theory-only' ? 0 : Number(practicalSections),
+        theoryProfessors: courseType === 'practical-only' ? [] : assignedTheoryProfessors,
+        practicalProfessors: courseType === 'theory-only' ? [] : assignedPracticalProfessors,
+        createdAt: new Date().toISOString(),
+    });
+
+    console.log("Course saved to Firestore successfully");
+} catch (err) {
+    console.error("Firestore error:", err);
+    setMessage({ type: "error", text: "Error saving course to Firestore" });
+    setLoading(false);
+    return;
+}
         
         // Save locally
         setCourses(prev => [...prev, newCourse]);

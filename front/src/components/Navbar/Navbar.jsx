@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import "./Navbar.css";
 import UniScanLogo from "../../assets/UniScan.png";
-
+import { auth, db } from "../../firebase";
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isStudentsDropdownOpen, setIsStudentsDropdownOpen] = useState(false);

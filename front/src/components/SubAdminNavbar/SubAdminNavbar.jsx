@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import "./SubAdminNavbar.css";
 import UniScanLogo from "../../assets/UniScan.png";
-
+import { auth, db } from "../../firebase";
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isStudentsDropdownOpen, setIsStudentsDropdownOpen] = useState(false);

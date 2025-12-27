@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './ViewCourses.css';
+import { db } from "../../firebase";
+import { collection, getDocs ,onSnapshot } from "firebase/firestore";
+import { doc, deleteDoc } from "firebase/firestore";
+import { updateDoc } from "firebase/firestore";
+
 
 function ViewCourses() {
     const [courses, setCourses] = useState([]);
@@ -8,37 +13,54 @@ function ViewCourses() {
     const [professors, setProfessors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedCourse, setExpandedCourse] = useState(null);
+    const [expandedCourseId, setExpandedCourseId] = useState(null);
+    const [editMode, setEditMode] = useState(false);
+    const [editData, setEditData] = useState(null);
 
     useEffect(() => {
-        // Load saved data
-        const savedCourses = localStorage.getItem('cs_courses');
-        const savedProfessors = localStorage.getItem('cs_professors');
-        
-        if (savedCourses) {
-            const parsedCourses = JSON.parse(savedCourses);
-            setCourses(parsedCourses);
-            setFilteredCourses(parsedCourses);
-        }
-        
-        if (savedProfessors) {
-            setProfessors(JSON.parse(savedProfessors));
-        }
-        
-        setLoading(false);
-        
-        // Load professors from API if possible
-        fetchProfessors();
+        const fetchData = async () => {
+            try {
+                // Load courses from Firestore
+                const snapshot = await getDocs(collection(db, "courses"));
+                const coursesData = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                setCourses(coursesData);
+                setFilteredCourses(coursesData);
+
+                // Load professors (من API أو localStorage كما هو)
+                fetchProfessors();
+            } catch (err) {
+                console.error("Error loading courses:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(db, "users"), (snapshot) => {
+            const profs = snapshot.docs
+                .map((doc) => ({ id: doc.id, ...doc.data() }))
+                .filter((u) => u.role === "professor");
+
+            setProfessors(profs);
+        });
+
+        return () => unsubscribe();
     }, []);
 
     const fetchProfessors = async () => {
         const token = localStorage.getItem('token');
         const API_BASE = import.meta.env.VITE_API_BASE || '/api';
-        
+
         try {
             const res = await fetch(`${API_BASE}/professors/`, {
                 headers: token ? { Authorization: `Bearer ${token}` } : {},
             });
-            
+
             if (res.ok) {
                 const data = await res.json();
                 if (Array.isArray(data)) {
@@ -57,15 +79,15 @@ function ViewCourses() {
             setFilteredCourses(courses);
             return;
         }
-        
+
         const term = searchTerm.toLowerCase();
-        const filtered = courses.filter(course => 
+        const filtered = courses.filter(course =>
             course.name.toLowerCase().includes(term) ||
             course.code.toLowerCase().includes(term) ||
             (course.type && course.type.toLowerCase().includes(term)) ||
             (course.academicHours && course.academicHours.toString().includes(term))
         );
-        
+
         setFilteredCourses(filtered);
     }, [searchTerm, courses]);
 
@@ -81,22 +103,48 @@ function ViewCourses() {
         if (!profId) return '';
         const prof = professors.find(p => p.id === profId);
         if (!prof) return '';
-        return prof.type === 'theory' ? 'Theory' : 
-               prof.type === 'practical' ? 'Practical' : 
-               prof.type === 'both' ? 'Theory & Practical' : '';
+        return prof.type === 'theory' ? 'Theory' :
+            prof.type === 'practical' ? 'Practical' :
+                prof.type === 'both' ? 'Theory & Practical' : '';
     };
 
     // Delete course
-    const deleteCourse = (courseId) => {
-        if (window.confirm('Are you sure you want to delete this course?')) {
+    const deleteCourse = async (courseId) => {
+        if (!window.confirm("Are you sure you want to delete this course?")) return;
+
+        try {
+            // حذف من Firestore
+            await deleteDoc(doc(db, "courses", courseId));
+
+            // حذف من الواجهة
             const updatedCourses = courses.filter(course => course.id !== courseId);
             setCourses(updatedCourses);
             setFilteredCourses(updatedCourses);
-            localStorage.setItem('cs_courses', JSON.stringify(updatedCourses));
             setExpandedCourse(null);
+
+            console.log("Course deleted from Firestore successfully");
+        } catch (err) {
+            console.error("Error deleting course:", err);
+            alert("Failed to delete course from Firestore");
         }
     };
+    const saveEdit = async () => {
+        if (!editData) return;
 
+        try {
+            const { id, ...data } = editData;
+
+            await updateDoc(doc(db, "courses", id), data);
+
+            // إغلاق وضع التعديل
+            setEditMode(false);
+            setEditData(null);
+            setExpandedCourseId(null);
+
+        } catch (error) {
+            console.error("Error updating course:", error);
+        }
+    };
     // Edit course
     const editCourse = (course) => {
         alert(`Edit course: ${course.name}\n\nEditing functionality coming soon!`);
@@ -113,7 +161,7 @@ function ViewCourses() {
 
     // Get course type display name
     const getCourseTypeDisplay = (type) => {
-        switch(type) {
+        switch (type) {
             case 'theory-only': return 'Theory Only';
             case 'practical-only': return 'Practical Only';
             case 'theory-practical': return 'Theory + Practical';
@@ -123,7 +171,7 @@ function ViewCourses() {
 
     // Get course type icon
     const getCourseTypeIcon = (type) => {
-        switch(type) {
+        switch (type) {
             case 'theory-only': return 'fa-chalkboard-teacher';
             case 'practical-only': return 'fa-flask';
             case 'theory-practical': return 'fa-graduation-cap';
@@ -139,7 +187,7 @@ function ViewCourses() {
 
     // Get academic hours color based on value
     const getAcademicHoursColor = (hours) => {
-        switch(hours) {
+        switch (hours) {
             case 1: return '#4ECDC4'; // Teal for 1 hour
             case 2: return '#45B7D1'; // Blue for 2 hours
             case 3: return '#96CEB4'; // Green for 3 hours
@@ -241,7 +289,7 @@ function ViewCourses() {
                         <div className="courses-list">
                             {filteredCourses.map((course) => (
                                 <div key={course.id} className="course-card">
-                                    <div 
+                                    <div
                                         className="course-header"
                                         onClick={() => toggleCourseDetails(course.id)}
                                         style={{ cursor: 'pointer' }}
@@ -253,11 +301,11 @@ function ViewCourses() {
                                                 </strong>
                                                 <span className="course-type-badge" style={{
                                                     backgroundColor: course.type === 'theory-only' ? 'rgba(141, 169, 196, 0.3)' :
-                                                                    course.type === 'practical-only' ? 'rgba(78, 205, 196, 0.3)' :
-                                                                    'rgba(255, 209, 102, 0.3)',
+                                                        course.type === 'practical-only' ? 'rgba(78, 205, 196, 0.3)' :
+                                                            'rgba(255, 209, 102, 0.3)',
                                                     color: course.type === 'theory-only' ? 'var(--primary-light)' :
-                                                           course.type === 'practical-only' ? 'var(--accent)' :
-                                                           'var(--primary-dark)',
+                                                        course.type === 'practical-only' ? 'var(--accent)' :
+                                                            'var(--primary-dark)',
                                                     padding: '4px 12px',
                                                     borderRadius: '20px',
                                                     fontSize: '0.85rem',
@@ -286,10 +334,10 @@ function ViewCourses() {
                                                 </span>
                                             </div>
                                             <h3 style={{ margin: '10px 0', color: 'var(--accent)' }}>{course.name}</h3>
-                                            
+
                                         </div>
                                         <div className="course-actions">
-                                            <button 
+                                            <button
                                                 className="btn-action btn-view"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -299,17 +347,20 @@ function ViewCourses() {
                                             >
                                                 <i className={`fas fa-${expandedCourse === course.id ? 'chevron-up' : 'chevron-down'}`}></i>
                                             </button>
-                                            <button 
+                                            <button
                                                 className="btn-action btn-edit"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    editCourse(course);
+                                                    setExpandedCourseId(course.id);
+                                                    setEditMode(true);
+                                                    setEditData(course);
+
                                                 }}
                                                 title="Edit"
                                             >
                                                 <i className="fas fa-edit"></i>
                                             </button>
-                                            <button 
+                                            <button
                                                 className="btn-action btn-delete"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -321,7 +372,80 @@ function ViewCourses() {
                                             </button>
                                         </div>
                                     </div>
+                                    {/* === EDIT MODE BOX (STEP 3 GOES HERE) === */}
+                                    {expandedCourseId === course.id && editMode && (
+                                        <div className="details-box" style={{
+                                            background: 'rgba(11, 37, 69, 0.7)',
+                                            border: '1px solid rgba(141, 169, 196, 0.3)',
+                                            borderRadius: '0.75rem',
+                                            padding: '1.25rem',
+                                            marginTop: '1rem',
+                                            color: '#eef4ed',
+                                            backdropFilter: 'blur(20px)',
+                                            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.3)'
+                                        }}>
+                                            <h3>Edit Course</h3>
 
+                                            <div className="form-group-inline">
+                                                <label>Course Name</label>
+                                                <input
+                                                    value={editData.name}
+                                                    onChange={(e) =>
+                                                        setEditData({ ...editData, name: e.target.value })
+                                                    }
+                                                />
+
+                                                <label>Course Code</label>
+                                                <input
+                                                    value={editData.code}
+                                                    onChange={(e) =>
+                                                        setEditData({ ...editData, code: e.target.value })
+                                                    }
+                                                />
+
+                                                <label>Academic Hours</label>
+                                                <input
+                                                    value={editData.academicHours}
+                                                    onChange={(e) =>
+                                                        setEditData({ ...editData, academicHours: e.target.value })
+                                                    }
+                                                />
+
+                                                <label>Course Type</label>
+                                                <select
+                                                    value={editData.type}
+                                                    onChange={(e) =>
+                                                        setEditData({ ...editData, type: e.target.value })
+                                                    }
+                                                >
+                                                    <option value="theory-only">Theory Only</option>
+                                                    <option value="practical-only">Practical Only</option>
+                                                    <option value="theory-practical">Theory + Practical</option>
+                                                </select>
+                                            </div>
+
+                                            <div style={{
+                                                display: "flex",
+                                                justifyContent: "flex-end",
+                                                gap: "8px",
+                                                marginTop: "10px",
+                                            }}>
+                                                <button className="btn btn-primary" onClick={saveEdit}>
+                                                    Save
+                                                </button>
+
+                                                <button
+                                                    className="btn btn-secondary"
+                                                    onClick={() => {
+                                                        setEditMode(false);
+                                                        setEditData(null);
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                     {expandedCourse === course.id && (
                                         <div className="course-details" style={{
                                             padding: '1.5rem',
@@ -351,7 +475,7 @@ function ViewCourses() {
                                                         </div>
                                                         <div className="info-item" style={{ marginBottom: '10px' }}>
                                                             <strong style={{ color: 'var(--primary-light)', display: 'block' }}>Academic Hours:</strong>
-                                                            <span style={{ 
+                                                            <span style={{
                                                                 color: getAcademicHoursColor(course.academicHours || 2),
                                                                 fontWeight: '600'
                                                             }}>
@@ -402,7 +526,7 @@ function ViewCourses() {
                                                         <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                                             <i className="fas fa-user-tie"></i>
                                                             Theory Professors
-                                                            <span style={{ 
+                                                            <span style={{
                                                                 backgroundColor: 'rgba(141, 169, 196, 0.3)',
                                                                 color: 'var(--accent)',
                                                                 padding: '2px 8px',
@@ -429,7 +553,7 @@ function ViewCourses() {
                                                                             <div style={{ fontWeight: '600', color: 'var(--accent)' }}>
                                                                                 Theory Professor {index + 1}
                                                                             </div>
-                                                                            <div style={{ 
+                                                                            <div style={{
                                                                                 color: profId ? 'var(--accent)' : 'var(--primary-light)',
                                                                                 fontSize: '0.9rem'
                                                                             }}>
@@ -443,9 +567,9 @@ function ViewCourses() {
                                                                                 ) : 'Not assigned'}
                                                                             </div>
                                                                         </div>
-                                                                        <div style={{ 
-                                                                            width: '12px', 
-                                                                            height: '12px', 
+                                                                        <div style={{
+                                                                            width: '12px',
+                                                                            height: '12px',
                                                                             borderRadius: '50%',
                                                                             backgroundColor: profId ? 'var(--success)' : 'var(--error)'
                                                                         }}></div>
@@ -466,7 +590,7 @@ function ViewCourses() {
                                                         <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                                             <i className="fas fa-user-graduate"></i>
                                                             Practical Professors
-                                                            <span style={{ 
+                                                            <span style={{
                                                                 backgroundColor: 'rgba(78, 205, 196, 0.3)',
                                                                 color: 'var(--accent)',
                                                                 padding: '2px 8px',
@@ -493,7 +617,7 @@ function ViewCourses() {
                                                                             <div style={{ fontWeight: '600', color: 'var(--accent)' }}>
                                                                                 Practical Professor {index + 1}
                                                                             </div>
-                                                                            <div style={{ 
+                                                                            <div style={{
                                                                                 color: profId ? 'var(--accent)' : 'var(--primary-light)',
                                                                                 fontSize: '0.9rem'
                                                                             }}>
@@ -507,9 +631,9 @@ function ViewCourses() {
                                                                                 ) : 'Not assigned'}
                                                                             </div>
                                                                         </div>
-                                                                        <div style={{ 
-                                                                            width: '12px', 
-                                                                            height: '12px', 
+                                                                        <div style={{
+                                                                            width: '12px',
+                                                                            height: '12px',
                                                                             borderRadius: '50%',
                                                                             backgroundColor: profId ? 'var(--success)' : 'var(--error)'
                                                                         }}></div>
@@ -525,11 +649,12 @@ function ViewCourses() {
                                                 )}
 
                                                 {/* Course Metadata */}
-                                                
+
                                             </div>
                                         </div>
                                     )}
                                 </div>
+
                             ))}
                         </div>
                     )}
@@ -540,7 +665,7 @@ function ViewCourses() {
                                 Showing {filteredCourses.length} of {courses.length} courses
                                 {courses.length > 0 && (
                                     <span style={{ marginLeft: '20px', color: 'var(--primary-light)' }}>
-                                        Total Academic Hours: {courses.reduce((total, course) => 
+                                        Total Academic Hours: {courses.reduce((total, course) =>
                                             total + ((course.academicHours || 2) * (course.weeks || 15)), 0
                                         )} hours across all courses
                                     </span>

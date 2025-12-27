@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import './RegisterStudents.css';
+import { db } from '../../firebase';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 export default function RegisterStudents() {
   const [studentData, setStudentData] = useState({
@@ -20,7 +22,17 @@ export default function RegisterStudents() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  // ⭐ توليد كلمة مرور عشوائية
+  const generatePassword = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let pass = "";
+    for (let i = 0; i < 8; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return pass;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validation for required fields
@@ -55,7 +67,7 @@ export default function RegisterStudents() {
       return;
     }
     
-    // University ID validation (assuming it should be numeric)
+    // University ID validation
     const idRegex = /^\d+$/;
     if (!idRegex.test(studentData.universityId)) {
       setAlert({
@@ -65,22 +77,63 @@ export default function RegisterStudents() {
       });
       return;
     }
-    
-    // Simulate API call
-    setAlert({
-      show: true,
-      type: 'success',
-      message: 'Student has been successfully registered in the system!'
-    });
-    
-    // Reset form
-    setStudentData({
-      fullName: '',
-      universityId: '',
-      phone: '',
-      email: '',
-      branch: ''
-    });
+
+    try {
+      const cleanId = studentData.universityId.trim();
+
+      // ⭐ التحقق من أن الطالب موجود مسبقًا
+      const existingStudent = await getDoc(doc(db, "users", cleanId));
+      if (existingStudent.exists()) {
+        setAlert({
+          show: true,
+          type: 'error',
+          message: 'A student with this University ID already exists.'
+        });
+        return;
+      }
+
+      // ⭐ توليد كلمة مرور عشوائية
+      const randomPassword = generatePassword();
+
+      // ⭐ حفظ الطالب داخل Firestore
+      await setDoc(doc(db, "users", cleanId), {
+        name: studentData.fullName,
+        studentId: cleanId,
+        phone: studentData.phone,
+        email: studentData.email,
+        branch: studentData.branch,
+        faculty: studentData.branch.toLowerCase(),
+        role: "student",
+        username: studentData.email.split("@")[0],
+        usernameLower: studentData.email.split("@")[0].toLowerCase(),
+        password: randomPassword,
+        adminLevel: 0,
+        lecturerId: "",
+        specialization: ""
+      });
+
+      setAlert({
+        show: true,
+        type: 'success',
+        message: 'Student has been successfully registered in the system!'
+      });
+
+      setStudentData({
+        fullName: '',
+        universityId: '',
+        phone: '',
+        email: '',
+        branch: ''
+      });
+
+    } catch (error) {
+      console.error("Error registering student:", error);
+      setAlert({
+        show: true,
+        type: 'error',
+        message: 'Failed to register student. Please try again.'
+      });
+    }
   };
 
   const resetForm = () => {
@@ -88,7 +141,7 @@ export default function RegisterStudents() {
       fullName: '',
       universityId: '',
       phone: '',
-      email: '',
+     email: '',
       branch: ''
     });
     setAlert({ show: false, type: '', message: '' });
@@ -139,7 +192,7 @@ export default function RegisterStudents() {
           
           <form onSubmit={handleSubmit}>
             <div className="form-grid">
-              {/* Student Full Name */}
+
               <div className="form-group">
                 <label htmlFor="fullName" className="form-label">
                   Student Full Name *
@@ -156,7 +209,6 @@ export default function RegisterStudents() {
                 />
               </div>
 
-              {/* Student University ID */}
               <div className="form-group">
                 <label htmlFor="universityId" className="form-label">
                   Student University ID *
@@ -173,7 +225,6 @@ export default function RegisterStudents() {
                 />
               </div>
 
-              {/* Phone Number */}
               <div className="form-group">
                 <label htmlFor="phone" className="form-label">
                   Phone Number *
@@ -190,7 +241,6 @@ export default function RegisterStudents() {
                 />
               </div>
 
-              {/* Email */}
               <div className="form-group">
                 <label htmlFor="email" className="form-label">
                   Email Address *
@@ -207,7 +257,6 @@ export default function RegisterStudents() {
                 />
               </div>
 
-              {/* Branch */}
               <div className="form-group">
                 <label htmlFor="branch" className="form-label">
                   Branch *
@@ -226,6 +275,7 @@ export default function RegisterStudents() {
                   ))}
                 </select>
               </div>
+
             </div>
 
             <div className="form-actions">

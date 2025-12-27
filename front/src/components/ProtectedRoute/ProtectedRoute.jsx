@@ -1,7 +1,7 @@
 // components/ProtectedRoute/ProtectedRoute.jsx
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-
+import { auth, db } from "../../firebase";
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
 
