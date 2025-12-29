@@ -9,12 +9,12 @@ export default function Navbar() {
   const [isStudentsDropdownOpen, setIsStudentsDropdownOpen] = useState(false);
   const [isCoursesDropdownOpen, setIsCoursesDropdownOpen] = useState(false);
   const [isProfessorsDropdownOpen, setIsProfessorsDropdownOpen] = useState(false);
-  
+
   const dropdownRef = useRef(null);
   const studentsDropdownRef = useRef(null);
   const coursesDropdownRef = useRef(null);
   const professorsDropdownRef = useRef(null);
-  
+
   const { user, logout, getDisplayName } = useAuth();
 
   // Close dropdowns when clicking outside
@@ -81,20 +81,20 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="nav-container">
         <NavLink to={getLogoLink()} className="nav-logo">
-          <img 
-            src={UniScanLogo} 
-            alt="UniScan Logo" 
+          <img
+            src={UniScanLogo}
+            alt="UniScan Logo"
             className="logo-image"
           />
         </NavLink>
         <ul className="nav-links">
           <li><NavLink to={getHomeLink()} end className="nav-item">Home</NavLink></li>
-          
+
           {/* Only show these management options for non-student users */}
           {user && user.role !== 'student' && (
             <>
               <li className="nav-dropdown" ref={studentsDropdownRef}>
-                <button 
+                <button
                   className={`nav-item nav-dropdown-toggle ${isStudentsDropdownOpen ? 'active' : ''}`}
                   onClick={toggleStudentsDropdown}
                 >
@@ -103,16 +103,16 @@ export default function Navbar() {
                 </button>
                 {isStudentsDropdownOpen && (
                   <div className="dropdown-menu">
-                    <NavLink 
-                      to="/view-students" 
+                    <NavLink
+                      to="/view-students"
                       className="dropdown-item"
                       onClick={() => setIsStudentsDropdownOpen(false)}
                     >
                       <i className="fas fa-list"></i>
                       View Students
                     </NavLink>
-                    <NavLink 
-                      to="/register-students" 
+                    <NavLink
+                      to="/register-students"
                       className="dropdown-item"
                       onClick={() => setIsStudentsDropdownOpen(false)}
                     >
@@ -125,7 +125,7 @@ export default function Navbar() {
 
               {/* Courses Dropdown */}
               <li className="nav-dropdown" ref={coursesDropdownRef}>
-                <button 
+                <button
                   className={`nav-item nav-dropdown-toggle ${isCoursesDropdownOpen ? 'active' : ''}`}
                   onClick={toggleCoursesDropdown}
                 >
@@ -134,24 +134,24 @@ export default function Navbar() {
                 </button>
                 {isCoursesDropdownOpen && (
                   <div className="dropdown-menu">
-                    <NavLink 
-                      to="/add-course" 
+                    <NavLink
+                      to="/add-course"
                       className="dropdown-item"
                       onClick={() => setIsCoursesDropdownOpen(false)}
                     >
                       <i className="fas fa-plus"></i>
                       Add Course
                     </NavLink>
-                    <NavLink 
-                      to="/view-courses" 
+                    <NavLink
+                      to="/view-courses"
                       className="dropdown-item"
                       onClick={() => setIsCoursesDropdownOpen(false)}
                     >
                       <i className="fas fa-list"></i>
                       View Courses
                     </NavLink>
-                    <NavLink 
-                      to="/manage-term-table" 
+                    <NavLink
+                      to="/manage-term-table"
                       className="dropdown-item"
                       onClick={() => setIsCoursesDropdownOpen(false)}
                     >
@@ -164,7 +164,7 @@ export default function Navbar() {
 
               {/* Professors Dropdown */}
               <li className="nav-dropdown" ref={professorsDropdownRef}>
-                <button 
+                <button
                   className={`nav-item nav-dropdown-toggle ${isProfessorsDropdownOpen ? 'active' : ''}`}
                   onClick={toggleProfessorsDropdown}
                 >
@@ -173,16 +173,16 @@ export default function Navbar() {
                 </button>
                 {isProfessorsDropdownOpen && (
                   <div className="dropdown-menu">
-                    <NavLink 
-                      to="/view-professors" 
+                    <NavLink
+                      to="/view-professors"
                       className="dropdown-item"
                       onClick={() => setIsProfessorsDropdownOpen(false)}
                     >
                       <i className="fas fa-list"></i>
                       View Professors
                     </NavLink>
-                    <NavLink 
-                      to="/add-professors" 
+                    <NavLink
+                      to="/add-professors"
                       className="dropdown-item"
                       onClick={() => setIsProfessorsDropdownOpen(false)}
                     >
@@ -194,6 +194,9 @@ export default function Navbar() {
               </li>
 
               <li><NavLink to="/attendance-log" className="nav-item">Attendance Log</NavLink></li>
+
+              {/* REMOVED: QR Code Room link from here */}
+              {/* Added back Support link */}
               <li><NavLink to="/support" className="nav-item">Support</NavLink></li>
             </>
           )}
@@ -205,12 +208,12 @@ export default function Navbar() {
               <li><NavLink to="/student/support" className="nav-item">Support</NavLink></li>
             </>
           )}
-          
+
           {/* User Authentication Section - Using AuthContext */}
           <li className="nav-auth-item" ref={dropdownRef}>
             {user ? (
               <div className="user-dropdown">
-                <button 
+                <button
                   className="user-toggle"
                   onClick={toggleDropdown}
                   aria-expanded={isDropdownOpen}
@@ -219,27 +222,27 @@ export default function Navbar() {
                   <span className="user-name">{getDisplayName()}</span>
                   <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>▼</span>
                 </button>
-                
+
                 {isDropdownOpen && (
                   <div className="dropdown-menu">
                     <div className="dropdown-header">
                       <strong>{getDisplayName()}</strong>
                       <span className="user-role">
-                        {user.role === 'student' ? 'Student' : 
-                         user.role === 'sub-admin' ? 'Sub-Admin' : 
-                         user.role === 'professional' ? 'Professional' : 
-                         'User'}
+                        {user.role === 'student' ? 'Student' :
+                          user.role === 'sub-admin' ? 'Sub-Admin' :
+                            user.role === 'professional' ? 'Professional' :
+                              'User'}
                       </span>
                       {user.studentId && (
                         <span className="user-id">ID: {user.studentId}</span>
                       )}
                     </div>
                     <div className="dropdown-divider"></div>
-                    
+
                     {/* Profile link - different for students vs professionals */}
                     {user.role === 'student' ? (
-                      <NavLink 
-                        to="/student/profile" 
+                      <NavLink
+                        to="/student/profile"
                         className="dropdown-item"
                         onClick={() => setIsDropdownOpen(false)}
                       >
@@ -247,8 +250,8 @@ export default function Navbar() {
                         Profile
                       </NavLink>
                     ) : (
-                      <NavLink 
-                        to="/profile" 
+                      <NavLink
+                        to="/profile"
                         className="dropdown-item"
                         onClick={() => setIsDropdownOpen(false)}
                       >
@@ -256,29 +259,29 @@ export default function Navbar() {
                         Profile
                       </NavLink>
                     )}
-                    
+
                     {/* Tickets link for all users */}
-                    <NavLink 
-                      to="/tickets" 
+                    <NavLink
+                      to="/tickets"
                       className="dropdown-item"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       <i className="fas fa-ticket-alt"></i>
                       My Tickets
                     </NavLink>
-                    
+
                     {/* Settings link */}
-                    <NavLink 
-                      to="/settings" 
+                    <NavLink
+                      to="/settings"
                       className="dropdown-item"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       <i className="fas fa-cog"></i>
                       Settings
                     </NavLink>
-                    
+
                     <div className="dropdown-divider"></div>
-                    <button 
+                    <button
                       className="dropdown-item logout-btn"
                       onClick={handleLogout}
                     >

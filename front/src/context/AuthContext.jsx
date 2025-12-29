@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../firebase"; // ← عدّل المسار إذا لزم
+import { db } from "../firebase";
 
 const AuthContext = createContext();
 
@@ -46,64 +46,195 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("token");
   };
 
-  // 🔥 تسجيل الدخول عبر Firestore
+  // 🔥 Enhanced login function for professors with LecturerID
   const loginWithFirestore = async (username, password) => {
     console.log("===== LOGIN DEBUG START =====");
 
-    const cleanUsername = username.trim().toLowerCase();
-    const cleanPassword = password.trim();
+    const trimmedUsername = username.trim();
+    const trimmedPassword = password.trim();
 
     console.log("Input username:", username);
-    console.log("Clean username:", cleanUsername);
+    console.log("Trimmed username:", trimmedUsername);
     console.log("Input password:", password);
-    console.log("Clean password:", cleanPassword);
+    console.log("Trimmed password:", trimmedPassword);
 
-    const usersRef = collection(db, "users");
-
-    console.log("Fetching ALL users...");
-    const allUsersSnap = await getDocs(usersRef);
-    console.log("Total users found:", allUsersSnap.size);
-
-    allUsersSnap.forEach((doc) => {
-      console.log("User doc:", doc.id, JSON.stringify(doc.data(), null, 2));
-      console.log("User doc:", doc.id, doc.data());
-    });
-
-    console.log("Running query...");
-    const q = query(
-      usersRef,
-      where("usernameLower", "==", cleanUsername),
-      where("password", "==", cleanPassword)
+    // ================== STEP 1: Check in professors collection ==================
+    console.log("Checking in professors collection...");
+    const professorsRef = collection(db, "professors");
+    
+    // Try to find by username
+    const professorQuery1 = query(
+      professorsRef,
+      where("username", "==", trimmedUsername),
+      where("password", "==", trimmedPassword)
     );
 
-    const snapshot = await getDocs(q);
+    const professorSnapshot1 = await getDocs(professorQuery1);
+    console.log("Professors found by username:", professorSnapshot1.size);
 
-    console.log("Query result count:", snapshot.size);
+    // Try to find by LecturerID
+    const professorQuery2 = query(
+      professorsRef,
+      where("LecturerID", "==", trimmedUsername),
+      where("password", "==", trimmedPassword)
+    );
 
-    if (snapshot.empty) {
-      console.log("❌ No matching user found");
-      console.log("===== LOGIN DEBUG END =====");
-      throw new Error("اسم المستخدم أو كلمة المرور غير صحيحة");
+    const professorSnapshot2 = await getDocs(professorQuery2);
+    console.log("Professors found by LecturerID:", professorSnapshot2.size);
+
+    if (!professorSnapshot1.empty || !professorSnapshot2.empty) {
+      const professorDoc = professorSnapshot1.empty ? professorSnapshot2.docs[0] : professorSnapshot1.docs[0];
+      const professorData = professorDoc.data();
+      console.log("Professor data found:", professorData);
+      
+      // Create user data with professor role - normalize role to lowercase
+      const userData = {
+        ...professorData,
+        id: professorDoc.id,
+        uid: professorDoc.id,
+        // Normalize role to lowercase for consistent checking
+        role: professorData.role ? professorData.role.toLowerCase() : 'professor',
+        // Store original role for display if needed
+        originalRole: professorData.role || 'Professor',
+        // Store type for course filtering
+        professorType: professorData.type || 'Theory',
+        // Store LecturerID for course assignment lookup
+        lecturerId: professorData.LecturerID || professorDoc.id
+      };
+      
+      console.log("Logging in as professor:", userData);
+      login(userData, professorDoc.id);
+      return userData;
     }
 
-    const userData = snapshot.docs[0].data();
-    const authToken = snapshot.docs[0].id;
+    // ================== STEP 2: Check in users collection ==================
+    console.log("Checking in users collection...");
+    const usersRef = collection(db, "users");
+    
+    // First try with usernameLower (existing logic)
+    const userQuery1 = query(
+      usersRef,
+      where("usernameLower", "==", trimmedUsername.toLowerCase()),
+      where("password", "==", trimmedPassword)
+    );
 
-    console.log("Matched user:", userData);
-    console.log("Saving user to context...");
+    const userSnapshot1 = await getDocs(userQuery1);
+    console.log("Users found (with usernameLower):", userSnapshot1.size);
 
-    login(userData, authToken);
+    if (!userSnapshot1.empty) {
+      const userDoc = userSnapshot1.docs[0];
+      const userData = userDoc.data();
+      console.log("User data found (with usernameLower):", userData);
+      
+      // Normalize role to lowercase
+      const normalizedData = {
+        ...userData,
+        role: userData.role ? userData.role.toLowerCase() : userData.role
+      };
+      
+      login(normalizedData, userDoc.id);
+      return normalizedData;
+    }
 
+    // Also try with regular username field
+    const userQuery2 = query(
+      usersRef,
+      where("username", "==", trimmedUsername),
+      where("password", "==", trimmedPassword)
+    );
+
+    const userSnapshot2 = await getDocs(userQuery2);
+    console.log("Users found (with username):", userSnapshot2.size);
+
+    if (!userSnapshot2.empty) {
+      const userDoc = userSnapshot2.docs[0];
+      const userData = userDoc.data();
+      console.log("User data found (with username):", userData);
+      
+      // Normalize role to lowercase
+      const normalizedData = {
+        ...userData,
+        role: userData.role ? userData.role.toLowerCase() : userData.role
+      };
+      
+      login(normalizedData, userDoc.id);
+      return normalizedData;
+    }
+
+    // ================== STEP 3: Check in students collection ==================
+    console.log("Checking in students collection...");
+    const studentsRef = collection(db, "students");
+    const studentQuery = query(
+      studentsRef,
+      where("username", "==", trimmedUsername),
+      where("password", "==", trimmedPassword)
+    );
+
+    const studentSnapshot = await getDocs(studentQuery);
+    console.log("Students found:", studentSnapshot.size);
+
+    if (!studentSnapshot.empty) {
+      const studentDoc = studentSnapshot.docs[0];
+      const studentData = studentDoc.data();
+      console.log("Student data found:", studentData);
+      
+      const userData = {
+        ...studentData,
+        id: studentDoc.id,
+        uid: studentDoc.id,
+        role: 'student'
+      };
+      
+      console.log("Logging in as student:", userData);
+      login(userData, studentDoc.id);
+      return userData;
+    }
+
+    // ================== STEP 4: Check in subAdmins collection ==================
+    console.log("Checking in subAdmins collection...");
+    const subAdminsRef = collection(db, "subAdmins");
+    const subAdminQuery = query(
+      subAdminsRef,
+      where("username", "==", trimmedUsername),
+      where("password", "==", trimmedPassword)
+    );
+
+    const subAdminSnapshot = await getDocs(subAdminQuery);
+    console.log("SubAdmins found:", subAdminSnapshot.size);
+
+    if (!subAdminSnapshot.empty) {
+      const subAdminDoc = subAdminSnapshot.docs[0];
+      const subAdminData = subAdminDoc.data();
+      console.log("SubAdmin data found:", subAdminData);
+      
+      const userData = {
+        ...subAdminData,
+        id: subAdminDoc.id,
+        uid: subAdminDoc.id,
+        role: 'sub-admin'
+      };
+      
+      console.log("Logging in as sub-admin:", userData);
+      login(userData, subAdminDoc.id);
+      return userData;
+    }
+
+    console.log("❌ No matching user found in any collection");
     console.log("===== LOGIN DEBUG END =====");
-
-    return userData;
+    throw new Error("Invalid username or password");
   };
 
-  const hasRole = (role) => user?.role === role;
-  const hasAnyRole = (roles) => roles.includes(user?.role);
+  const hasRole = (role) => user?.role === role.toLowerCase();
+  const hasAnyRole = (roles) => roles.map(r => r.toLowerCase()).includes(user?.role);
   const getDisplayName = () => user?.name || user?.username || "User";
   const isAuthenticated = () => !!user && !!token;
   const getUserRole = () => user?.role;
+
+  // Get professor type (Theory/Practical/Both)
+  const getProfessorType = () => user?.professorType || user?.type;
+  
+  // Get lecturer ID for course assignment lookup
+  const getLecturerId = () => user?.lecturerId || user?.LecturerID || user?.id;
 
   return (
     <AuthContext.Provider
@@ -118,7 +249,9 @@ export function AuthProvider({ children }) {
         getDisplayName,
         isAuthenticated,
         getUserRole,
-        loginWithFirestore, // ← تمت إضافتها هنا
+        loginWithFirestore,
+        getProfessorType,
+        getLecturerId
       }}
     >
       {children}

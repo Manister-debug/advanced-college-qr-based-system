@@ -9,6 +9,7 @@ export default function RegisterStudents() {
     universityId: '',
     phone: '',
     email: '',
+    faculty: '', // Added faculty field
     branch: ''
   });
   
@@ -22,7 +23,7 @@ export default function RegisterStudents() {
     }));
   };
 
-  // ⭐ توليد كلمة مرور عشوائية
+  // ⭐ Generate random password
   const generatePassword = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let pass = "";
@@ -36,7 +37,8 @@ export default function RegisterStudents() {
     e.preventDefault();
     
     // Validation for required fields
-    if (!studentData.fullName || !studentData.universityId || !studentData.phone || !studentData.email || !studentData.branch) {
+    if (!studentData.fullName || !studentData.universityId || !studentData.phone || 
+        !studentData.email || !studentData.faculty || !studentData.branch) {
       setAlert({
         show: true,
         type: 'error',
@@ -81,7 +83,7 @@ export default function RegisterStudents() {
     try {
       const cleanId = studentData.universityId.trim();
 
-      // ⭐ التحقق من أن الطالب موجود مسبقًا
+      // ⭐ Check if student already exists
       const existingStudent = await getDoc(doc(db, "users", cleanId));
       if (existingStudent.exists()) {
         setAlert({
@@ -92,17 +94,17 @@ export default function RegisterStudents() {
         return;
       }
 
-      // ⭐ توليد كلمة مرور عشوائية
+      // ⭐ Generate random password
       const randomPassword = generatePassword();
 
-      // ⭐ حفظ الطالب داخل Firestore
+      // ⭐ Save student to Firestore
       await setDoc(doc(db, "users", cleanId), {
         name: studentData.fullName,
         studentId: cleanId,
         phone: studentData.phone,
         email: studentData.email,
+        faculty: studentData.faculty, // Save faculty field
         branch: studentData.branch,
-        faculty: studentData.branch.toLowerCase(),
         role: "student",
         username: studentData.email.split("@")[0],
         usernameLower: studentData.email.split("@")[0].toLowerCase(),
@@ -118,11 +120,13 @@ export default function RegisterStudents() {
         message: 'Student has been successfully registered in the system!'
       });
 
+      // Reset form
       setStudentData({
         fullName: '',
         universityId: '',
         phone: '',
         email: '',
+        faculty: '', // Reset faculty
         branch: ''
       });
 
@@ -141,11 +145,24 @@ export default function RegisterStudents() {
       fullName: '',
       universityId: '',
       phone: '',
-     email: '',
+      email: '',
+      faculty: '',
       branch: ''
     });
     setAlert({ show: false, type: '', message: '' });
   };
+
+  const faculties = [
+    'Computer Science',
+    'Software Engineering',
+    'Information Technology',
+    'Computer Engineering',
+    'Data Science',
+    'Cybersecurity',
+    'Artificial Intelligence',
+    'Networking',
+    'Information Systems'
+  ];
 
   const branches = [
     'Software Engineering',
@@ -255,6 +272,26 @@ export default function RegisterStudents() {
                   placeholder="Enter email address"
                   required
                 />
+              </div>
+
+              {/* New Faculty Field */}
+              <div className="form-group">
+                <label htmlFor="faculty" className="form-label">
+                  Faculty *
+                </label>
+                <select
+                  id="faculty"
+                  name="faculty"
+                  value={studentData.faculty}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  required
+                >
+                  <option value="">Select Faculty</option>
+                  {faculties.map(faculty => (
+                    <option key={faculty} value={faculty}>{faculty}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="form-group">

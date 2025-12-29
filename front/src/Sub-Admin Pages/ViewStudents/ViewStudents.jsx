@@ -1,5 +1,4 @@
 import { useState, useEffect, Fragment } from "react";
-import { Link } from "react-router-dom";
 import "./ViewStudents.css";
 import {
   collection,
@@ -22,9 +21,13 @@ export default function ViewStudents() {
   const faculties = [
     "Computer Science",
     "Software Engineering",
-    "Network Engineering",
+    "Information Technology",
+    "Computer Engineering",
+    "Data Science",
+    "Cybersecurity",
     "Artificial Intelligence",
-    "Robotics",
+    "Networking",
+    "Information Systems"
   ];
 
   const branches = [
@@ -143,7 +146,7 @@ export default function ViewStudents() {
                 onChange={(e) => setFilterFaculty(e.target.value)}
                 className="filter-select"
               >
-                <option value="">All Departments</option>
+                <option value="">All Faculties</option>
                 {faculties.map((faculty) => (
                   <option key={faculty} value={faculty}>
                     {faculty}

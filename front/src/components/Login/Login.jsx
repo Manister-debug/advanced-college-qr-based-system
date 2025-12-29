@@ -12,7 +12,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // نستخدم loginWithFirestore بدل login
   const { user, loginWithFirestore, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -23,8 +22,8 @@ export default function Login() {
         navigate("/student/home");
       } else if (user.role === "sub-admin") {
         navigate("/home");
-      } else if (user.role === "lecturer") {
-        navigate("/lecturer/home");
+      } else if (user.role === "Professor" || user.role === "professor") {
+        navigate("/professor/home");
       } else if (user.role === "admin") {
         navigate("/admin/home");
       }
@@ -57,10 +56,7 @@ export default function Login() {
     setError("");
 
     try {
-      // 🔥 تسجيل الدخول عبر Firestore
       await loginWithFirestore(credentials.username, credentials.password);
-
-      // التوجيه سيتم تلقائيًا عبر useEffect
     } catch (err) {
       console.error(err);
       setError(err.message || "An error occurred during login.");

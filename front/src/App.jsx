@@ -2,28 +2,36 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Login from "./components/Login/Login.jsx";
 import "./App.css";
-{/* Navbars */}
+
+// Navbars
 import Navbar from "./components/SubAdminNavbar/SubAdminNavbar.jsx";
 import NavbarLogin from "./components/Alt-Navbar/NavbarLogin.jsx";
 import StudentNavbar from "./components/StudentsNavbar/StudentsNavbar.jsx";
-{/* Sub-Admin Pages */}
+import ProfessorNavbar from "./components/ProfessorNavbar/ProfessorNavbar.jsx";
+
+// Sub-Admin Pages
 import Home from "./Sub-Admin Pages/Home/Home.jsx";
 import Dashboard from "./Sub-Admin Pages/Dashboard/Dashboard.jsx";
 import RegisterStudents from "./Sub-Admin Pages/RegisterStudents/RegisterStudents.jsx";
 import ViewStudents from "./Sub-Admin Pages/ViewStudents/ViewStudents.jsx";
-
 import AddCourse from "./Sub-Admin Pages/AddCourses/AddCourses.jsx";
 import ViewCourses from "./Sub-Admin Pages/ViewCourses/ViewCourses.jsx";
 import ManageTermTable from "./Sub-Admin Pages/Manage Term Table/ManageTermTable.jsx";
-
 import AddProfessors from "./Sub-Admin Pages/AddProfessors/AddProfessors.jsx";
 import ViewProfessors from "./Sub-Admin Pages/ViewProfessors/ViewProfessors.jsx";
 import AttendanceLog from "./Sub-Admin Pages/AttendanceLog/AttendanceLog.jsx";
-{/* Student Pages */}
+
+// Student Pages
 import StudentsHome from "./Student Pages/StudentsHome/StudentsHome.jsx";
 
+// Professor Pages
+import ProfessorHome from "./ProfessorPages/ProfessorHome/ProfessorHome.jsx";
+import ViewTermCourses from "./ProfessorPages/ViewTermCourses/ViewTermCourses.jsx";
+import ProfessorSchedule from "./ProfessorPages/ProfessorSchedule/ProfessorSchedule.jsx";
+import ProfessorAttendanceLog from "./ProfessorPages/ProfessorAttendanceLog/ProfessorAttendanceLog.jsx";
+import QrCodeRoom from "./QR-Code-Room/QrCodeRoom.jsx";
 
-// Protected Route Component for Sub-Admin/Professional routes
+// Protected Route Component for Sub-Admin routes
 const ProtectedRoute = ({ children, requiredRole = 'sub-admin' }) => {
   const { user, loading } = useAuth();
   
@@ -35,11 +43,17 @@ const ProtectedRoute = ({ children, requiredRole = 'sub-admin' }) => {
     return <Navigate to="/login" replace />;
   }
   
+  // Normalize role to lowercase for comparison
+  const normalizedRole = user?.role?.toLowerCase();
+  const normalizedRequiredRole = requiredRole.toLowerCase();
+  
   // Check user role if requiredRole is specified
-  if (requiredRole && user.role !== requiredRole) {
+  if (requiredRole && normalizedRole !== normalizedRequiredRole) {
     // Redirect to appropriate home based on role
-    if (user.role === 'student') {
+    if (normalizedRole === 'student') {
       return <Navigate to="/student/home" replace />;
+    } else if (normalizedRole === 'professor') {
+      return <Navigate to="/professor/home" replace />;
     }
     return <Navigate to="/home" replace />;
   }
@@ -49,7 +63,87 @@ const ProtectedRoute = ({ children, requiredRole = 'sub-admin' }) => {
 
 // Protected Route Component for Student routes
 const StudentProtectedRoute = ({ children }) => {
-  return <ProtectedRoute requiredRole="student">{children}</ProtectedRoute>;
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="loading-container">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  const normalizedRole = user?.role?.toLowerCase();
+  
+  if (normalizedRole !== 'student') {
+    if (normalizedRole === 'sub-admin' || normalizedRole === 'admin') {
+      return <Navigate to="/home" replace />;
+    } else if (normalizedRole === 'professor') {
+      return <Navigate to="/professor/home" replace />;
+    }
+  }
+  
+  return children;
+};
+
+// Protected Route Component for Professional users (both sub-admin and professional)
+const ProfessionalProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="loading-container">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  const normalizedRole = user?.role?.toLowerCase();
+  const allowedRoles = ['sub-admin', 'admin', 'professional'].map(r => r.toLowerCase());
+  
+  if (!allowedRoles.includes(normalizedRole)) {
+    if (normalizedRole === 'student') {
+      return <Navigate to="/student/home" replace />;
+    } else if (normalizedRole === 'professor') {
+      return <Navigate to="/professor/home" replace />;
+    }
+    return <Navigate to="/home" replace />;
+  }
+  
+  return children;
+};
+
+// Protected Route Component for Professor routes - UPDATED WITH DEBUG LOGS
+const ProfessorProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  
+  console.log("ProfessorProtectedRoute - User:", user); // Debug log
+  
+  if (loading) {
+    return <div className="loading-container">Loading...</div>;
+  }
+  
+  if (!user) {
+    console.log("No user, redirecting to login");
+    return <Navigate to="/login" replace />;
+  }
+  
+  // Check for professor role (case-insensitive)
+  const normalizedRole = user?.role?.toLowerCase();
+  console.log("Checking role:", normalizedRole);
+  
+  if (normalizedRole !== 'professor') {
+    console.log("Not a professor, redirecting. Role was:", user?.role);
+    if (normalizedRole === 'student') {
+      return <Navigate to="/student/home" replace />;
+    } else if (normalizedRole === 'sub-admin' || normalizedRole === 'admin') {
+      return <Navigate to="/home" replace />;
+    }
+    return <Navigate to="/login" replace />;
+  }
+  
+  console.log("Professor authorized, rendering children");
+  return children;
 };
 
 // Public Route Component (only for non-authenticated users)
@@ -62,10 +156,14 @@ const PublicRoute = ({ children }) => {
   
   // If user is already logged in, redirect to appropriate home
   if (user) {
-    if (user.role === 'student') {
+    const normalizedRole = user?.role?.toLowerCase();
+    if (normalizedRole === 'student') {
       return <Navigate to="/student/home" replace />;
+    } else if (normalizedRole === 'professor') {
+      return <Navigate to="/professor/home" replace />;
+    } else if (normalizedRole === 'sub-admin' || normalizedRole === 'admin') {
+      return <Navigate to="/home" replace />;
     }
-    return <Navigate to="/home" replace />;
   }
   
   return children;
@@ -99,14 +197,14 @@ function App() {
           <Route 
             path="/home" 
             element={
-              <ProtectedRoute>
+              <ProfessionalProtectedRoute>
                 <div className="App">
                   <Navbar />
                   <main className="main-content">
                     <Home />
                   </main>
                 </div>
-              </ProtectedRoute>
+              </ProfessionalProtectedRoute>
             } 
           />
           
@@ -114,7 +212,7 @@ function App() {
           <Route 
             path="/dashboard" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
                   <Navbar />
                   <main className="main-content">
@@ -129,7 +227,7 @@ function App() {
           <Route 
             path="/register-students" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
                   <Navbar />
                   <main className="main-content">
@@ -158,7 +256,7 @@ function App() {
           <Route 
             path="/add-course" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
                   <Navbar />
                   <main className="main-content">
@@ -185,7 +283,7 @@ function App() {
           <Route 
             path="/manage-term-table" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
                   <Navbar />
                   <main className="main-content">
@@ -200,7 +298,7 @@ function App() {
           <Route 
             path="/add-professors" 
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
                   <Navbar />
                   <main className="main-content">
@@ -225,7 +323,7 @@ function App() {
             } 
           />
           
-          {/* Attendance Log - FIXED TO RENDER ATTENDANCELOG COMPONENT */}
+          {/* Attendance Log */}
           <Route 
             path="/attendance-log" 
             element={
@@ -237,6 +335,136 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
+            } 
+          />
+          
+          {/* QR Code Room */}
+          <Route 
+            path="/qr-code-room" 
+            element={
+              <ProfessionalProtectedRoute>
+                <div className="App">
+                  <Navbar />
+                  <main className="main-content">
+                    <QrCodeRoom />
+                  </main>
+                </div>
+              </ProfessionalProtectedRoute>
+            } 
+          />
+          
+          {/* ================== PROFESSOR ROUTES ================== */}
+          {/* Professor Home */}
+          <Route 
+            path="/professor/home" 
+            element={
+              <ProfessorProtectedRoute>
+                <div className="App">
+                  <ProfessorNavbar />
+                  <main className="main-content">
+                    <ProfessorHome />
+                  </main>
+                </div>
+              </ProfessorProtectedRoute>
+            } 
+          />
+          
+          {/* Professor Courses - View assigned courses */}
+          <Route 
+            path="/professor/courses" 
+            element={
+              <ProfessorProtectedRoute>
+                <div className="App">
+                  <ProfessorNavbar />
+                  <main className="main-content">
+                    <ViewTermCourses />
+                  </main>
+                </div>
+              </ProfessorProtectedRoute>
+            } 
+          />
+          
+          {/* Professor Schedule */}
+          <Route 
+            path="/professor/schedule" 
+            element={
+              <ProfessorProtectedRoute>
+                <div className="App">
+                  <ProfessorNavbar />
+                  <main className="main-content">
+                    <ProfessorSchedule />
+                  </main>
+                </div>
+              </ProfessorProtectedRoute>
+            } 
+          />
+          
+          {/* Professor Attendance Log */}
+          <Route 
+            path="/professor/attendance-log" 
+            element={
+              <ProfessorProtectedRoute>
+                <div className="App">
+                  <ProfessorNavbar />
+                  <main className="main-content">
+                    <ProfessorAttendanceLog />
+                  </main>
+                </div>
+              </ProfessorProtectedRoute>
+            } 
+          />
+          
+          {/* Professor Profile */}
+          <Route 
+            path="/professor/profile" 
+            element={
+              <ProfessorProtectedRoute>
+                <div className="App">
+                  <ProfessorNavbar />
+                  <main className="main-content">
+                    <div className="page-container">
+                      <h1>Professor Profile</h1>
+                      <p>Professor profile page will be implemented here.</p>
+                    </div>
+                  </main>
+                </div>
+              </ProfessorProtectedRoute>
+            } 
+          />
+          
+          {/* Professor Settings */}
+          <Route 
+            path="/professor/settings" 
+            element={
+              <ProfessorProtectedRoute>
+                <div className="App">
+                  <ProfessorNavbar />
+                  <main className="main-content">
+                    <div className="page-container">
+                      <h1>Professor Settings</h1>
+                      <p>Professor settings page will be implemented here.</p>
+                    </div>
+                  </main>
+                </div>
+              </ProfessorProtectedRoute>
+            } 
+          />
+          
+          {/* Professor Support */}
+          <Route 
+            path="/professor/support" 
+            element={
+              <ProfessorProtectedRoute>
+                <div className="App">
+                  <ProfessorNavbar />
+                  <main className="main-content">
+                    <div className="page-container">
+                      <h1>Professor Support</h1>
+                      <p>Professor support page will be implemented here.</p>
+                    </div>
+                  </main>
+                </div>
+              </ProfessorProtectedRoute>
             } 
           />
           

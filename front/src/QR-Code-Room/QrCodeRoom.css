@@ -1,0 +1,913 @@
+/* QrCodeRoom.css - Scoped to QR Code Room page only */
+.qr-code-room-page {
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at 20% 20%, rgba(141, 169, 196, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(19, 52, 116, 0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    color: #0b2545;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.qr-code-room-page * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Header */
+.qr-code-room-page .page-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+    padding: 0.875rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.qr-code-room-page .header-content h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+    color: #0b2545;
+}
+
+.qr-code-room-page .header-content h1 i {
+    color: #8da9c4;
+}
+
+.qr-code-room-page .page-subtitle {
+    color: #13315c;
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+
+.qr-code-room-page .user-info {
+    background: rgba(141, 169, 196, 0.1);
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: #0b2545;
+    border: 1px solid rgba(141, 169, 196, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.qr-code-room-page .user-info i {
+    color: #13315c;
+}
+
+/* Main Content Layout */
+.qr-code-room-page .main-content {
+    padding: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.qr-code-room-page .content-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* QR Code Section */
+.qr-code-room-page .qr-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(141, 169, 196, 0.2);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+.qr-code-room-page .qr-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+.qr-code-room-page .qr-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #0b2545;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.qr-code-room-page .qr-header h2 i {
+    color: #13315c;
+}
+
+.qr-code-room-page .course-info h3 {
+    font-size: 1.1rem;
+    color: #13315c;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.qr-code-room-page .course-details {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.qr-code-room-page .course-details span {
+    background: rgba(141, 169, 196, 0.1);
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #0b2545;
+    border: 1px solid rgba(141, 169, 196, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+/* QR Display */
+.qr-code-room-page .qr-display-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.qr-code-room-page .qr-display {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    background: #ffffff;
+    border: 2px solid rgba(141, 169, 196, 0.3);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.qr-code-room-page .qr-display.redacted {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.qr-code-room-page .qr-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 1rem;
+}
+
+.qr-code-room-page .qr-placeholder,
+.qr-code-room-page .qr-redacted {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: #64748b;
+}
+
+.qr-code-room-page .qr-placeholder i,
+.qr-code-room-page .qr-redacted i {
+    font-size: 4rem;
+    color: #8da9c4;
+}
+
+.qr-code-room-page .qr-redacted i {
+    color: #ef4444;
+}
+
+.qr-code-room-page .qr-placeholder p,
+.qr-code-room-page .qr-redacted p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+/* Countdown Overlay */
+.qr-code-room-page .countdown-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.qr-code-room-page .countdown-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+}
+
+.qr-code-room-page .countdown-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ef4444;
+}
+
+.qr-code-room-page .countdown-text {
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+/* Instructions */
+.qr-code-room-page .qr-instructions {
+    background: rgba(241, 245, 249, 0.8);
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(141, 169, 196, 0.3);
+    width: 100%;
+}
+
+.qr-code-room-page .instructions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.qr-code-room-page .instructions-list p {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: #475569;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+}
+
+.qr-code-room-page .instructions-list p i {
+    color: #13315c;
+    margin-top: 0.125rem;
+    flex-shrink: 0;
+}
+
+/* Report Button */
+.qr-code-room-page .btn-report {
+    width: 100%;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+.qr-code-room-page .btn-report:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+/* QR Controls */
+.qr-code-room-page .qr-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(141, 169, 196, 0.2);
+    gap: 1rem;
+}
+
+.qr-code-room-page .qr-controls-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.qr-code-room-page .qr-controls-right {
+    display: flex;
+    align-items: center;
+}
+
+.qr-code-room-page .btn-start-countdown {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #13315c 0%, #0b2545 100%);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(19, 49, 92, 0.2);
+}
+
+.qr-code-room-page .btn-start-countdown:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(19, 49, 92, 0.3);
+}
+
+.qr-code-room-page .btn-start-countdown:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.qr-code-room-page .btn-start-countdown.active {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.qr-code-room-page .countdown-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.8125rem;
+    margin-left: 0.5rem;
+}
+
+.qr-code-room-page .qr-status .status-indicator {
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.qr-code-room-page .qr-status .status-indicator.active {
+    background: rgba(34, 197, 94, 0.1);
+    color: #059669;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.qr-code-room-page .qr-status .status-indicator.inactive {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* End Lecture Button */
+.qr-code-room-page .btn-end-lecture {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+.qr-code-room-page .btn-end-lecture:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+}
+
+/* Lecture Ended Message */
+.lecture-ended-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #13315c 0%, #0b2545 100%);
+    color: white;
+    text-align: center;
+    padding: 2rem;
+}
+
+.lecture-ended-message {
+    max-width: 600px;
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lecture-ended-message i {
+    font-size: 4rem;
+    color: #4ade80;
+    margin-bottom: 1.5rem;
+}
+
+.lecture-ended-message h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.lecture-ended-message p {
+    font-size: 1.125rem;
+    color: #cbd5e1;
+    margin-bottom: 2rem;
+}
+
+.redirecting-spinner {
+    margin-top: 2rem;
+}
+
+.redirecting-spinner i {
+    font-size: 2rem;
+    color: #8da9c4;
+}
+
+/* Attendance Section */
+.qr-code-room-page .attendance-section {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(141, 169, 196, 0.2);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+.qr-code-room-page .attendance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+}
+
+.qr-code-room-page .attendance-title h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #0b2545;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.qr-code-room-page .attendance-title h2 i {
+    color: #13315c;
+}
+
+.qr-code-room-page .attendance-subtitle {
+    color: #475569;
+    font-size: 0.8125rem;
+}
+
+.qr-code-room-page .lecturer-badge {
+    background: rgba(141, 169, 196, 0.1);
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: #0b2545;
+    border: 1px solid rgba(141, 169, 196, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Manual Attendance Section */
+.qr-code-room-page .manual-attendance {
+    background: rgba(241, 245, 249, 0.8);
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(141, 169, 196, 0.3);
+    margin-bottom: 1.5rem;
+}
+
+.qr-code-room-page .manual-attendance h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #13315c;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.qr-code-room-page .manual-input-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.qr-code-room-page .input-wrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.qr-code-room-page .input-wrapper i {
+    position: absolute;
+    left: 1rem;
+    color: #8da9c4;
+    font-size: 1rem;
+}
+
+.qr-code-room-page .input-wrapper input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    border: 1px solid rgba(141, 169, 196, 0.3);
+    border-radius: 0.5rem;
+    background: white;
+    color: #0b2545;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.qr-code-room-page .input-wrapper input:focus {
+    border-color: #13315c;
+    box-shadow: 0 0 0 2px rgba(19, 49, 92, 0.1);
+}
+
+.qr-code-room-page .btn-manual-attendance {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.qr-code-room-page .btn-manual-attendance:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+}
+
+.qr-code-room-page .manual-note {
+    font-size: 0.8125rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Attendance Table */
+.qr-code-room-page .attendance-table-container {
+    border: 1px solid rgba(141, 169, 196, 0.3);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+}
+
+.qr-code-room-page .attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    min-width: 800px;
+}
+
+.qr-code-room-page .attendance-table thead {
+    background: rgba(141, 169, 196, 0.1);
+    border-bottom: 1px solid rgba(141, 169, 196, 0.3);
+}
+
+.qr-code-room-page .attendance-table th {
+    padding: 0.875rem 1rem;
+    text-align: left;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #13315c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.qr-code-room-page .attendance-table th i {
+    margin-right: 0.5rem;
+    color: #8da9c4;
+    font-size: 0.75rem;
+}
+
+.qr-code-room-page .attendance-table tbody tr {
+    border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.qr-code-room-page .attendance-table tbody tr:hover {
+    background-color: rgba(141, 169, 196, 0.05);
+}
+
+.qr-code-room-page .attendance-table td {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+    color: #0b2545;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.qr-code-room-page .row-number {
+    font-weight: 600;
+    color: #13315c;
+}
+
+.qr-code-room-page .student-name {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.qr-code-room-page .student-name i {
+    color: #13315c;
+}
+
+.qr-code-room-page .student-id {
+    font-family: 'Courier New', monospace;
+    color: #475569;
+}
+
+.qr-code-room-page .scan-time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+}
+
+.qr-code-room-page .scan-time i {
+    color: #8da9c4;
+}
+
+.qr-code-room-page .status-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.qr-code-room-page .status-badge.present {
+    background: rgba(34, 197, 94, 0.1);
+    color: #059669;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.qr-code-room-page .status-badge.present-manual {
+    background: rgba(59, 130, 246, 0.1);
+    color: #1d4ed8;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.qr-code-room-page .status-badge.absent {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.qr-code-room-page .no-attendance {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #8da9c4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.qr-code-room-page .no-attendance i {
+    font-size: 2rem;
+    color: #cbd5e1;
+}
+
+/* Attendance Summary */
+.qr-code-room-page .attendance-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.qr-code-room-page .summary-card {
+    background: rgba(241, 245, 249, 0.8);
+    border: 1px solid rgba(141, 169, 196, 0.3);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+.qr-code-room-page .summary-card h4 {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.qr-code-room-page .summary-card .total-count,
+.qr-code-room-page .summary-card .manual-count,
+.qr-code-room-page .summary-card .capacity,
+.qr-code-room-page .summary-card .rate {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0b2545;
+}
+
+.qr-code-room-page .summary-card .manual-count {
+    color: #1d4ed8;
+}
+
+.qr-code-room-page .summary-card .rate {
+    color: #059669;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .qr-code-room-page .content-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .qr-code-room-page .main-content {
+        padding: 1rem;
+    }
+
+    .qr-code-room-page .qr-section,
+    .qr-code-room-page .attendance-section {
+        padding: 1rem;
+    }
+
+    .qr-code-room-page .page-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .qr-code-room-page .qr-controls {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .qr-code-room-page .qr-controls-left,
+    .qr-code-room-page .qr-controls-right {
+        width: 100%;
+    }
+
+    .qr-code-room-page .btn-start-countdown,
+    .qr-code-room-page .btn-end-lecture {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .qr-code-room-page .attendance-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .qr-code-room-page .lecturer-badge {
+        align-self: flex-start;
+    }
+
+    .qr-code-room-page .qr-display {
+        width: 250px;
+        height: 250px;
+    }
+
+    .qr-code-room-page .manual-input-group {
+        flex-direction: column;
+    }
+
+    .qr-code-room-page .attendance-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .qr-code-room-page .course-details {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .qr-code-room-page .attendance-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .qr-code-room-page .qr-display {
+        width: 200px;
+        height: 200px;
+    }
+
+    .qr-code-room-page .countdown-circle {
+        width: 80px;
+        height: 80px;
+    }
+
+    .qr-code-room-page .countdown-number {
+        font-size: 2rem;
+    }
+
+    .lecture-ended-message {
+        padding: 2rem 1rem;
+    }
+
+    .lecture-ended-message h1 {
+        font-size: 1.25rem;
+    }
+}
+
+/* Custom Scrollbar */
+.qr-code-room-page ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.qr-code-room-page ::-webkit-scrollbar-track {
+    background: rgba(141, 169, 196, 0.1);
+}
+
+.qr-code-room-page ::-webkit-scrollbar-thumb {
+    background: rgba(141, 169, 196, 0.3);
+    border-radius: 4px;
+}
+
+.qr-code-room-page ::-webkit-scrollbar-thumb:hover {
+    background: #8da9c4;
+}
+
+/* Focus states */
+.qr-code-room-page .btn-start-countdown:focus-visible,
+.qr-code-room-page .btn-report:focus-visible,
+.qr-code-room-page .btn-end-lecture:focus-visible,
+.qr-code-room-page .btn-manual-attendance:focus-visible {
+    outline: 2px solid #13315c;
+    outline-offset: 2px;
+}
+
+/* Icon styling */
+.qr-code-room-page .fas,
+.qr-code-room-page .fab {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.qr-code-room-page .qr-section,
+.qr-code-room-page .attendance-section {
+    animation: slideIn 0.5s ease-out;
+}

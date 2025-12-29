@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './ManageTermTable.css';
+import { db } from '../../firebase';
+import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 export default function ManageTermTable() {
-  // State for courses and scheduling
+  // State for courses, professors, and scheduling
   const [courses, setCourses] = useState([]);
+  const [professors, setProfessors] = useState([]);
   const [scheduledSections, setScheduledSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [draggingSection, setDraggingSection] = useState(null);
@@ -11,15 +14,6 @@ export default function ManageTermTable() {
   const [activeDay, setActiveDay] = useState('Monday');
   const [weekNumber, setWeekNumber] = useState(1);
   
-  // Mock professors data
-  const [professors] = useState([
-    { id: 'p1', fullName: 'Dr. Mohamad Ahmad' },
-    { id: 'p2', fullName: 'Dr. Ali Battour' },
-    { id: 'p3', fullName: 'Dr. Salah Dawaji' },
-    { id: 'p4', fullName: 'Dr. Mahmoud Haidar' },
-    { id: 'p5', fullName: 'Eng. Omar Kassem' },
-  ]);
-
   // Time configuration
   const timeSlots = [];
   for (let hour = 8; hour <= 16; hour++) {
@@ -33,89 +27,105 @@ export default function ManageTermTable() {
   // Days of the week
   const days = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday'];
 
-  // Load courses from localStorage
+  // Load data from Firestore
   useEffect(() => {
-    const loadCourses = () => {
-      setLoading(true);
-      try {
-        const savedCourses = localStorage.getItem('cs_courses');
-        const savedSchedule = localStorage.getItem('term_table_schedule');
+    // Load courses
+    const coursesUnsubscribe = onSnapshot(collection(db, "courses"), (snapshot) => {
+      const coursesData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setCourses(coursesData);
+      
+      // Create sections from courses
+      const allSections = coursesData.flatMap(course => {
+        const sections = [];
         
-        if (savedCourses) {
-          const parsedCourses = JSON.parse(savedCourses);
-          
-          // Add unique IDs to sections if they don't exist
-          const coursesWithSections = parsedCourses.map(course => {
-            const sections = [];
-            
-            // Theory sections
-            if (course.theorySections > 0 && course.theoryProfessors) {
-              for (let i = 0; i < course.theorySections; i++) {
-                sections.push({
-                  id: `${course.id}-theory-${i + 1}`,
-                  courseId: course.id,
-                  type: 'Theory',
-                  sectionNumber: i + 1,
-                  professorId: course.theoryProfessors[i] || null,
-                  courseCode: course.code,
-                  courseName: course.name,
-                  academicHours: course.academicHours,
-                  duration: course.academicHours * 60, // Default duration in minutes
-                  originalType: 'theory',
-                });
-              }
-            }
-            
-            // Practical sections
-            if (course.practicalSections > 0 && course.practicalProfessors) {
-              for (let i = 0; i < course.practicalSections; i++) {
-                sections.push({
-                  id: `${course.id}-practical-${i + 1}`,
-                  courseId: course.id,
-                  type: 'Practical',
-                  sectionNumber: i + 1,
-                  professorId: course.practicalProfessors[i] || null,
-                  courseCode: course.code,
-                  courseName: course.name,
-                  academicHours: 2, // Practical sessions are usually 2 hours
-                  duration: 120, // Default 2 hours in minutes
-                  originalType: 'practical',
-                });
-              }
-            }
-            
-            return {
-              ...course,
-              sections: sections
-            };
-          });
-          
-          setCourses(coursesWithSections);
-          
-          // Load saved schedule if exists
-          if (savedSchedule) {
-            setScheduledSections(JSON.parse(savedSchedule));
+        // Theory sections
+        if (course.theorySections > 0 && course.theoryProfessors) {
+          for (let i = 0; i < course.theorySections; i++) {
+            sections.push({
+              id: `${course.id}-theory-${i + 1}`,
+              courseId: course.id,
+              type: 'Theory',
+              sectionNumber: i + 1,
+              professorId: course.theoryProfessors[i] || null,
+              professorName: course.theoryProfessors[i] || 'Not Assigned',
+              courseCode: course.code,
+              courseName: course.name,
+              academicHours: course.academicHours || 2,
+              duration: (course.academicHours || 2) * 60, // Duration in minutes
+              originalType: 'theory',
+              weeks: course.weeks || 15,
+            });
           }
         }
-      } catch (error) {
-        console.error('Error loading courses:', error);
-      } finally {
+        
+        // Practical sections
+        if (course.practicalSections > 0 && course.practicalProfessors) {
+          for (let i = 0; i < course.practicalSections; i++) {
+            sections.push({
+              id: `${course.id}-practical-${i + 1}`,
+              courseId: course.id,
+              type: 'Practical',
+              sectionNumber: i + 1,
+              professorId: course.practicalProfessors[i] || null,
+              professorName: course.practicalProfessors[i] || 'Not Assigned',
+              courseCode: course.code,
+              courseName: course.name,
+              academicHours: course.academicHours || 2,
+              duration: 120, // Practical sessions are usually 2 hours
+              originalType: 'practical',
+              weeks: course.weeks || 15,
+            });
+          }
+        }
+        
+        return sections;
+      });
+      
+      // Update loading state when courses are loaded
+      if (coursesData.length > 0) {
         setLoading(false);
       }
-    };
+    });
 
-    loadCourses();
+    // Load professors
+    const professorsUnsubscribe = onSnapshot(collection(db, "professors"), (snapshot) => {
+      const professorsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setProfessors(professorsData);
+    });
+
+    // Load scheduled sections from Firestore
+    const scheduleUnsubscribe = onSnapshot(collection(db, "schedule"), (snapshot) => {
+      const scheduleData = snapshot.docs.map(doc => ({
+        scheduleId: doc.id,
+        ...doc.data()
+      }));
+      setScheduledSections(scheduleData);
+    });
+
+    // Cleanup subscriptions
+    return () => {
+      coursesUnsubscribe();
+      professorsUnsubscribe();
+      scheduleUnsubscribe();
+    };
   }, []);
 
-  // Save schedule to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('term_table_schedule', JSON.stringify(scheduledSections));
-  }, [scheduledSections]);
-
-  // Get professor name by ID
-  const getProfessorName = (professorId) => {
-    const professor = professors.find(p => p.id === professorId);
-    return professor ? professor.fullName : 'Not Assigned';
+  // Get professor name by ID or name
+  const getProfessorName = (professorIdOrName) => {
+    if (!professorIdOrName) return 'Not Assigned';
+    
+    // First try to find by ID
+    const professorById = professors.find(p => p.id === professorIdOrName);
+    if (professorById) return professorById.name;
+    
+    // If not found by ID, it might be stored as a name string
+    return professorIdOrName;
   };
 
   // Handle drag start
@@ -132,7 +142,7 @@ export default function ManageTermTable() {
   };
 
   // Handle drop on time slot
-  const handleDrop = (e, day, timeSlotIndex) => {
+  const handleDrop = async (e, day, timeSlotIndex) => {
     e.preventDefault();
     e.currentTarget.classList.remove('drag-over');
     
@@ -145,13 +155,15 @@ export default function ManageTermTable() {
       // Create a new scheduled section
       const newScheduledSection = {
         ...sectionData,
-        scheduleId: `${sectionData.id}-${Date.now()}`,
+        scheduleId: `${sectionData.id}-${day}-${timeSlotIndex}-${Date.now()}`,
         day: day,
         startTime: timeSlotIndex, // Store as index for easier calculations
         startMinutes: startMinutes,
         endMinutes: startMinutes + sectionData.duration,
         week: weekNumber,
         color: getSectionColor(sectionData.type, sectionData.courseId),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       // Check for conflicts
@@ -161,9 +173,15 @@ export default function ManageTermTable() {
         return;
       }
 
+      // Save to Firestore
+      const scheduleRef = doc(db, "schedule", newScheduledSection.scheduleId);
+      await setDoc(scheduleRef, newScheduledSection);
+
+      // Update local state (Firestore listener will update automatically)
       setScheduledSections(prev => [...prev, newScheduledSection]);
     } catch (error) {
       console.error('Error processing drop:', error);
+      alert('Error scheduling section. Please try again.');
     }
   };
 
@@ -193,38 +211,60 @@ export default function ManageTermTable() {
   };
 
   // Remove a scheduled section
-  const removeScheduledSection = (scheduleId) => {
-    setScheduledSections(prev => prev.filter(section => section.scheduleId !== scheduleId));
+  const removeScheduledSection = async (scheduleId) => {
+    if (window.confirm('Are you sure you want to remove this section from the schedule?')) {
+      try {
+        // Delete from Firestore
+        await deleteDoc(doc(db, "schedule", scheduleId));
+        // Local state will be updated by Firestore listener
+      } catch (error) {
+        console.error('Error removing section:', error);
+        alert('Error removing section. Please try again.');
+      }
+    }
   };
 
   // Update section duration
-  const updateSectionDuration = (scheduleId, newDurationMinutes) => {
-    setScheduledSections(prev => prev.map(section => {
-      if (section.scheduleId === scheduleId) {
-        return {
+  const updateSectionDuration = async (scheduleId, newDurationMinutes) => {
+    try {
+      const sectionRef = doc(db, "schedule", scheduleId);
+      const section = scheduledSections.find(s => s.scheduleId === scheduleId);
+      
+      if (section) {
+        await setDoc(sectionRef, {
           ...section,
           duration: newDurationMinutes,
           endMinutes: section.startMinutes + newDurationMinutes,
-        };
+          updatedAt: new Date().toISOString(),
+        }, { merge: true });
       }
-      return section;
-    }));
+    } catch (error) {
+      console.error('Error updating section duration:', error);
+      alert('Error updating duration. Please try again.');
+    }
   };
 
   // Update section time (drag to different time slot)
-  const updateSectionTime = (scheduleId, newStartTimeIndex) => {
-    setScheduledSections(prev => prev.map(section => {
-      if (section.scheduleId === scheduleId) {
+  const updateSectionTime = async (scheduleId, newStartTimeIndex, newDay) => {
+    try {
+      const sectionRef = doc(db, "schedule", scheduleId);
+      const section = scheduledSections.find(s => s.scheduleId === scheduleId);
+      
+      if (section) {
         const startMinutes = 480 + (newStartTimeIndex * 30);
-        return {
+        await setDoc(sectionRef, {
           ...section,
+          day: newDay || section.day,
           startTime: newStartTimeIndex,
           startMinutes: startMinutes,
           endMinutes: startMinutes + section.duration,
-        };
+          updatedAt: new Date().toISOString(),
+        }, { merge: true });
       }
-      return section;
-    }));
+    } catch (error) {
+      console.error('Error updating section time:', error);
+      alert('Error updating time. Please try again.');
+    }
   };
 
   // Get section color based on type and course
@@ -233,20 +273,20 @@ export default function ManageTermTable() {
       'Theory': {
         background: 'rgba(141, 169, 196, 0.8)',
         border: 'rgba(141, 169, 196, 1)',
+        text: 'rgba(20, 64, 116, 1)',
       },
       'Practical': {
         background: 'rgba(78, 205, 196, 0.8)',
         border: 'rgba(78, 205, 196, 1)',
+        text: 'rgba(20, 64, 116, 1)',
       },
     };
     
     // Use hash of courseId to get consistent color
-    const hash = courseId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hash = courseId ? courseId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 0;
     const hue = hash % 360;
     
-    return type === 'Theory' 
-      ? colors.Theory 
-      : colors.Practical;
+    return type === 'Theory' ? colors.Theory : colors.Practical;
   };
 
   // Get sections for a specific day and time
@@ -274,7 +314,7 @@ export default function ManageTermTable() {
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     const period = hours >= 12 ? 'PM' : 'AM';
-    const displayHours = hours > 12 ? hours - 12 : hours;
+    const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
     return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
   };
 
@@ -296,7 +336,6 @@ export default function ManageTermTable() {
     if (!resizingSection) return;
     
     // Calculate new duration based on mouse position
-    // This is a simplified version - in production you'd calculate based on grid
     const newDuration = Math.max(30, resizingSection.duration + 30); // Increase by 30 minutes
     
     // Update the section
@@ -311,17 +350,31 @@ export default function ManageTermTable() {
   };
 
   // Clear all scheduled sections
-  const clearSchedule = () => {
-    if (window.confirm('Are you sure you want to clear the entire schedule? This action cannot be undone.')) {
-      setScheduledSections([]);
+  const clearSchedule = async () => {
+    if (window.confirm('Are you sure you want to clear the entire schedule for this week? This action cannot be undone.')) {
+      try {
+        // Delete all scheduled sections for this week from Firestore
+        const weekSections = scheduledSections.filter(s => s.week === weekNumber);
+        const deletePromises = weekSections.map(section => 
+          deleteDoc(doc(db, "schedule", section.scheduleId))
+        );
+        
+        await Promise.all(deletePromises);
+        // Local state will be updated by Firestore listener
+      } catch (error) {
+        console.error('Error clearing schedule:', error);
+        alert('Error clearing schedule. Please try again.');
+      }
     }
   };
 
   // Export schedule
   const exportSchedule = () => {
+    const weekSections = scheduledSections.filter(s => s.week === weekNumber);
     const scheduleData = {
       courses: courses,
-      scheduledSections: scheduledSections,
+      scheduledSections: weekSections,
+      professors: professors,
       generatedAt: new Date().toISOString(),
       weekNumber: weekNumber,
     };
@@ -335,9 +388,53 @@ export default function ManageTermTable() {
     URL.revokeObjectURL(url);
   };
 
-  // Get all sections for a course
+  // Get all sections from courses
   const getAllSections = () => {
-    return courses.flatMap(course => course.sections || []);
+    return courses.flatMap(course => {
+      const sections = [];
+      
+      // Theory sections
+      if (course.theorySections > 0 && course.theoryProfessors) {
+        for (let i = 0; i < course.theorySections; i++) {
+          sections.push({
+            id: `${course.id}-theory-${i + 1}`,
+            courseId: course.id,
+            type: 'Theory',
+            sectionNumber: i + 1,
+            professorId: course.theoryProfessors[i] || null,
+            professorName: course.theoryProfessors[i] || 'Not Assigned',
+            courseCode: course.code,
+            courseName: course.name,
+            academicHours: course.academicHours || 2,
+            duration: (course.academicHours || 2) * 60,
+            originalType: 'theory',
+            weeks: course.weeks || 15,
+          });
+        }
+      }
+      
+      // Practical sections
+      if (course.practicalSections > 0 && course.practicalProfessors) {
+        for (let i = 0; i < course.practicalSections; i++) {
+          sections.push({
+            id: `${course.id}-practical-${i + 1}`,
+            courseId: course.id,
+            type: 'Practical',
+            sectionNumber: i + 1,
+            professorId: course.practicalProfessors[i] || null,
+            professorName: course.practicalProfessors[i] || 'Not Assigned',
+            courseCode: course.code,
+            courseName: course.name,
+            academicHours: course.academicHours || 2,
+            duration: 120,
+            originalType: 'practical',
+            weeks: course.weeks || 15,
+          });
+        }
+      }
+      
+      return sections;
+    });
   };
 
   // Filter sections by active day
@@ -345,6 +442,43 @@ export default function ManageTermTable() {
     return scheduledSections.filter(section => 
       section.day === activeDay && section.week === weekNumber
     );
+  };
+
+  // Get course type display name
+  const getCourseTypeDisplay = (type) => {
+    switch (type) {
+      case 'theory-only': return 'Theory Only';
+      case 'practical-only': return 'Practical Only';
+      case 'theory-practical': return 'Theory + Practical';
+      default: return type || 'Mixed';
+    }
+  };
+
+  // Get course type icon
+  const getCourseTypeIcon = (type) => {
+    switch (type) {
+      case 'theory-only': return 'fa-chalkboard-teacher';
+      case 'practical-only': return 'fa-flask';
+      case 'theory-practical': return 'fa-graduation-cap';
+      default: return 'fa-book';
+    }
+  };
+
+  // Format academic hours
+  const formatAcademicHours = (hours) => {
+    if (!hours) return 'Not specified';
+    return `${hours} hour${hours !== 1 ? 's' : ''}`;
+  };
+
+  // Get academic hours color based on value
+  const getAcademicHoursColor = (hours) => {
+    switch (hours) {
+      case 1: return '#4ECDC4'; // Teal for 1 hour
+      case 2: return '#45B7D1'; // Blue for 2 hours
+      case 3: return '#96CEB4'; // Green for 3 hours
+      case 4: return '#FFA69E'; // Coral for 4 hours
+      default: return '#8DA9C4'; // Default
+    }
   };
 
   return (
@@ -389,7 +523,7 @@ export default function ManageTermTable() {
               </button>
               <button className="btn btn-secondary" onClick={clearSchedule}>
                 <i className="fas fa-trash"></i>
-                Clear All
+                Clear Week {weekNumber}
               </button>
             </div>
           </div>
@@ -401,30 +535,40 @@ export default function ManageTermTable() {
                 <h3 className="courses-title">
                   <i className="fas fa-book"></i>
                   Available Courses & Sections
+                  {loading && (
+                    <span className="loading-badge">
+                      <i className="fas fa-spinner fa-spin"></i>
+                      Loading...
+                    </span>
+                  )}
                 </h3>
                 
-                <div className="filter-group">
-                  <h4 className="filter-label">
-                    <i className="fas fa-filter"></i>
-                    Filter
-                  </h4>
-                  <select className="filter-select">
-                    <option value="all">All Courses</option>
-                    <option value="theory">Theory Only</option>
-                    <option value="practical">Practical Only</option>
-                  </select>
+                <div className="courses-stats" style={{ marginBottom: '1rem' }}>
+                  <div className="stat-item">
+                    <span className="stat-label">Courses:</span>
+                    <span className="stat-value">{courses.length}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Sections:</span>
+                    <span className="stat-value">{getAllSections().length}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Professors:</span>
+                    <span className="stat-value">{professors.length}</span>
+                  </div>
                 </div>
 
                 <div className="courses-list">
                   {loading ? (
                     <div className="loading-small">
                       <i className="fas fa-spinner fa-spin"></i>
-                      Loading courses...
+                      Loading courses from database...
                     </div>
                   ) : getAllSections().length === 0 ? (
                     <div className="no-courses">
                       <i className="fas fa-book"></i>
-                      <p>No courses found. Add courses first.</p>
+                      <p>No courses found in database.</p>
+                      <small>Add courses first in the "Add Courses" section.</small>
                     </div>
                   ) : (
                     getAllSections().map(section => (
@@ -458,7 +602,7 @@ export default function ManageTermTable() {
                             </span>
                             <span className="professor">
                               <i className="fas fa-user-tie"></i>
-                              {getProfessorName(section.professorId)}
+                              {section.professorName}
                             </span>
                           </div>
                         </div>
@@ -474,21 +618,11 @@ export default function ManageTermTable() {
                   )}
                 </div>
 
-                <div className="courses-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Total Courses:</span>
-                    <span className="stat-value">{courses.length}</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Total Sections:</span>
-                    <span className="stat-value">{getAllSections().length}</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Scheduled:</span>
-                    <span className="stat-value">
-                      {scheduledSections.filter(s => s.week === weekNumber).length}
-                    </span>
-                  </div>
+                <div className="courses-info">
+                  <p style={{ fontSize: '0.85rem', color: 'var(--primary-light)', marginTop: '1rem' }}>
+                    <i className="fas fa-info-circle"></i>
+                    All data loaded from Firestore database
+                  </p>
                 </div>
               </div>
             </div>
@@ -563,8 +697,9 @@ export default function ManageTermTable() {
                                   className="scheduled-section"
                                   style={{
                                     height: `${getSectionHeight(section.duration)}px`,
-                                    backgroundColor: section.color.background,
-                                    border: `2px solid ${section.color.border}`,
+                                    backgroundColor: section.color?.background || 'rgba(141, 169, 196, 0.8)',
+                                    border: `2px solid ${section.color?.border || 'rgba(141, 169, 196, 1)'}`,
+                                    color: section.color?.text || 'rgba(20, 64, 116, 1)',
                                   }}
                                   draggable="true"
                                   onDragStart={(e) => handleDragStart(e, section)}
@@ -582,7 +717,7 @@ export default function ManageTermTable() {
                                     </div>
                                     <div className="section-professor">
                                       <i className="fas fa-user-tie"></i>
-                                      {getProfessorName(section.professorId)}
+                                      {section.professorName || getProfessorName(section.professorId)}
                                     </div>
                                     <div className="section-duration">
                                       <i className="fas fa-clock"></i>
@@ -595,7 +730,6 @@ export default function ManageTermTable() {
                                       className="section-action-btn edit"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        // Edit functionality
                                         const newDuration = parseInt(prompt('Enter new duration in hours:', section.duration / 60));
                                         if (newDuration && newDuration > 0) {
                                           updateSectionDuration(section.scheduleId, newDuration * 60);
@@ -702,7 +836,7 @@ export default function ManageTermTable() {
                             <div className="summary-section-details">
                               <strong>{section.courseCode}</strong> - {section.type} Sec {section.sectionNumber}
                               <div className="summary-section-meta">
-                                <span>{getProfessorName(section.professorId)}</span>
+                                <span>{section.professorName || getProfessorName(section.professorId)}</span>
                                 <span>{section.duration / 60} hours</span>
                               </div>
                             </div>
@@ -734,7 +868,7 @@ export default function ManageTermTable() {
                 <div className="step-number">2</div>
                 <div className="step-content">
                   <strong>Adjust Duration</strong>
-                  <p>Click the duration button on a scheduled section to adjust its length (in hours).</p>
+                  <p>Click the edit button on a scheduled section to adjust its length (in hours).</p>
                 </div>
               </div>
               <div className="instruction-step">
@@ -749,6 +883,13 @@ export default function ManageTermTable() {
                 <div className="step-content">
                   <strong>Move Sections</strong>
                   <p>Drag scheduled sections to different time slots or days to rearrange the schedule.</p>
+                </div>
+              </div>
+              <div className="instruction-step">
+                <div className="step-number">5</div>
+                <div className="step-content">
+                  <strong>Database Integration</strong>
+                  <p>All changes are automatically saved to Firestore. All data comes from the database.</p>
                 </div>
               </div>
             </div>

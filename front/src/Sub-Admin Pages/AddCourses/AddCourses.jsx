@@ -1,85 +1,78 @@
 import React, { useEffect, useState } from 'react';
 import './AddCourses.css';
-import { db } from "../../firebase"; 
-import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { db } from "../../firebase";
+import { collection, addDoc, setDoc, doc, getDocs, onSnapshot } from "firebase/firestore";
 
-
-const API_BASE = import.meta.env.VITE_API_BASE || '/api';
+// ... previous imports ...
 
 function AddCourse() {
     const [courses, setCourses] = useState([]);
     const [professors, setProfessors] = useState([]);
-    
+
     // New course fields
     const [courseType, setCourseType] = useState('theory-practical');
     const [courseName, setCourseName] = useState('');
     const [courseCode, setCourseCode] = useState('');
-    const [academicHours, setAcademicHours] = useState(2); // New field: Academic hours
+    const [academicHours, setAcademicHours] = useState(2);
     const [weeks, setWeeks] = useState(15);
     const [theorySections, setTheorySections] = useState(1);
     const [practicalSections, setPracticalSections] = useState(2);
     const [numTheoryProfessors, setNumTheoryProfessors] = useState(1);
     const [numPracticalProfessors, setNumPracticalProfessors] = useState(2);
-    
-    // Professor assignment arrays
+
+    // Professor assignment arrays - STORE LECTURER IDs
     const [assignedTheoryProfessors, setAssignedTheoryProfessors] = useState([null]);
     const [assignedPracticalProfessors, setAssignedPracticalProfessors] = useState([null, null]);
-    
+
     const [loading, setLoading] = useState(false);
-    const [profLoading, setProfLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
 
-   useEffect(() => {
-    const fetchData = async () => {
-        try {
-            // جلب الكورسات من Firestore
-            const snapshot = await getDocs(collection(db, "courses"));
-            const coursesData = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            setCourses(coursesData);
-
-            // جلب الأساتذة من Firestore
-            fetchProfessors();
-        } catch (err) {
-            console.error("Error loading data from Firestore:", err);
-        }
-    };
-
-    fetchData();
-}, []);
-
-
+    // Fetch professors from Firestore in real-time
     useEffect(() => {
-        localStorage.setItem('cs_courses', JSON.stringify(courses));
-    }, [courses]);
+        const fetchProfessors = () => {
+            const unsubscribe = onSnapshot(collection(db, "professors"), (snapshot) => {
+                const data = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                setProfessors(data);
+                console.log("Professors loaded from Firestore:", data.length);
+            }, (error) => {
+                console.error("Error fetching professors from Firestore:", error);
+            });
 
-    // Load professors from database
-    const fetchProfessors = async () => {
-    setProfLoading(true);
-    try {
-        const snapshot = await getDocs(collection(db, "professors"));
-        const data = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
-        setProfessors(data);
-    } catch (err) {
-        console.error("Error fetching professors from Firestore:", err);
-    } finally {
-        setProfLoading(false);
-    }
-};
+            return unsubscribe;
+        };
 
+        const unsubscribe = fetchProfessors();
+        return () => unsubscribe();
+    }, []);
+
+    // Fetch courses from Firestore
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const snapshot = await getDocs(collection(db, "courses"));
+                const coursesData = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                setCourses(coursesData);
+            } catch (err) {
+                console.error("Error loading courses from Firestore:", err);
+            }
+        };
+
+        fetchCourses();
+    }, []);
 
     // Filter professors by type
-    const theoryProfessors = professors.filter(p => 
-        p.type === 'theory' || p.type === 'both'
+    const theoryProfessors = professors.filter(p =>
+        p.type === 'Theory' || p.type === 'theory' || p.type === 'both'
     );
-    
-    const practicalProfessors = professors.filter(p => 
-        p.type === 'practical' || p.type === 'both'
+
+    const practicalProfessors = professors.filter(p =>
+        p.type === 'Practical' || p.type === 'practical' || p.type === 'both'
     );
 
     // Auto-calculate practical sections based on course type
@@ -129,19 +122,19 @@ function AddCourse() {
         }
     }, [numPracticalProfessors, courseType]);
 
-    // Assign a professor to a slot
-    const assignTheoryProfessor = (professorId, slotIndex) => {
+    // Assign a professor to a slot - STORE LECTURER ID
+    const assignTheoryProfessor = (lecturerId, slotIndex) => {
         setAssignedTheoryProfessors(prev => {
             const newArray = [...prev];
-            newArray[slotIndex] = professorId;
+            newArray[slotIndex] = lecturerId;
             return newArray;
         });
     };
 
-    const assignPracticalProfessor = (professorId, slotIndex) => {
+    const assignPracticalProfessor = (lecturerId, slotIndex) => {
         setAssignedPracticalProfessors(prev => {
             const newArray = [...prev];
-            newArray[slotIndex] = professorId;
+            newArray[slotIndex] = lecturerId;
             return newArray;
         });
     };
@@ -163,102 +156,101 @@ function AddCourse() {
         });
     };
 
-    // Get professor name by ID
-    const getProfessorName = (profId) => {
-        const prof = professors.find(p => p.id === profId);
-        return prof ? prof.name : null;
+    // Get professor details by LecturerID
+    const getProfessorDetails = (lecturerId) => {
+        const prof = professors.find(p => p.LecturerID === lecturerId || p.id === lecturerId);
+        return prof || null;
     };
 
     // Add new course
     const addCourse = async (e) => {
         e.preventDefault();
-        
+
         // Validate required fields
         if (!courseName.trim() || !courseCode.trim()) {
             setMessage({ type: 'error', text: 'Please enter course name and code' });
             return;
         }
-        
+
         // Validate professor assignments based on course type
         if (courseType === 'theory-only' && assignedTheoryProfessors.some(p => p === null)) {
             setMessage({ type: 'error', text: 'Please assign all theory professors' });
             return;
         }
-        
+
         if (courseType === 'practical-only' && assignedPracticalProfessors.some(p => p === null)) {
             setMessage({ type: 'error', text: 'Please assign all practical professors' });
             return;
         }
-        
-        if (courseType === 'theory-practical' && 
+
+        if (courseType === 'theory-practical' &&
             (assignedTheoryProfessors.some(p => p === null) || assignedPracticalProfessors.some(p => p === null))) {
             setMessage({ type: 'error', text: 'Please assign all theory and practical professors' });
             return;
         }
-        
-        setLoading(true);
-        
-        const newCourse = {
-            id: Date.now().toString(),
-            name: courseName.trim(),
-            code: courseCode.trim(),
-            academicHours: Number(academicHours), // Added academic hours
-            type: courseType,
-            weeks: Number(weeks),
-            theorySections: courseType === 'practical-only' ? 0 : Number(theorySections),
-            practicalSections: courseType === 'theory-only' ? 0 : Number(practicalSections),
-            theoryProfessors: courseType === 'practical-only' ? [] : assignedTheoryProfessors,
-            practicalProfessors: courseType === 'theory-only' ? [] : assignedPracticalProfessors,
-            createdAt: new Date().toISOString(),
-        };
-        
-        // Try to save to server first معدل لتخزين الكورسات 
-        try {
-    const courseRef = doc(db, "courses", courseCode.trim());
-    await setDoc(courseRef, {
-        name: courseName.trim(),
-        code: courseCode.trim(),
-        academicHours: Number(academicHours),
-        type: courseType,
-        weeks: Number(weeks),
-        theorySections: courseType === 'practical-only' ? 0 : Number(theorySections),
-        practicalSections: courseType === 'theory-only' ? 0 : Number(practicalSections),
-        theoryProfessors: courseType === 'practical-only' ? [] : assignedTheoryProfessors,
-        practicalProfessors: courseType === 'theory-only' ? [] : assignedPracticalProfessors,
-        createdAt: new Date().toISOString(),
-    });
 
-    console.log("Course saved to Firestore successfully");
-} catch (err) {
-    console.error("Firestore error:", err);
-    setMessage({ type: "error", text: "Error saving course to Firestore" });
-    setLoading(false);
-    return;
-}
-        
-        // Save locally
-        setCourses(prev => [...prev, newCourse]);
-        
-        // Reset fields
-        setCourseName('');
-        setCourseCode('');
-        setAcademicHours(2); // Reset to default value
-        setCourseType('theory-practical');
-        setWeeks(14);
-        setTheorySections(1);
-        setPracticalSections(2);
-        setNumTheoryProfessors(1);
-        setNumPracticalProfessors(2);
-        setAssignedTheoryProfessors([null]);
-        setAssignedPracticalProfessors([null, null]);
-        
-        setMessage({ 
-            type: 'success', 
-            text: 'Course added successfully!' 
-        });
-        
-        setLoading(false);
-        
+        setLoading(true);
+
+        try {
+            const courseRef = doc(db, "courses", courseCode.trim());
+            await setDoc(courseRef, {
+                name: courseName.trim(),
+                code: courseCode.trim(),
+                academicHours: Number(academicHours),
+                type: courseType,
+                weeks: Number(weeks),
+                theorySections: courseType === 'practical-only' ? 0 : Number(theorySections),
+                practicalSections: courseType === 'theory-only' ? 0 : Number(practicalSections),
+                theoryProfessors: courseType === 'practical-only' ? [] : assignedTheoryProfessors,
+                practicalProfessors: courseType === 'theory-only' ? [] : assignedPracticalProfessors,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+
+            console.log("Course saved to Firestore successfully");
+
+            // Add to local state
+            const newCourse = {
+                id: courseCode.trim(),
+                name: courseName.trim(),
+                code: courseCode.trim(),
+                academicHours: Number(academicHours),
+                type: courseType,
+                weeks: Number(weeks),
+                theorySections: courseType === 'practical-only' ? 0 : Number(theorySections),
+                practicalSections: courseType === 'theory-only' ? 0 : Number(practicalSections),
+                theoryProfessors: courseType === 'practical-only' ? [] : assignedTheoryProfessors,
+                practicalProfessors: courseType === 'theory-only' ? [] : assignedPracticalProfessors,
+                createdAt: new Date().toISOString(),
+            };
+
+            setCourses(prev => [...prev, newCourse]);
+
+            // Reset fields
+            setCourseName('');
+            setCourseCode('');
+            setAcademicHours(2);
+            setCourseType('theory-practical');
+            setWeeks(15);
+            setTheorySections(1);
+            setPracticalSections(2);
+            setNumTheoryProfessors(1);
+            setNumPracticalProfessors(2);
+            setAssignedTheoryProfessors([null]);
+            setAssignedPracticalProfessors([null, null]);
+
+            setMessage({
+                type: 'success',
+                text: 'Course added successfully!'
+            });
+
+        } catch (err) {
+            console.error("Firestore error:", err);
+            setMessage({ type: "error", text: "Error saving course to Firestore" });
+        } finally {
+            setLoading(false);
+        }
+
         // Hide message after 3 seconds
         setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     };
@@ -516,11 +508,14 @@ function AddCourse() {
                                 <h3 style={{ color: 'var(--accent)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <i className="fas fa-user-tie"></i>
                                     Theory Professors Assignment
+                                    <span style={{ fontSize: '0.9rem', color: 'var(--primary-light)', marginLeft: 'auto' }}>
+                                        {theoryProfessors.length} professors available
+                                    </span>
                                 </h3>
-                                
-                                <div style={{ 
-                                    display: 'grid', 
-                                    gridTemplateColumns: '1fr 1fr', 
+
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
                                     gap: '2rem',
                                     backgroundColor: 'rgba(11, 37, 69, 0.5)',
                                     padding: '1.5rem',
@@ -532,8 +527,8 @@ function AddCourse() {
                                         <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', fontSize: '1.1rem' }}>
                                             Available Theory Professors
                                         </h4>
-                                        <div style={{ 
-                                            maxHeight: '300px', 
+                                        <div style={{
+                                            maxHeight: '300px',
                                             overflowY: 'auto',
                                             backgroundColor: 'rgba(19, 49, 92, 0.3)',
                                             borderRadius: '6px',
@@ -541,49 +536,75 @@ function AddCourse() {
                                         }}>
                                             {theoryProfessors.length === 0 ? (
                                                 <div style={{ color: 'var(--primary-light)', textAlign: 'center', padding: '1rem' }}>
-                                                    No theory professors available
+                                                    No theory professors available in database
                                                 </div>
                                             ) : (
-                                                theoryProfessors.map((professor) => (
-                                                    <div 
-                                                        key={professor.id}
-                                                        style={{
-                                                            display: 'flex',
-                                                            justifyContent: 'space-between',
-                                                            alignItems: 'center',
-                                                            padding: '0.75rem',
-                                                            marginBottom: '0.5rem',
-                                                            backgroundColor: 'rgba(141, 169, 196, 0.1)',
-                                                            borderRadius: '6px',
-                                                            border: '1px solid rgba(141, 169, 196, 0.2)'
-                                                        }}
-                                                    >
-                                                        <span style={{ color: 'var(--accent)' }}>{professor.name}</span>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                // Find first empty slot
-                                                                const emptySlotIndex = assignedTheoryProfessors.findIndex(p => p === null);
-                                                                if (emptySlotIndex !== -1) {
-                                                                    assignTheoryProfessor(professor.id, emptySlotIndex);
-                                                                }
-                                                            }}
-                                                            disabled={assignedTheoryProfessors.includes(professor.id)}
+                                                theoryProfessors.map((professor) => {
+                                                    const profDetails = getProfessorDetails(professor.LecturerID || professor.id);
+                                                    return (
+                                                        <div
+                                                            key={professor.LecturerID || professor.id}
                                                             style={{
-                                                                background: 'transparent',
-                                                                border: 'none',
-                                                                color: assignedTheoryProfessors.includes(professor.id) ? 'var(--primary-light)' : 'var(--accent)',
-                                                                cursor: assignedTheoryProfessors.includes(professor.id) ? 'not-allowed' : 'pointer',
-                                                                fontSize: '1.2rem',
-                                                                padding: '5px 10px',
-                                                                borderRadius: '4px'
+                                                                display: 'flex',
+                                                                justifyContent: 'space-between',
+                                                                alignItems: 'center',
+                                                                padding: '0.75rem',
+                                                                marginBottom: '0.5rem',
+                                                                backgroundColor: 'rgba(141, 169, 196, 0.1)',
+                                                                borderRadius: '6px',
+                                                                border: '1px solid rgba(141, 169, 196, 0.2)'
                                                             }}
-                                                            title={assignedTheoryProfessors.includes(professor.id) ? 'Already assigned' : 'Assign to next available slot'}
                                                         >
-                                                            →
-                                                        </button>
-                                                    </div>
-                                                ))
+                                                            <div style={{ flex: 1 }}>
+                                                                <div style={{ fontWeight: '600', color: 'var(--accent)', marginBottom: '4px' }}>
+                                                                    {professor.name}
+                                                                </div>
+                                                                <div style={{ fontSize: '0.85rem', color: 'var(--primary-light)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                                                    <span>
+                                                                        <i className="fas fa-id-card" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
+                                                                        ID: {professor.LecturerID}
+                                                                    </span>
+                                                                    {professor.faculty && (
+                                                                        <span>
+                                                                            <i className="fas fa-university" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
+                                                                            {professor.faculty}
+                                                                        </span>
+                                                                    )}
+                                                                    {professor.specialization && (
+                                                                        <span>
+                                                                            <i className="fas fa-graduation-cap" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
+                                                                            {professor.specialization}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    // Find first empty slot
+                                                                    const emptySlotIndex = assignedTheoryProfessors.findIndex(p => p === null);
+                                                                    if (emptySlotIndex !== -1) {
+                                                                        assignTheoryProfessor(professor.LecturerID || professor.id, emptySlotIndex);
+                                                                    }
+                                                                }}
+                                                                disabled={assignedTheoryProfessors.includes(professor.LecturerID || professor.id)}
+                                                                style={{
+                                                                    background: 'transparent',
+                                                                    border: 'none',
+                                                                    color: assignedTheoryProfessors.includes(professor.LecturerID || professor.id) ? 'var(--primary-light)' : 'var(--accent)',
+                                                                    cursor: assignedTheoryProfessors.includes(professor.LecturerID || professor.id) ? 'not-allowed' : 'pointer',
+                                                                    fontSize: '1.2rem',
+                                                                    padding: '5px 10px',
+                                                                    borderRadius: '4px',
+                                                                    minWidth: '40px'
+                                                                }}
+                                                                title={assignedTheoryProfessors.includes(professor.LecturerID || professor.id) ? 'Already assigned' : 'Assign to next available slot'}
+                                                            >
+                                                                →
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                })
                                             )}
                                         </div>
                                     </div>
@@ -593,55 +614,80 @@ function AddCourse() {
                                         <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', fontSize: '1.1rem' }}>
                                             Assigned Theory Professors ({assignedTheoryProfessors.filter(p => p !== null).length}/{numTheoryProfessors})
                                         </h4>
-                                        <div style={{ 
-                                            maxHeight: '300px', 
+                                        <div style={{
+                                            maxHeight: '300px',
                                             overflowY: 'auto',
                                             backgroundColor: 'rgba(19, 49, 92, 0.3)',
                                             borderRadius: '6px',
                                             padding: '1rem'
                                         }}>
-                                            {assignedTheoryProfessors.map((profId, index) => (
-                                                <div 
-                                                    key={index}
-                                                    style={{
-                                                        display: 'flex',
-                                                        justifyContent: 'space-between',
-                                                        alignItems: 'center',
-                                                        padding: '0.75rem',
-                                                        marginBottom: '0.5rem',
-                                                        backgroundColor: profId ? 'rgba(78, 205, 196, 0.1)' : 'rgba(141, 169, 196, 0.05)',
-                                                        borderRadius: '6px',
-                                                        border: `1px solid ${profId ? 'var(--success)' : 'rgba(141, 169, 196, 0.2)'}`
-                                                    }}
-                                                >
-                                                    <div>
-                                                        <div style={{ fontWeight: '600', color: 'var(--accent)' }}>
-                                                            Theory Professor {index + 1}
+                                            {assignedTheoryProfessors.map((lecturerId, index) => {
+                                                const professor = getProfessorDetails(lecturerId);
+                                                return (
+                                                    <div
+                                                        key={index}
+                                                        style={{
+                                                            display: 'flex',
+                                                            justifyContent: 'space-between',
+                                                            alignItems: 'center',
+                                                            padding: '0.75rem',
+                                                            marginBottom: '0.5rem',
+                                                            backgroundColor: lecturerId ? 'rgba(78, 205, 196, 0.1)' : 'rgba(141, 169, 196, 0.05)',
+                                                            borderRadius: '6px',
+                                                            border: `1px solid ${lecturerId ? 'var(--success)' : 'rgba(141, 169, 196, 0.2)'}`
+                                                        }}
+                                                    >
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{ fontWeight: '600', color: 'var(--accent)', marginBottom: '4px' }}>
+                                                                Theory Professor {index + 1}
+                                                            </div>
+                                                            <div style={{ color: lecturerId ? 'var(--accent)' : 'var(--primary-light)' }}>
+                                                                {professor ? (
+                                                                    <>
+                                                                        <div>{professor.name}</div>
+                                                                        <div style={{ fontSize: '0.85rem', color: 'var(--primary-light)', marginTop: '2px' }}>
+                                                                            <span style={{ marginRight: '10px' }}>
+                                                                                <i className="fas fa-id-card" style={{ marginRight: '3px' }}></i>
+                                                                                ID: {professor.LecturerID}
+                                                                            </span>
+                                                                            {professor.faculty && (
+                                                                                <span style={{ marginRight: '10px' }}>
+                                                                                    <i className="fas fa-university" style={{ marginRight: '3px' }}></i>
+                                                                                    {professor.faculty}
+                                                                                </span>
+                                                                            )}
+                                                                            {professor.specialization && (
+                                                                                <span>
+                                                                                    <i className="fas fa-graduation-cap" style={{ marginRight: '3px' }}></i>
+                                                                                    {professor.specialization}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </>
+                                                                ) : 'Not assigned'}
+                                                            </div>
                                                         </div>
-                                                        <div style={{ color: profId ? 'var(--accent)' : 'var(--primary-light)' }}>
-                                                            {profId ? getProfessorName(profId) : 'Not assigned'}
-                                                        </div>
+                                                        {lecturerId && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeTheoryProfessor(index)}
+                                                                style={{
+                                                                    background: 'rgba(255, 107, 107, 0.2)',
+                                                                    border: '1px solid var(--error)',
+                                                                    color: 'var(--error)',
+                                                                    cursor: 'pointer',
+                                                                    padding: '5px 10px',
+                                                                    borderRadius: '4px',
+                                                                    fontSize: '0.9rem'
+                                                                }}
+                                                                title="Remove professor"
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        )}
                                                     </div>
-                                                    {profId && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeTheoryProfessor(index)}
-                                                            style={{
-                                                                background: 'rgba(255, 107, 107, 0.2)',
-                                                                border: '1px solid var(--error)',
-                                                                color: 'var(--error)',
-                                                                cursor: 'pointer',
-                                                                padding: '5px 10px',
-                                                                borderRadius: '4px',
-                                                                fontSize: '0.9rem'
-                                                            }}
-                                                            title="Remove professor"
-                                                        >
-                                                            Remove
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 </div>
@@ -653,11 +699,14 @@ function AddCourse() {
                                 <h3 style={{ color: 'var(--accent)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <i className="fas fa-user-graduate"></i>
                                     Practical Professors Assignment
+                                    <span style={{ fontSize: '0.9rem', color: 'var(--primary-light)', marginLeft: 'auto' }}>
+                                        {practicalProfessors.length} professors available
+                                    </span>
                                 </h3>
-                                
-                                <div style={{ 
-                                    display: 'grid', 
-                                    gridTemplateColumns: '1fr 1fr', 
+
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
                                     gap: '2rem',
                                     backgroundColor: 'rgba(11, 37, 69, 0.5)',
                                     padding: '1.5rem',
@@ -669,8 +718,8 @@ function AddCourse() {
                                         <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', fontSize: '1.1rem' }}>
                                             Available Practical Professors
                                         </h4>
-                                        <div style={{ 
-                                            maxHeight: '300px', 
+                                        <div style={{
+                                            maxHeight: '300px',
                                             overflowY: 'auto',
                                             backgroundColor: 'rgba(19, 49, 92, 0.3)',
                                             borderRadius: '6px',
@@ -678,49 +727,75 @@ function AddCourse() {
                                         }}>
                                             {practicalProfessors.length === 0 ? (
                                                 <div style={{ color: 'var(--primary-light)', textAlign: 'center', padding: '1rem' }}>
-                                                    No practical professors available
+                                                    No practical professors available in database
                                                 </div>
                                             ) : (
-                                                practicalProfessors.map((professor) => (
-                                                    <div 
-                                                        key={professor.id}
-                                                        style={{
-                                                            display: 'flex',
-                                                            justifyContent: 'space-between',
-                                                            alignItems: 'center',
-                                                            padding: '0.75rem',
-                                                            marginBottom: '0.5rem',
-                                                            backgroundColor: 'rgba(141, 169, 196, 0.1)',
-                                                            borderRadius: '6px',
-                                                            border: '1px solid rgba(141, 169, 196, 0.2)'
-                                                        }}
-                                                    >
-                                                        <span style={{ color: 'var(--accent)' }}>{professor.name}</span>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                // Find first empty slot
-                                                                const emptySlotIndex = assignedPracticalProfessors.findIndex(p => p === null);
-                                                                if (emptySlotIndex !== -1) {
-                                                                    assignPracticalProfessor(professor.id, emptySlotIndex);
-                                                                }
-                                                            }}
-                                                            disabled={assignedPracticalProfessors.includes(professor.id)}
+                                                practicalProfessors.map((professor) => {
+                                                    const profDetails = getProfessorDetails(professor.LecturerID || professor.id);
+                                                    return (
+                                                        <div
+                                                            key={professor.LecturerID || professor.id}
                                                             style={{
-                                                                background: 'transparent',
-                                                                border: 'none',
-                                                                color: assignedPracticalProfessors.includes(professor.id) ? 'var(--primary-light)' : 'var(--accent)',
-                                                                cursor: assignedPracticalProfessors.includes(professor.id) ? 'not-allowed' : 'pointer',
-                                                                fontSize: '1.2rem',
-                                                                padding: '5px 10px',
-                                                                borderRadius: '4px'
+                                                                display: 'flex',
+                                                                justifyContent: 'space-between',
+                                                                alignItems: 'center',
+                                                                padding: '0.75rem',
+                                                                marginBottom: '0.5rem',
+                                                                backgroundColor: 'rgba(141, 169, 196, 0.1)',
+                                                                borderRadius: '6px',
+                                                                border: '1px solid rgba(141, 169, 196, 0.2)'
                                                             }}
-                                                            title={assignedPracticalProfessors.includes(professor.id) ? 'Already assigned' : 'Assign to next available slot'}
                                                         >
-                                                            →
-                                                        </button>
-                                                    </div>
-                                                ))
+                                                            <div style={{ flex: 1 }}>
+                                                                <div style={{ fontWeight: '600', color: 'var(--accent)', marginBottom: '4px' }}>
+                                                                    {professor.name}
+                                                                </div>
+                                                                <div style={{ fontSize: '0.85rem', color: 'var(--primary-light)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                                                    <span>
+                                                                        <i className="fas fa-id-card" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
+                                                                        ID: {professor.LecturerID}
+                                                                    </span>
+                                                                    {professor.faculty && (
+                                                                        <span>
+                                                                            <i className="fas fa-university" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
+                                                                            {professor.faculty}
+                                                                        </span>
+                                                                    )}
+                                                                    {professor.specialization && (
+                                                                        <span>
+                                                                            <i className="fas fa-graduation-cap" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
+                                                                            {professor.specialization}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    // Find first empty slot
+                                                                    const emptySlotIndex = assignedPracticalProfessors.findIndex(p => p === null);
+                                                                    if (emptySlotIndex !== -1) {
+                                                                        assignPracticalProfessor(professor.LecturerID || professor.id, emptySlotIndex);
+                                                                    }
+                                                                }}
+                                                                disabled={assignedPracticalProfessors.includes(professor.LecturerID || professor.id)}
+                                                                style={{
+                                                                    background: 'transparent',
+                                                                    border: 'none',
+                                                                    color: assignedPracticalProfessors.includes(professor.LecturerID || professor.id) ? 'var(--primary-light)' : 'var(--accent)',
+                                                                    cursor: assignedPracticalProfessors.includes(professor.LecturerID || professor.id) ? 'not-allowed' : 'pointer',
+                                                                    fontSize: '1.2rem',
+                                                                    padding: '5px 10px',
+                                                                    borderRadius: '4px',
+                                                                    minWidth: '40px'
+                                                                }}
+                                                                title={assignedPracticalProfessors.includes(professor.LecturerID || professor.id) ? 'Already assigned' : 'Assign to next available slot'}
+                                                            >
+                                                                →
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                })
                                             )}
                                         </div>
                                     </div>
@@ -730,55 +805,80 @@ function AddCourse() {
                                         <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', fontSize: '1.1rem' }}>
                                             Assigned Practical Professors ({assignedPracticalProfessors.filter(p => p !== null).length}/{numPracticalProfessors})
                                         </h4>
-                                        <div style={{ 
-                                            maxHeight: '300px', 
+                                        <div style={{
+                                            maxHeight: '300px',
                                             overflowY: 'auto',
                                             backgroundColor: 'rgba(19, 49, 92, 0.3)',
                                             borderRadius: '6px',
                                             padding: '1rem'
                                         }}>
-                                            {assignedPracticalProfessors.map((profId, index) => (
-                                                <div 
-                                                    key={index}
-                                                    style={{
-                                                        display: 'flex',
-                                                        justifyContent: 'space-between',
-                                                        alignItems: 'center',
-                                                        padding: '0.75rem',
-                                                        marginBottom: '0.5rem',
-                                                        backgroundColor: profId ? 'rgba(78, 205, 196, 0.1)' : 'rgba(141, 169, 196, 0.05)',
-                                                        borderRadius: '6px',
-                                                        border: `1px solid ${profId ? 'var(--success)' : 'rgba(141, 169, 196, 0.2)'}`
-                                                    }}
-                                                >
-                                                    <div>
-                                                        <div style={{ fontWeight: '600', color: 'var(--accent)' }}>
-                                                            Practical Professor {index + 1}
+                                            {assignedPracticalProfessors.map((lecturerId, index) => {
+                                                const professor = getProfessorDetails(lecturerId);
+                                                return (
+                                                    <div
+                                                        key={index}
+                                                        style={{
+                                                            display: 'flex',
+                                                            justifyContent: 'space-between',
+                                                            alignItems: 'center',
+                                                            padding: '0.75rem',
+                                                            marginBottom: '0.5rem',
+                                                            backgroundColor: lecturerId ? 'rgba(78, 205, 196, 0.1)' : 'rgba(141, 169, 196, 0.05)',
+                                                            borderRadius: '6px',
+                                                            border: `1px solid ${lecturerId ? 'var(--success)' : 'rgba(141, 169, 196, 0.2)'}`
+                                                        }}
+                                                    >
+                                                        <div style={{ flex: 1 }}>
+                                                            <div style={{ fontWeight: '600', color: 'var(--accent)', marginBottom: '4px' }}>
+                                                                Practical Professor {index + 1}
+                                                            </div>
+                                                            <div style={{ color: lecturerId ? 'var(--accent)' : 'var(--primary-light)' }}>
+                                                                {professor ? (
+                                                                    <>
+                                                                        <div>{professor.name}</div>
+                                                                        <div style={{ fontSize: '0.85rem', color: 'var(--primary-light)', marginTop: '2px' }}>
+                                                                            <span style={{ marginRight: '10px' }}>
+                                                                                <i className="fas fa-id-card" style={{ marginRight: '3px' }}></i>
+                                                                                ID: {professor.LecturerID}
+                                                                            </span>
+                                                                            {professor.faculty && (
+                                                                                <span style={{ marginRight: '10px' }}>
+                                                                                    <i className="fas fa-university" style={{ marginRight: '3px' }}></i>
+                                                                                    {professor.faculty}
+                                                                                </span>
+                                                                            )}
+                                                                            {professor.specialization && (
+                                                                                <span>
+                                                                                    <i className="fas fa-graduation-cap" style={{ marginRight: '3px' }}></i>
+                                                                                    {professor.specialization}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </>
+                                                                ) : 'Not assigned'}
+                                                            </div>
                                                         </div>
-                                                        <div style={{ color: profId ? 'var(--accent)' : 'var(--primary-light)' }}>
-                                                            {profId ? getProfessorName(profId) : 'Not assigned'}
-                                                        </div>
+                                                        {lecturerId && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removePracticalProfessor(index)}
+                                                                style={{
+                                                                    background: 'rgba(255, 107, 107, 0.2)',
+                                                                    border: '1px solid var(--error)',
+                                                                    color: 'var(--error)',
+                                                                    cursor: 'pointer',
+                                                                    padding: '5px 10px',
+                                                                    borderRadius: '4px',
+                                                                    fontSize: '0.9rem'
+                                                                }}
+                                                                title="Remove professor"
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        )}
                                                     </div>
-                                                    {profId && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removePracticalProfessor(index)}
-                                                            style={{
-                                                                background: 'rgba(255, 107, 107, 0.2)',
-                                                                border: '1px solid var(--error)',
-                                                                color: 'var(--error)',
-                                                                cursor: 'pointer',
-                                                                padding: '5px 10px',
-                                                                borderRadius: '4px',
-                                                                fontSize: '0.9rem'
-                                                            }}
-                                                            title="Remove professor"
-                                                        >
-                                                            Remove
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                 </div>
@@ -802,7 +902,7 @@ function AddCourse() {
                             <button type="button" className="btn btn-secondary" onClick={() => {
                                 setCourseName('');
                                 setCourseCode('');
-                                setAcademicHours(2); // Reset academic hours
+                                setAcademicHours(2);
                                 setCourseType('theory-practical');
                                 setWeeks(15);
                                 setTheorySections(1);
@@ -862,12 +962,18 @@ function AddCourse() {
                                             <td style={{ padding: '12px', textAlign: 'left', fontSize: '0.9rem' }}>
                                                 {course.theoryProfessors && course.theoryProfessors.length > 0 && (
                                                     <div>
-                                                        <strong>Theory:</strong> {course.theoryProfessors.map(id => getProfessorName(id)).filter(name => name).join(', ')}
+                                                        <strong>Theory:</strong> {course.theoryProfessors.map(lecturerId => {
+                                                            const prof = getProfessorDetails(lecturerId);
+                                                            return prof ? prof.name : `ID: ${lecturerId}`;
+                                                        }).filter(name => name).join(', ')}
                                                     </div>
                                                 )}
                                                 {course.practicalProfessors && course.practicalProfessors.length > 0 && (
                                                     <div>
-                                                        <strong>Practical:</strong> {course.practicalProfessors.map(id => getProfessorName(id)).filter(name => name).join(', ')}
+                                                        <strong>Practical:</strong> {course.practicalProfessors.map(lecturerId => {
+                                                            const prof = getProfessorDetails(lecturerId);
+                                                            return prof ? prof.name : `ID: ${lecturerId}`;
+                                                        }).filter(name => name).join(', ')}
                                                     </div>
                                                 )}
                                             </td>
