@@ -42,9 +42,11 @@ export default function ViewProfessors() {
     email: '',
     phone: '',
     type: 'theory',
-    status: 'active'
+    status: 'active',
+    password: '' // Added password field
   });
   const [saving, setSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // For password visibility toggle
 
   const faculties = [
     'Computer Science',
@@ -189,8 +191,10 @@ export default function ViewProfessors() {
       email: '',
       phone: '',
       type: 'theory',
-      status: 'active'
+      status: 'active',
+      password: ''
     });
+    setShowPassword(false);
   };
 
   // ⭐ Start editing
@@ -203,7 +207,8 @@ export default function ViewProfessors() {
       email: professor.email || '',
       phone: professor.phone || '',
       type: professor.type || 'theory',
-      status: professor.status || 'active'
+      status: professor.status || 'active',
+      password: '' // Always empty for security
     });
   };
 
@@ -217,8 +222,10 @@ export default function ViewProfessors() {
       email: '',
       phone: '',
       type: 'theory',
-      status: 'active'
+      status: 'active',
+      password: ''
     });
+    setShowPassword(false);
   };
 
   // ⭐ Handle edit form input changes
@@ -230,7 +237,12 @@ export default function ViewProfessors() {
     }));
   };
 
-  // ⭐ Update professor
+  // ⭐ Toggle password visibility
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  // ⭐ Update professor with password
   const updateProfessor = async () => {
     if (!selectedProfessor) return;
 
@@ -250,7 +262,9 @@ export default function ViewProfessors() {
     setSaving(true);
     try {
       const professorRef = doc(db, "professors", selectedProfessor.id);
-      await updateDoc(professorRef, {
+      
+      // Prepare update data
+      const updateData = {
         name: editFormData.name.trim(),
         faculty: editFormData.faculty,
         specialization: editFormData.specialization,
@@ -259,20 +273,28 @@ export default function ViewProfessors() {
         type: editFormData.type,
         status: editFormData.status,
         updatedAt: new Date().toISOString()
-      });
+      };
+
+      // Only update password if a new one is provided
+      if (editFormData.password.trim()) {
+        updateData.password = editFormData.password.trim();
+        // Note: In a real app, you should hash the password here
+        // Example: updateData.password = await hashPassword(editFormData.password.trim());
+      }
+
+      await updateDoc(professorRef, updateData);
 
       // Update local state
       setProfessors(prev => prev.map(p => 
         p.id === selectedProfessor.id 
-          ? { ...p, ...editFormData, updatedAt: new Date().toISOString() }
+          ? { ...p, ...updateData }
           : p
       ));
 
       // Update selected professor
       setSelectedProfessor(prev => ({ 
         ...prev, 
-        ...editFormData,
-        updatedAt: new Date().toISOString() 
+        ...updateData
       }));
 
       setEditing(false);
@@ -784,6 +806,35 @@ export default function ViewProfessors() {
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                       </select>
+                    </div>
+
+                    {/* Password Field - Added */}
+                    <div className="form-group">
+                      <label className="form-label">
+                        <i className="fas fa-lock"></i>
+                        New Password
+                      </label>
+                      <div className="password-field">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          value={editFormData.password}
+                          onChange={handleEditChange}
+                          className="form-input"
+                          placeholder="Enter new password (leave blank to keep current)"
+                        />
+                        <button
+                          type="button"
+                          className="password-toggle"
+                          onClick={togglePasswordVisibility}
+                        >
+                          <i className={`fas fa-${showPassword ? "eye-slash" : "eye"}`}></i>
+                        </button>
+                      </div>
+                      <p className="form-hint">
+                        <i className="fas fa-info-circle"></i>
+                        Leave password field empty if you don't want to change it
+                      </p>
                     </div>
                   </div>
                 </div>

@@ -29,24 +29,24 @@ import ProfessorHome from "./ProfessorPages/ProfessorHome/ProfessorHome.jsx";
 import ViewTermCourses from "./ProfessorPages/ViewTermCourses/ViewTermCourses.jsx";
 import ProfessorSchedule from "./ProfessorPages/ProfessorSchedule/ProfessorSchedule.jsx";
 import ProfessorAttendanceLog from "./ProfessorPages/ProfessorAttendanceLog/ProfessorAttendanceLog.jsx";
-import QrCodeRoom from "./QR-Code-Room/QrCodeRoom.jsx";
+import QrCodeRoom from "./ProfessorPages/QR-Code-Room/QrCodeRoom.jsx";
 
 // Protected Route Component for Sub-Admin routes
 const ProtectedRoute = ({ children, requiredRole = 'sub-admin' }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return <div className="loading-container">Loading...</div>;
   }
-  
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  
+
   // Normalize role to lowercase for comparison
   const normalizedRole = user?.role?.toLowerCase();
   const normalizedRequiredRole = requiredRole.toLowerCase();
-  
+
   // Check user role if requiredRole is specified
   if (requiredRole && normalizedRole !== normalizedRequiredRole) {
     // Redirect to appropriate home based on role
@@ -57,24 +57,24 @@ const ProtectedRoute = ({ children, requiredRole = 'sub-admin' }) => {
     }
     return <Navigate to="/home" replace />;
   }
-  
+
   return children;
 };
 
 // Protected Route Component for Student routes
 const StudentProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return <div className="loading-container">Loading...</div>;
   }
-  
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  
+
   const normalizedRole = user?.role?.toLowerCase();
-  
+
   if (normalizedRole !== 'student') {
     if (normalizedRole === 'sub-admin' || normalizedRole === 'admin') {
       return <Navigate to="/home" replace />;
@@ -82,25 +82,25 @@ const StudentProtectedRoute = ({ children }) => {
       return <Navigate to="/professor/home" replace />;
     }
   }
-  
+
   return children;
 };
 
 // Protected Route Component for Professional users (both sub-admin and professional)
 const ProfessionalProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return <div className="loading-container">Loading...</div>;
   }
-  
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  
+
   const normalizedRole = user?.role?.toLowerCase();
   const allowedRoles = ['sub-admin', 'admin', 'professional'].map(r => r.toLowerCase());
-  
+
   if (!allowedRoles.includes(normalizedRole)) {
     if (normalizedRole === 'student') {
       return <Navigate to="/student/home" replace />;
@@ -109,29 +109,29 @@ const ProfessionalProtectedRoute = ({ children }) => {
     }
     return <Navigate to="/home" replace />;
   }
-  
+
   return children;
 };
 
 // Protected Route Component for Professor routes - UPDATED WITH DEBUG LOGS
 const ProfessorProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  
+
   console.log("ProfessorProtectedRoute - User:", user); // Debug log
-  
+
   if (loading) {
     return <div className="loading-container">Loading...</div>;
   }
-  
+
   if (!user) {
     console.log("No user, redirecting to login");
     return <Navigate to="/login" replace />;
   }
-  
+
   // Check for professor role (case-insensitive)
   const normalizedRole = user?.role?.toLowerCase();
   console.log("Checking role:", normalizedRole);
-  
+
   if (normalizedRole !== 'professor') {
     console.log("Not a professor, redirecting. Role was:", user?.role);
     if (normalizedRole === 'student') {
@@ -141,7 +141,7 @@ const ProfessorProtectedRoute = ({ children }) => {
     }
     return <Navigate to="/login" replace />;
   }
-  
+
   console.log("Professor authorized, rendering children");
   return children;
 };
@@ -149,11 +149,11 @@ const ProfessorProtectedRoute = ({ children }) => {
 // Public Route Component (only for non-authenticated users)
 const PublicRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) {
     return <div className="loading-container">Loading...</div>;
   }
-  
+
   // If user is already logged in, redirect to appropriate home
   if (user) {
     const normalizedRole = user?.role?.toLowerCase();
@@ -165,7 +165,7 @@ const PublicRoute = ({ children }) => {
       return <Navigate to="/home" replace />;
     }
   }
-  
+
   return children;
 };
 
@@ -176,10 +176,10 @@ function App() {
         <Routes>
           {/* Redirect root based on authentication status */}
           <Route path="/" element={<Navigate to="/login" replace />} />
-          
+
           {/* Login page - only accessible when not logged in */}
-          <Route 
-            path="/login" 
+          <Route
+            path="/login"
             element={
               <PublicRoute>
                 <div className="App">
@@ -189,13 +189,13 @@ function App() {
                   </main>
                 </div>
               </PublicRoute>
-            } 
+            }
           />
-          
+
           {/* ================== SUB-ADMIN/PROFESSIONAL ROUTES ================== */}
           {/* Home */}
-          <Route 
-            path="/home" 
+          <Route
+            path="/home"
             element={
               <ProfessionalProtectedRoute>
                 <div className="App">
@@ -205,12 +205,12 @@ function App() {
                   </main>
                 </div>
               </ProfessionalProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Dashboard */}
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
@@ -220,12 +220,12 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Student Management */}
-          <Route 
-            path="/register-students" 
+          <Route
+            path="/register-students"
             element={
               <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
@@ -235,11 +235,11 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/view-students" 
+
+          <Route
+            path="/view-students"
             element={
               <ProtectedRoute>
                 <div className="App">
@@ -249,12 +249,12 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Course Management */}
-          <Route 
-            path="/add-course" 
+          <Route
+            path="/add-course"
             element={
               <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
@@ -264,11 +264,11 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/view-courses" 
+
+          <Route
+            path="/view-courses"
             element={
               <ProtectedRoute>
                 <div className="App">
@@ -278,10 +278,10 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          <Route 
-            path="/manage-term-table" 
+          <Route
+            path="/manage-term-table"
             element={
               <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
@@ -291,12 +291,12 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Professor Management */}
-          <Route 
-            path="/add-professors" 
+          <Route
+            path="/add-professors"
             element={
               <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
@@ -306,11 +306,11 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/view-professors" 
+
+          <Route
+            path="/view-professors"
             element={
               <ProtectedRoute>
                 <div className="App">
@@ -320,12 +320,12 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Attendance Log */}
-          <Route 
-            path="/attendance-log" 
+          <Route
+            path="/attendance-log"
             element={
               <ProtectedRoute>
                 <div className="App">
@@ -335,12 +335,12 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* QR Code Room */}
-          <Route 
-            path="/qr-code-room" 
+          <Route
+            path="/qr-code-room"
             element={
               <ProfessionalProtectedRoute>
                 <div className="App">
@@ -350,13 +350,13 @@ function App() {
                   </main>
                 </div>
               </ProfessionalProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* ================== PROFESSOR ROUTES ================== */}
           {/* Professor Home */}
-          <Route 
-            path="/professor/home" 
+          <Route
+            path="/professor/home"
             element={
               <ProfessorProtectedRoute>
                 <div className="App">
@@ -366,12 +366,12 @@ function App() {
                   </main>
                 </div>
               </ProfessorProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Professor Courses - View assigned courses */}
-          <Route 
-            path="/professor/courses" 
+          <Route
+            path="/professor/courses"
             element={
               <ProfessorProtectedRoute>
                 <div className="App">
@@ -381,12 +381,12 @@ function App() {
                   </main>
                 </div>
               </ProfessorProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Professor Schedule */}
-          <Route 
-            path="/professor/schedule" 
+          <Route
+            path="/professor/schedule"
             element={
               <ProfessorProtectedRoute>
                 <div className="App">
@@ -396,12 +396,12 @@ function App() {
                   </main>
                 </div>
               </ProfessorProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Professor Attendance Log */}
-          <Route 
-            path="/professor/attendance-log" 
+          <Route
+            path="/professor/attendance-log"
             element={
               <ProfessorProtectedRoute>
                 <div className="App">
@@ -411,12 +411,25 @@ function App() {
                   </main>
                 </div>
               </ProfessorProtectedRoute>
-            } 
+            }
           />
-          
+          {/* Professor QR Code Gate */}
+          <Route
+            path="/professor/qr-code-gate"
+            element={
+              <ProfessorProtectedRoute>
+                <div className="App">
+                  <ProfessorNavbar />
+                  <main className="main-content">
+                    <QrCodeRoom />
+                  </main>
+                </div>
+              </ProfessorProtectedRoute>
+            }
+          />
           {/* Professor Profile */}
-          <Route 
-            path="/professor/profile" 
+          <Route
+            path="/professor/profile"
             element={
               <ProfessorProtectedRoute>
                 <div className="App">
@@ -429,12 +442,12 @@ function App() {
                   </main>
                 </div>
               </ProfessorProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Professor Settings */}
-          <Route 
-            path="/professor/settings" 
+          <Route
+            path="/professor/settings"
             element={
               <ProfessorProtectedRoute>
                 <div className="App">
@@ -447,12 +460,12 @@ function App() {
                   </main>
                 </div>
               </ProfessorProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Professor Support */}
-          <Route 
-            path="/professor/support" 
+          <Route
+            path="/professor/support"
             element={
               <ProfessorProtectedRoute>
                 <div className="App">
@@ -465,12 +478,12 @@ function App() {
                   </main>
                 </div>
               </ProfessorProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Support */}
-          <Route 
-            path="/support" 
+          <Route
+            path="/support"
             element={
               <ProtectedRoute>
                 <div className="App">
@@ -483,12 +496,12 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Profile */}
-          <Route 
-            path="/profile" 
+          <Route
+            path="/profile"
             element={
               <ProtectedRoute>
                 <div className="App">
@@ -501,12 +514,12 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Tickets */}
-          <Route 
-            path="/tickets" 
+          <Route
+            path="/tickets"
             element={
               <ProtectedRoute>
                 <div className="App">
@@ -519,12 +532,12 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Settings */}
-          <Route 
-            path="/settings" 
+          <Route
+            path="/settings"
             element={
               <ProtectedRoute>
                 <div className="App">
@@ -537,13 +550,13 @@ function App() {
                   </main>
                 </div>
               </ProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* ================== STUDENT ROUTES ================== */}
           {/* Student Home */}
-          <Route 
-            path="/student/home" 
+          <Route
+            path="/student/home"
             element={
               <StudentProtectedRoute>
                 <div className="App">
@@ -553,12 +566,12 @@ function App() {
                   </main>
                 </div>
               </StudentProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Student Profile */}
-          <Route 
-            path="/student/profile" 
+          <Route
+            path="/student/profile"
             element={
               <StudentProtectedRoute>
                 <div className="App">
@@ -571,12 +584,12 @@ function App() {
                   </main>
                 </div>
               </StudentProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Student Attendance Log (if needed) */}
-          <Route 
-            path="/student/attendance-log" 
+          <Route
+            path="/student/attendance-log"
             element={
               <StudentProtectedRoute>
                 <div className="App">
@@ -589,12 +602,12 @@ function App() {
                   </main>
                 </div>
               </StudentProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Student Tickets */}
-          <Route 
-            path="/student/tickets" 
+          <Route
+            path="/student/tickets"
             element={
               <StudentProtectedRoute>
                 <div className="App">
@@ -607,12 +620,12 @@ function App() {
                   </main>
                 </div>
               </StudentProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Student Settings */}
-          <Route 
-            path="/student/settings" 
+          <Route
+            path="/student/settings"
             element={
               <StudentProtectedRoute>
                 <div className="App">
@@ -625,12 +638,12 @@ function App() {
                   </main>
                 </div>
               </StudentProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Student Support */}
-          <Route 
-            path="/student/support" 
+          <Route
+            path="/student/support"
             element={
               <StudentProtectedRoute>
                 <div className="App">
@@ -643,12 +656,12 @@ function App() {
                   </main>
                 </div>
               </StudentProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* Student Course Management */}
-          <Route 
-            path="/student/view-courses" 
+          <Route
+            path="/student/view-courses"
             element={
               <StudentProtectedRoute>
                 <div className="App">
@@ -661,11 +674,11 @@ function App() {
                   </main>
                 </div>
               </StudentProtectedRoute>
-            } 
+            }
           />
-          
-          <Route 
-            path="/student/register-courses" 
+
+          <Route
+            path="/student/register-courses"
             element={
               <StudentProtectedRoute>
                 <div className="App">
@@ -678,12 +691,12 @@ function App() {
                   </main>
                 </div>
               </StudentProtectedRoute>
-            } 
+            }
           />
-          
+
           {/* 404 route - accessible without authentication */}
-          <Route 
-            path="*" 
+          <Route
+            path="*"
             element={
               <div className="App">
                 <NavbarLogin />
@@ -694,7 +707,7 @@ function App() {
                   </div>
                 </main>
               </div>
-            } 
+            }
           />
         </Routes>
       </Router>
