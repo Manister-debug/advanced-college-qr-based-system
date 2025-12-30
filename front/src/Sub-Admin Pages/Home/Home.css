@@ -1,4 +1,4 @@
-/* Home.css - Modern Gradient Theme matching AddProfessors.css */
+/* Home.css - Modern Dashboard with SubAdminNavbar Style */
 :root {
     --primary-blue: #13315c;
     --primary-dark: #0a1b35;
@@ -43,19 +43,72 @@
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Page Header - Similar to ViewCourses page */
+/* =========================================== */
+/* SubAdminNavbar Centering Styles */
+/* =========================================== */
+
+.home-page .subadmin-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-heavy);
+    display: flex;
+    justify-content: center; /* هذا يحقق المنتصف */
+    align-items: center;
+    height: 64px;
+    width: 100%;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* إذا كان النافبار يحتاج container داخلي */
+.home-page .subadmin-navbar .navbar-container {
+    max-width: 1400px;
+    width: 100%;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: center; /* أو space-between حسب تصميمك */
+    align-items: center;
+}
+
+/* إخفاء أي نافبار آخر غير SubAdminNavbar */
+.home-page nav:not(.subadmin-navbar),
+.home-page .navbar:not(.subadmin-navbar),
+.home-page header:not(.subadmin-navbar) {
+    display: none !important;
+}
+
+/* تأكد من أن SubAdminNavbar فقط هو الظاهر */
+.home-page .subadmin-navbar {
+    display: flex !important;
+    visibility: visible !important;
+}
+
+/* =========================================== */
+/* Main Content - Adjusted for Navbar */
+/* =========================================== */
+
+.home-page .main-content {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 84px; /* 64px للنافبار + 20px فراغ */
+}
+
+/* Page Header */
 .home-page .page-header {
     background: var(--gradient-primary);
+    color: var(--text-white);
     padding: 2.5rem 2rem;
-    border-radius: 0 0 24px 24px;
+    border-radius: 20px;
     margin-bottom: 2rem;
     box-shadow: var(--shadow-heavy);
     position: relative;
     overflow: hidden;
-    border-bottom: 4px solid var(--accent-blue);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    border: 2px solid var(--border-color);
 }
 
 .home-page .page-header::before {
@@ -97,13 +150,6 @@
     color: var(--text-white);
     font-weight: 600;
     font-size: 1.1rem;
-}
-
-/* Main Content */
-.home-page .main-content {
-    padding: 0 2rem 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
 }
 
 /* Stats Grid */
@@ -165,8 +211,185 @@
     letter-spacing: 0.5px;
 }
 
-/* Rest of the CSS remains the same as the previous version */
-/* ... (keep all the other CSS styles from the previous version) ... */
+/* Professors Section Styles - Added for recent professors */
+.home-page .professors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.home-page .professor-card {
+    background: var(--gradient-card);
+    border: 2px solid var(--border-color);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-medium);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.home-page .professor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-heavy);
+    border-color: var(--accent-blue);
+}
+
+.home-page .professor-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.home-page .professor-avatar {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--text-white);
+}
+
+.home-page .professor-info {
+    flex: 1;
+}
+
+.home-page .professor-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-white);
+    margin-bottom: 0.25rem;
+}
+
+.home-page .professor-faculty {
+    font-size: 0.85rem;
+    color: var(--text-lighter);
+    font-weight: 500;
+}
+
+.home-page .professor-type-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-white);
+}
+
+.home-page .professor-body {
+    margin-bottom: 1rem;
+}
+
+.home-page .professor-specialization {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.home-page .professor-specialization i {
+    color: var(--accent-blue);
+}
+
+.home-page .status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.home-page .status-indicator.active {
+    background: rgba(78, 205, 196, 0.2);
+    color: var(--success-color);
+}
+
+.home-page .status-indicator.inactive {
+    background: rgba(255, 107, 107, 0.2);
+    color: var(--error-color);
+}
+
+.home-page .status-indicator i {
+    font-size: 0.6rem;
+}
+
+.home-page .professor-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1rem;
+}
+
+.home-page .view-professor-link {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.home-page .view-professor-link:hover {
+    color: var(--text-white);
+    transform: translateX(-5px);
+}
+
+.home-page .no-data-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-lighter);
+}
+
+.home-page .no-data-message i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--text-lighter);
+}
+
+.home-page .no-data-message p {
+    font-size: 1.1rem;
+}
+
+.home-page .professor-details {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: block;
+    margin-top: 4px;
+}
+
+.home-page .attendance-detail {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: block;
+    margin-top: 4px;
+}
+
+/* Loading state for stats */
+.home-page .stat-card.loading {
+    opacity: 0.7;
+}
+
+.home-page .stat-card.loading .stat-value {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    width: 60px;
+    height: 30px;
+    display: inline-block;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.3; }
+}
 
 /* Section Styles */
 .home-page .section {
@@ -179,7 +402,6 @@
         opacity: 0;
         transform: translateY(20px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -459,25 +681,13 @@
     animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-}
-
 /* Footer */
 .home-page .page-footer {
     background: var(--gradient-primary);
     border-top: 4px solid var(--accent-blue);
     padding: 2rem;
     margin-top: 4rem;
-    border-radius: 24px 24px 0 0;
+    border-radius: 20px 20px 0 0;
     box-shadow: var(--shadow-heavy);
 }
 
@@ -589,12 +799,28 @@
     .home-page .main-pages-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    .home-page .professors-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
+    .home-page .subadmin-navbar {
+        height: 56px; /* أقل ارتفاع للشاشات الصغيرة */
+    }
+    
+    .home-page .subadmin-navbar .navbar-container {
+        padding: 0 1rem;
+    }
+    
+    .home-page .main-content {
+        padding: 1rem;
+        padding-top: 76px; /* 56px للنافبار + 20px فراغ */
+    }
+
     .home-page .page-header {
-        padding: 2rem 1.5rem;
-        border-radius: 0 0 20px 20px;
+        padding: 1.5rem;
         flex-direction: column;
         gap: 1rem;
         text-align: center;
@@ -604,10 +830,6 @@
         font-size: 1.8rem;
     }
 
-    .home-page .main-content {
-        padding: 0 1.5rem 1.5rem;
-    }
-
     .home-page .section {
         margin-bottom: 2rem;
     }
@@ -615,7 +837,8 @@
     .home-page .stats-grid,
     .home-page .quick-actions-grid,
     .home-page .main-pages-grid,
-    .home-page .status-container {
+    .home-page .status-container,
+    .home-page .professors-grid {
         grid-template-columns: 1fr;
     }
 
@@ -632,7 +855,7 @@
 
 @media (max-width: 480px) {
     .home-page .page-header {
-        padding: 1.5rem 1rem;
+        padding: 1rem;
     }
 
     .home-page .header-content h1 {

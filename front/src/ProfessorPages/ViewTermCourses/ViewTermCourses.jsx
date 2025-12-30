@@ -14,7 +14,6 @@ function ViewTermCourses() {
     const { user, getLecturerId } = useAuth();
     const [assignedCourses, setAssignedCourses] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedTerm, setSelectedTerm] = useState('fall2024');
     const [stats, setStats] = useState({
         totalCourses: 0,
         totalTheorySections: 0,
@@ -197,7 +196,7 @@ function ViewTermCourses() {
                         My Assigned Courses
                     </h1>
                     <p className="page-subtitle">
-                        {user?.name} | {user?.specialization} | Lecturer ID: {user?.LecturerID || user?.lecturerId} | Academic Term: {selectedTerm.toUpperCase()}
+                        {user?.name} | {user?.specialization} | Lecturer ID: {user?.LecturerID || user?.lecturerId}
                     </p>
                 </div>
                 <div className="user-info">
@@ -251,24 +250,7 @@ function ViewTermCourses() {
             </div>
 
             <div className="main-content">
-                {/* Term Selection */}
-                <div className="term-selector">
-                    <div className="form-group" style={{ maxWidth: '300px' }}>
-                        <label className="form-label">
-                            <i className="fas fa-calendar-alt"></i>
-                            Select Academic Term
-                        </label>
-                        <select
-                            className="form-input"
-                            value={selectedTerm}
-                            onChange={(e) => setSelectedTerm(e.target.value)}
-                        >
-                            <option value="fall2024">Fall 2024</option>
-                            <option value="spring2025">Spring 2025</option>
-                            <option value="summer2025">Summer 2025</option>
-                        </select>
-                    </div>
-                </div>
+                {/* تم حذف قسم Term Selector بالكامل */}
 
                 {/* Courses Table */}
                 <div className="courses-table-container">

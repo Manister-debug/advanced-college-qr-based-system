@@ -135,6 +135,33 @@
     gap: 0.375rem;
 }
 
+/* Course Weeks Info */
+.qr-code-room-page .course-weeks {
+    background: rgba(255, 193, 7, 0.1);
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #ca8a04;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+/* Week Ended Badge */
+.qr-code-room-page .week-ended-badge {
+    background: rgba(239, 68, 68, 0.1);
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-weight: 600;
+}
+
 /* QR Display */
 .qr-code-room-page .qr-display-container {
     display: flex;
@@ -224,12 +251,9 @@
 }
 
 @keyframes pulse {
-
-    0%,
-    100% {
+    0%, 100% {
         box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
     }
-
     50% {
         box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
     }
@@ -297,10 +321,15 @@
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
-.qr-code-room-page .btn-report:hover {
+.qr-code-room-page .btn-report:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
     background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.qr-code-room-page .btn-report:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* QR Controls */
@@ -347,7 +376,7 @@
 }
 
 .qr-code-room-page .btn-start-countdown:disabled {
-    opacity: 0.7;
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
@@ -388,7 +417,7 @@
 /* End Lecture Button */
 .qr-code-room-page .btn-end-lecture {
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1b 100%);
     color: white;
     border: none;
     border-radius: 0.5rem;
@@ -402,10 +431,15 @@
     box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
 }
 
-.qr-code-room-page .btn-end-lecture:hover {
+.qr-code-room-page .btn-end-lecture:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
-    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    background: linear-gradient(135deg, #b91c1b 0%, #991b1b 100%);
+}
+
+.qr-code-room-page .btn-end-lecture:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Lecture Ended Message */
@@ -494,6 +528,76 @@
     font-size: 0.8125rem;
 }
 
+/* Week and Course Selection */
+.qr-code-room-page .selection-filters {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(241, 245, 249, 0.8);
+    border-radius: 0.75rem;
+    border: 1px solid rgba(141, 169, 196, 0.3);
+}
+
+.qr-code-room-page .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.qr-code-room-page .filter-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #13315c;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.qr-code-room-page .filter-label i {
+    color: #8da9c4;
+    font-size: 0.875rem;
+}
+
+.qr-code-room-page .filter-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: white;
+    border: 1px solid rgba(141, 169, 196, 0.3);
+    border-radius: 0.5rem;
+    color: #0b2545;
+    font-size: 0.9375rem;
+    transition: all 0.2s ease;
+    outline: none;
+    cursor: pointer;
+}
+
+.qr-code-room-page .filter-select:focus {
+    border-color: #13315c;
+    box-shadow: 0 0 0 2px rgba(19, 49, 92, 0.1);
+}
+
+.qr-code-room-page .filter-select option {
+    background: white;
+    color: #0b2545;
+    padding: 0.5rem;
+}
+
+.qr-code-room-page .filter-select:disabled {
+    background: rgba(241, 245, 249, 0.5);
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* Filter Note */
+.qr-code-room-page .filter-note {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
 .qr-code-room-page .lecturer-badge {
     background: rgba(141, 169, 196, 0.1);
     padding: 0.5rem 0.875rem;
@@ -504,6 +608,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    align-self: center;
 }
 
 /* Manual Attendance Section */
@@ -562,6 +667,12 @@
     box-shadow: 0 0 0 2px rgba(19, 49, 92, 0.1);
 }
 
+.qr-code-room-page .input-wrapper input:disabled {
+    background: rgba(241, 245, 249, 0.5);
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
 .qr-code-room-page .btn-manual-attendance {
     padding: 0.75rem 1.5rem;
     background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
@@ -578,10 +689,15 @@
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
-.qr-code-room-page .btn-manual-attendance:hover {
+.qr-code-room-page .btn-manual-attendance:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
     background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+}
+
+.qr-code-room-page .btn-manual-attendance:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .qr-code-room-page .manual-note {
@@ -758,8 +874,36 @@
     color: #1d4ed8;
 }
 
-.qr-code-room-page .summary-card .rate {
-    color: #059669;
+/* Loading State */
+.qr-code-room-page .loading-container-full {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #13315c 0%, #0b2545 100%);
+    color: white;
+}
+
+.qr-code-room-page .loading-container-full .spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #8da9c4;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.qr-code-room-page .loading-container-full p {
+    font-size: 1.1rem;
+    color: #cbd5e1;
 }
 
 /* Responsive Design */
@@ -767,6 +911,13 @@
     .qr-code-room-page .content-container {
         grid-template-columns: 1fr;
         gap: 2rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .qr-code-room-page .selection-filters {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
 }
 
@@ -900,7 +1051,6 @@
         opacity: 0;
         transform: translateY(10px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);

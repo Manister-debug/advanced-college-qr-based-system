@@ -32,7 +32,7 @@ export default function ViewStudents() {
 
   const branches = [
     "Software Engineering",
-    "Artificial Intelligence (AI)",
+    "Artificial Intelligence",
     "Networking",
     "Robotics",
     "Cyber Security",
@@ -44,7 +44,7 @@ export default function ViewStudents() {
     "Web Development",
     "Mobile App Development",
     "Cloud Computing",
-    "Internet of Things (IoT)",
+    "Internet of Things",
   ];
 
   // Fetch students

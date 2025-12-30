@@ -1,19 +1,78 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/SubAdminNavbar/SubAdminNavbar.jsx";
 import { useAuth } from "../../context/AuthContext";
 import "./Home.css";
 import { Link } from "react-router-dom";
+import { db } from "../../firebase";
+import { 
+  collection, 
+  query,
+  where,
+  onSnapshot
+} from "firebase/firestore";
 
 const Home = () => {
   const { user, logout, getDisplayName } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [recentProfessors, setRecentProfessors] = useState([]);
+  const [totalTheoryProfessors, setTotalTheoryProfessors] = useState(0);
+  const [totalPracticalProfessors, setTotalPracticalProfessors] = useState(0);
 
-  // Statistics
-  const stats = [
-    { icon: "fas fa-user-graduate", label: "Total Students", value: "1,245", color: "#4ecdc4" },
-    { icon: "fas fa-chalkboard-teacher", label: "Total Professors", value: "89", color: "#ffd166" },
-    { icon: "fas fa-book", label: "Courses", value: "45", color: "#ff6b6b" },
-    { icon: "fas fa-calendar-check", label: "Today's Attendance", value: "94%", color: "#8da9c4" },
-  ];
+  // Fetch data from Firebase
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch professors with real-time updates
+        const professorsQuery = query(
+          collection(db, "users"), 
+          where("role", "in", ["Professor", "professor"])
+        );
+        
+        const unsubscribe = onSnapshot(professorsQuery, (snapshot) => {
+          let theoryCount = 0;
+          let practicalCount = 0;
+          const recent = [];
+          
+          snapshot.forEach((doc) => {
+            const data = doc.data();
+            
+            // Count by type
+            if (data.type === "theory") {
+              theoryCount++;
+            } else if (data.type === "practical") {
+              practicalCount++;
+            }
+            
+            // Get recent professors (last 5)
+            if (recent.length < 5) {
+              recent.push({
+                id: doc.id,
+                name: data.name,
+                faculty: data.faculty,
+                specialization: data.specialization,
+                type: data.type,
+                status: data.status,
+                createdAt: data.createdAt
+              });
+            }
+          });
+          
+          setTotalTheoryProfessors(theoryCount);
+          setTotalPracticalProfessors(practicalCount);
+          setRecentProfessors(recent);
+        });
+
+        // Cleanup subscription
+        return () => unsubscribe();
+      } catch (error) {
+        console.error("Error fetching data from Firebase:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Quick Actions
   const quickActions = [
@@ -23,7 +82,7 @@ const Home = () => {
     { icon: "fas fa-calendar-alt", label: "Attendance Log", link: "/attendance-log", color: "#0a1b35" },
   ];
 
-  // Main Pages
+  // Main Pages with professor-related pages
   const mainPages = [
     { icon: "fas fa-users", label: "View Students", description: "Manage and view all student records", link: "/view-students", gradient: "linear-gradient(135deg, #2a5a9c 0%, #1a4375 100%)" },
     { icon: "fas fa-chalkboard-teacher", label: "View Professors", description: "Manage and view all professor records", link: "/view-professors", gradient: "linear-gradient(135deg, #1a4375 0%, #13315c 100%)" },
@@ -31,42 +90,27 @@ const Home = () => {
     { icon: "fas fa-table", label: "Manage Term Table", description: "Manage academic schedules and classes", link: "/manage-term-table", gradient: "linear-gradient(135deg, #0a1b35 0%, #051224 100%)" },
   ];
 
+  // Professor type badge color
+  const getProfessorTypeBadge = (type) => {
+    switch(type) {
+      case "theory":
+        return { color: "#4ecdc4", label: "Theory" };
+      case "practical":
+        return { color: "#ffd166", label: "Practical" };
+      default:
+        return { color: "#8da9c4", label: type };
+    }
+  };
+
   return (
     <div className="home-page">
       <Navbar />
 
-      {/* Page Header - Similar to ViewCourses page */}
-      <div className="page-header">
-        <div className="header-content">
-          <h1>
-            <i className="fas fa-tachometer-alt"></i>
-            Dashboard
-          </h1>
-          <p className="page-subtitle">College Management System - Assistant Admin Overview</p>
-        </div>
-        <div className="user-info">
-          <span>Welcome, {getDisplayName()}</span>
-        </div>
-      </div>
-
       {/* Main Content */}
       <div className="main-content">
-        {/* Stats Section */}
-        <div className="section">
-          <div className="stats-grid">
-            {stats.map((stat, index) => (
-              <div key={index} className="stat-card">
-                <div className="stat-icon" style={{ color: stat.color }}>
-                  <i className={stat.icon}></i>
-                </div>
-                <div className="stat-content">
-                  <h3 className="stat-value">{stat.value}</h3>
-                  <p className="stat-label">{stat.label}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* تم حذف Welcome Header */}
+
+        {/* تم حذف Recent Professors Section بالكامل */}
 
         {/* Quick Actions */}
         <div className="section">
@@ -148,7 +192,7 @@ const Home = () => {
                 </div>
                 <div className="status-item">
                   <span className="status-label">Last Update:</span>
-                  <span className="status-value">1 minute ago</span>
+                  <span className="status-value">Just now</span>
                 </div>
               </div>
             </div>
@@ -167,12 +211,17 @@ const Home = () => {
                   </span>
                 </div>
                 <div className="status-item">
-                  <span className="status-label">Records:</span>
-                  <span className="status-value">12,458</span>
+                  <span className="status-label">Professors Data:</span>
+                  <span className="status-value">
+                    {recentProfessors.length > 0 ? "Data Loaded" : "No Data"}
+                  </span>
                 </div>
                 <div className="status-item">
-                  <span className="status-label">Size:</span>
-                  <span className="status-value">245 MB</span>
+                  <span className="status-label">Real-time Sync:</span>
+                  <span className="status-value status-active">
+                    <i className="fas fa-check-circle"></i>
+                    Active
+                  </span>
                 </div>
               </div>
             </div>

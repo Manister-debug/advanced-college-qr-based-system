@@ -1,15 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, where, onSnapshot, updateDoc, doc, getDoc, addDoc } from 'firebase/firestore';
+import {
+    collection,
+    query,
+    where,
+    onSnapshot,
+    updateDoc,
+    doc,
+    getDoc,
+    addDoc,
+    getDocs
+} from 'firebase/firestore';
 import { db } from '../../firebase.js';
-import { useAuth } from '../../context/AuthContext'; // أضف هذا السطر
+import { useAuth } from '../../context/AuthContext';
 import './QrCodeRoom.css';
-import ProfessorNavbar from '../../components/ProfessorNavbar/ProfessorNavbar'; // استبدل NavbarLogin
+import ProfessorNavbar from '../../components/ProfessorNavbar/ProfessorNavbar';
 
 const QrCodeRoom = () => {
     const navigate = useNavigate();
-    const { user } = useAuth(); // أضف هذا
-    
+    const { user, getLecturerId } = useAuth();
+
     // State variables
     const [qrCode, setQrCode] = useState(null);
     const [countdown, setCountdown] = useState(30);
@@ -18,66 +28,224 @@ const QrCodeRoom = () => {
     const [attendanceList, setAttendanceList] = useState([]);
     const [manualCollegeId, setManualCollegeId] = useState('');
     const [isLectureEnded, setIsLectureEnded] = useState(false);
-    
+
+    // New states for week and course selection
+    const [selectedWeek, setSelectedWeek] = useState('');
+    const [selectedCourse, setSelectedCourse] = useState('');
+    const [weeks, setWeeks] = useState([]);
+    const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [endedWeeks, setEndedWeeks] = useState([]); // Track ended weeks
+
     // استخدم بيانات المستخدم الفعلية
     const [roomInfo, setRoomInfo] = useState({
         roomNumber: '101',
-        courseName: 'Introduction to Computer Science',
-        courseCode: 'CS101',
-        lecturerName: user?.name || 'Professor', // استخدم اسم المستخدم
+        courseName: 'Select Course',
+        courseCode: '',
+        lecturerName: user?.name || 'Professor',
         section: 'Section A'
     });
 
-    // تحديث اسم المحاضر عندما يتوفر المستخدم
+    // Fetch courses assigned to the professor
     useEffect(() => {
-        if (user?.name) {
-            setRoomInfo(prev => ({
-                ...prev,
-                lecturerName: user.name
-            }));
-        }
-    }, [user]);
+        const fetchProfessorCourses = async () => {
+            if (!user || !getLecturerId()) return;
 
-    // Mock data - replace with actual Firestore queries
-    const mockAttendanceData = [
-        {
-            id: '1',
-            studentName: 'John Smith',
-            collegeId: '20210001',
-            scanTime: '10:05:23 AM',
-            timestamp: new Date(),
-            status: 'Present'
-        },
-        {
-            id: '2',
-            studentName: 'Emma Wilson',
-            collegeId: '20210002',
-            scanTime: '10:07:45 AM',
-            timestamp: new Date(),
-            status: 'Present'
-        }
-    ];
-
-    // Fetch QR code from Firestore (replace with actual implementation)
-    useEffect(() => {
-        const fetchQrCode = async () => {
             try {
-                // Replace with actual Firestore query
-                // const qrQuery = query(collection(db, 'qrcodes'), where('roomId', '==', 'roomId'));
-                // const qrSnapshot = await getDocs(qrQuery);
-                // if (!qrSnapshot.empty) {
-                //   setQrCode(qrSnapshot.docs[0].data().qrCodeUrl);
-                // }
+                const lecturerId = getLecturerId();
 
-                // Mock QR code data
-                setQrCode('https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=Room-101-CS101-Session-2024');
+                // Query all courses
+                const coursesRef = collection(db, "courses");
+                const snapshot = await getDocs(coursesRef);
+                const allCourses = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                // Filter courses where professor's LecturerID is in theoryProfessors or practicalProfessors
+                const professorCourses = allCourses.filter(course => {
+                    const theoryProfessors = Array.isArray(course.theoryProfessors) ? course.theoryProfessors : [];
+                    const practicalProfessors = Array.isArray(course.practicalProfessors) ? course.practicalProfessors : [];
+
+                    const isTheoryProfessor = theoryProfessors.includes(lecturerId);
+                    const isPracticalProfessor = practicalProfessors.includes(lecturerId);
+
+                    return isTheoryProfessor || isPracticalProfessor;
+                });
+
+                // Enrich course data with professor role
+                const enrichedCourses = professorCourses.map(course => {
+                    const theoryProfessors = Array.isArray(course.theoryProfessors) ? course.theoryProfessors : [];
+                    const practicalProfessors = Array.isArray(course.practicalProfessors) ? course.practicalProfessors : [];
+
+                    const isTheoryProf = theoryProfessors.includes(lecturerId);
+                    const isPracticalProf = practicalProfessors.includes(lecturerId);
+
+                    // Determine professor role for this course
+                    let professorRole = '';
+                    if (isTheoryProf && isPracticalProf) {
+                        professorRole = 'Both';
+                    } else if (isTheoryProf) {
+                        professorRole = 'Theory';
+                    } else if (isPracticalProf) {
+                        professorRole = 'Practical';
+                    }
+
+                    return {
+                        ...course,
+                        professorRole
+                    };
+                });
+
+                setCourses(enrichedCourses);
+
+                // Set default course if available
+                if (enrichedCourses.length > 0) {
+                    setSelectedCourse(enrichedCourses[0].id);
+                    // Update room info with first course
+                    const firstCourse = enrichedCourses[0];
+                    setRoomInfo(prev => ({
+                        ...prev,
+                        courseName: firstCourse.name,
+                        courseCode: firstCourse.code,
+                        section: firstCourse.section || 'Section A'
+                    }));
+                }
             } catch (error) {
-                console.error('Error fetching QR code:', error);
+                console.error('Error fetching professor courses:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchQrCode();
-    }, []);
+        fetchProfessorCourses();
+    }, [user, getLecturerId]);
+
+    // Generate weeks based on selected course
+    useEffect(() => {
+        if (selectedCourse && courses.length > 0) {
+            const selectedCourseData = courses.find(course => course.id === selectedCourse);
+            if (selectedCourseData) {
+                // Get number of weeks from course data
+                const courseWeeks = selectedCourseData.weeks || 16; // Default 16 weeks if not specified
+
+                // Generate weeks array
+                const generatedWeeks = Array.from({ length: courseWeeks }, (_, i) => ({
+                    id: `week${i + 1}`,
+                    weekNumber: i + 1,
+                    name: `Week ${i + 1}`,
+                    isCurrent: i === 0 // First week is current by default
+                }));
+
+                setWeeks(generatedWeeks);
+
+                // Set default week
+                if (generatedWeeks.length > 0) {
+                    const currentWeek = generatedWeeks.find(week => week.isCurrent === true) || generatedWeeks[0];
+                    setSelectedWeek(currentWeek.id);
+                }
+            }
+        } else {
+            // Reset weeks when no course is selected
+            setWeeks([]);
+            setSelectedWeek('');
+        }
+    }, [selectedCourse, courses]);
+
+    // Fetch ended weeks for this course
+    useEffect(() => {
+        if (!selectedCourse || !getLecturerId()) return;
+
+        const fetchEndedWeeks = async () => {
+            try {
+                // Query attendance sessions that are ended for this course and lecturer
+                const sessionsQuery = query(
+                    collection(db, 'attendance_sessions'),
+                    where('courseId', '==', selectedCourse),
+                    where('lecturerId', '==', getLecturerId()),
+                    where('isActive', '==', false)
+                );
+
+                const snapshot = await getDocs(sessionsQuery);
+                const endedWeeksList = snapshot.docs.map(doc => doc.data().weekId);
+                setEndedWeeks(endedWeeksList);
+            } catch (error) {
+                console.error('Error fetching ended weeks:', error);
+            }
+        };
+
+        fetchEndedWeeks();
+    }, [selectedCourse, getLecturerId]);
+
+    // Update room info when course changes
+    useEffect(() => {
+        if (selectedCourse && courses.length > 0) {
+            const selectedCourseData = courses.find(course => course.id === selectedCourse);
+            if (selectedCourseData) {
+                setRoomInfo(prev => ({
+                    ...prev,
+                    courseName: selectedCourseData.name,
+                    courseCode: selectedCourseData.code,
+                    section: selectedCourseData.section || 'Section A'
+                }));
+
+                // Generate new QR code with updated course and week info
+                updateQrCode(selectedCourseData);
+            }
+        }
+    }, [selectedCourse, selectedWeek, courses]);
+
+    // Update QR code when week or course changes
+    const updateQrCode = (courseData) => {
+        if (!selectedWeek || !courseData) return;
+
+        const weekData = weeks.find(week => week.id === selectedWeek);
+        const weekNumber = weekData ? weekData.weekNumber : '1';
+
+        // Generate QR code data with course and week info
+        const qrData = `Course:${courseData.code}|Week:${weekNumber}|Room:${roomInfo.roomNumber}|Lecturer:${user?.name}`;
+        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrData)}`;
+        setQrCode(qrCodeUrl);
+    };
+
+    // Fetch attendance data based on selected course and week
+    useEffect(() => {
+        if (!selectedCourse || !selectedWeek) return;
+
+        const fetchAttendanceData = async () => {
+            try {
+                const weekData = weeks.find(week => week.id === selectedWeek);
+                const courseData = courses.find(course => course.id === selectedCourse);
+
+                if (!weekData || !courseData) return;
+
+                // Query attendance for this course and week
+                const attendanceQuery = query(
+                    collection(db, 'attendance'),
+                    where('courseId', '==', selectedCourse),
+                    where('weekId', '==', selectedWeek),
+                    where('lecturerId', '==', getLecturerId())
+                );
+
+                const unsubscribe = onSnapshot(attendanceQuery, (snapshot) => {
+                    const attendanceData = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+
+                    // Sort by timestamp
+                    attendanceData.sort((a, b) => b.timestamp?.toDate() - a.timestamp?.toDate());
+                    setAttendanceList(attendanceData);
+                });
+
+                return unsubscribe;
+            } catch (error) {
+                console.error('Error fetching attendance data:', error);
+            }
+        };
+
+        fetchAttendanceData();
+    }, [selectedCourse, selectedWeek, weeks, courses, getLecturerId]);
 
     // Countdown timer effect
     useEffect(() => {
@@ -100,61 +268,200 @@ const QrCodeRoom = () => {
         };
     }, [isCountdownActive, countdown]);
 
-    // Fetch attendance data (replace with actual Firestore listener)
-    useEffect(() => {
-        // Mock data - replace with actual Firestore query
-        // const attendanceQuery = query(
-        //   collection(db, 'attendance'),
-        //   where('roomId', '==', 'roomId'),
-        //   where('date', '==', new Date().toISOString().split('T')[0]),
-        //   orderBy('timestamp', 'desc')
-        // );
+    const startCountdown = async () => {
+        if (!selectedCourse || !selectedWeek) {
+            alert('Please select both course and week before starting attendance');
+            return;
+        }
 
-        // const unsubscribe = onSnapshot(attendanceQuery, (snapshot) => {
-        //   const attendanceData = snapshot.docs.map(doc => ({
-        //     id: doc.id,
-        //     ...doc.data()
-        //   }));
-        //   setAttendanceList(attendanceData);
-        // });
+        // Check if this week is already ended
+        if (endedWeeks.includes(selectedWeek)) {
+            alert('This week has already been ended. Please select another week.');
+            return;
+        }
 
-        // return () => unsubscribe();
+        // Check if there's already an active session for this week
+        try {
+            const activeSessionQuery = query(
+                collection(db, 'attendance_sessions'),
+                where('courseId', '==', selectedCourse),
+                where('weekId', '==', selectedWeek),
+                where('lecturerId', '==', getLecturerId()),
+                where('isActive', '==', true)
+            );
 
-        setAttendanceList(mockAttendanceData);
-    }, []);
+            const snapshot = await getDocs(activeSessionQuery);
+            if (!snapshot.empty) {
+                alert('There is already an active attendance session for this week.');
+                return;
+            }
+        } catch (error) {
+            console.error('Error checking active sessions:', error);
+        }
 
-    const startCountdown = () => {
         setIsCountdownActive(true);
         setCountdown(30);
         setIsQrRedacted(false);
+
+        // Create attendance session in Firestore
+        try {
+            const attendanceSession = {
+                courseId: selectedCourse,
+                weekId: selectedWeek,
+                lecturerId: getLecturerId(),
+                roomNumber: roomInfo.roomNumber,
+                qrCode: qrCode,
+                isActive: true,
+                startTime: new Date(),
+                endTime: null,
+                createdAt: new Date()
+            };
+
+            await addDoc(collection(db, 'attendance_sessions'), attendanceSession);
+            console.log('Attendance session started');
+        } catch (error) {
+            console.error('Error creating attendance session:', error);
+        }
     };
 
     const redactQrCode = async () => {
         setIsQrRedacted(true);
         setIsCountdownActive(false);
 
-        // Update QR code status in Firestore
+        // Update attendance session in Firestore
         try {
-            // Replace with actual Firestore update
-            // const qrDocRef = doc(db, 'qrcodes', 'qrId');
-            // await updateDoc(qrDocRef, { isActive: false });
-            console.log('QR code redacted');
+            // Find the active session for this course and week
+            const sessionsQuery = query(
+                collection(db, 'attendance_sessions'),
+                where('courseId', '==', selectedCourse),
+                where('weekId', '==', selectedWeek),
+                where('lecturerId', '==', getLecturerId()),
+                where('isActive', '==', true)
+            );
+
+            const snapshot = await getDocs(sessionsQuery);
+            if (!snapshot.empty) {
+                const sessionDoc = snapshot.docs[0];
+                await updateDoc(doc(db, 'attendance_sessions', sessionDoc.id), {
+                    isActive: false,
+                    endTime: new Date()
+                });
+
+                // Update ended weeks list
+                setEndedWeeks(prev => [...prev, selectedWeek]);
+            }
+
+            console.log('QR code redacted and session ended');
         } catch (error) {
             console.error('Error redacting QR code:', error);
         }
     };
 
+    const checkIfStudentAlreadyAttended = async (studentId) => {
+        if (!selectedCourse || !selectedWeek) return false;
+
+        try {
+            // Query to check if student already attended this course and week
+            const attendanceQuery = query(
+                collection(db, 'attendance'),
+                where('studentId', '==', studentId),
+                where('courseId', '==', selectedCourse),
+                where('weekId', '==', selectedWeek),
+                where('lecturerId', '==', getLecturerId())
+            );
+
+            const snapshot = await getDocs(attendanceQuery);
+            return !snapshot.empty; // Returns true if student already attended
+        } catch (error) {
+            console.error('Error checking student attendance:', error);
+            return false;
+        }
+    };
+
+    const handleManualAttendance = async () => {
+        if (!manualCollegeId.trim()) {
+            alert('Please enter a College ID');
+            return;
+        }
+
+        if (!selectedCourse || !selectedWeek) {
+            alert('Please select course and week first');
+            return;
+        }
+
+        // Check if this week is already ended
+        if (endedWeeks.includes(selectedWeek)) {
+            alert('This week has already been ended. Cannot add manual attendance.');
+            return;
+        }
+
+        // Check if student already attended this week
+        const alreadyAttended = await checkIfStudentAlreadyAttended(manualCollegeId);
+        if (alreadyAttended) {
+            alert(`Student with ID ${manualCollegeId} has already attended this week.`);
+            return;
+        }
+
+        try {
+            // Check if student exists
+            const studentQuery = query(
+                collection(db, 'users'),
+                where('collegeId', '==', manualCollegeId),
+                where('role', '==', 'student')
+            );
+
+            const snapshot = await getDocs(studentQuery);
+            let studentName = 'Unknown Student';
+
+            if (!snapshot.empty) {
+                const studentData = snapshot.docs[0].data();
+                studentName = studentData.name || studentData.username || 'Unknown Student';
+            }
+
+            // Create manual attendance record
+            const newAttendance = {
+                studentId: manualCollegeId,
+                studentName: studentName,
+                collegeId: manualCollegeId,
+                courseId: selectedCourse,
+                weekId: selectedWeek,
+                lecturerId: getLecturerId(),
+                roomNumber: roomInfo.roomNumber,
+                status: 'Present-M',
+                timestamp: new Date(),
+                isManual: true,
+                scanTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                createdAt: new Date()
+            };
+
+            await addDoc(collection(db, 'attendance'), newAttendance);
+
+            // Update local state
+            setAttendanceList(prev => [newAttendance, ...prev]);
+            setManualCollegeId('');
+
+            alert(`Student ${studentName} (${manualCollegeId}) marked as Present-M`);
+        } catch (error) {
+            console.error('Error adding manual attendance:', error);
+            alert('Failed to add manual attendance. Please try again.');
+        }
+    };
+
     const handleReportProblem = async () => {
         try {
-            // Add report to Firestore
-            // await addDoc(collection(db, 'reports'), {
-            //   type: 'problem',
-            //   roomId: roomInfo.roomNumber,
-            //   course: roomInfo.courseCode,
-            //   timestamp: new Date(),
-            //   status: 'pending'
-            // });
+            const reportData = {
+                type: 'problem',
+                roomId: roomInfo.roomNumber,
+                course: selectedCourse,
+                week: selectedWeek,
+                lecturerId: getLecturerId(),
+                timestamp: new Date(),
+                status: 'pending',
+                description: 'Reported via QR Code Attendance System',
+                createdAt: new Date()
+            };
 
+            await addDoc(collection(db, 'reports'), reportData);
             alert('Problem reported successfully!');
         } catch (error) {
             console.error('Error reporting problem:', error);
@@ -162,38 +469,71 @@ const QrCodeRoom = () => {
         }
     };
 
-    const handleManualAttendance = () => {
-        if (!manualCollegeId.trim()) {
-            alert('Please enter a College ID');
+    const handleEndLecture = async () => {
+        if (!selectedCourse || !selectedWeek) {
+            alert('Please select course and week first');
             return;
         }
 
-        // In a real app, you would check if the student exists in the database
-        const newAttendance = {
-            id: Date.now().toString(),
-            studentName: 'Manually Added Student',
-            collegeId: manualCollegeId,
-            scanTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-            timestamp: new Date(),
-            status: 'Present-M'
-        };
+        if (window.confirm('Are you sure you want to end the lecture for this week? This will prevent any further attendance for this week.')) {
+            try {
+                // Mark the week as ended
+                const weekEndData = {
+                    courseId: selectedCourse,
+                    weekId: selectedWeek,
+                    lecturerId: getLecturerId(),
+                    endedAt: new Date(),
+                    endedBy: user?.name || 'Professor',
+                    roomNumber: roomInfo.roomNumber
+                };
 
-        setAttendanceList(prev => [newAttendance, ...prev]);
-        setManualCollegeId('');
-        
-        alert(`Student with ID ${manualCollegeId} marked as Present-M`);
-    };
+                await addDoc(collection(db, 'ended_weeks'), weekEndData);
+                
+                // Also ensure any active session is ended
+                const sessionsQuery = query(
+                    collection(db, 'attendance_sessions'),
+                    where('courseId', '==', selectedCourse),
+                    where('weekId', '==', selectedWeek),
+                    where('lecturerId', '==', getLecturerId()),
+                    where('isActive', '==', true)
+                );
 
-    const handleEndLecture = () => {
-        if (window.confirm('Are you sure you want to end the lecture? This will redirect you to the login page.')) {
-            setIsLectureEnded(true);
-            
-            // Redirect to login after 3 seconds
-            setTimeout(() => {
-                navigate('/login');
-            }, 3000);
+                const snapshot = await getDocs(sessionsQuery);
+                if (!snapshot.empty) {
+                    const sessionDoc = snapshot.docs[0];
+                    await updateDoc(doc(db, 'attendance_sessions', sessionDoc.id), {
+                        isActive: false,
+                        endTime: new Date()
+                    });
+                }
+
+                // Update ended weeks list
+                setEndedWeeks(prev => [...prev, selectedWeek]);
+                
+                alert(`Week ${selectedWeek} has been ended successfully. No further attendance can be taken for this week.`);
+                
+                // Reset UI
+                setIsQrRedacted(true);
+                setIsCountdownActive(false);
+                
+            } catch (error) {
+                console.error('Error ending lecture:', error);
+                alert('Failed to end lecture. Please try again.');
+            }
         }
     };
+
+    // Check if current week is ended
+    const isWeekEnded = endedWeeks.includes(selectedWeek);
+
+    if (loading) {
+        return (
+            <div className="loading-container-full">
+                <div className="spinner"></div>
+                <p>Loading courses and weeks...</p>
+            </div>
+        );
+    }
 
     // If lecture is ended, show the end message
     if (isLectureEnded) {
@@ -213,7 +553,6 @@ const QrCodeRoom = () => {
 
     return (
         <div className="qr-code-room-page">
-            {/* تمت إزالة NavbarLogin لأن App.jsx يقوم بإضافته */}
             <div className="page-header">
                 <div className="header-content">
                     <h1>
@@ -248,6 +587,18 @@ const QrCodeRoom = () => {
                                         <i className="fas fa-chalkboard-teacher"></i>
                                         {roomInfo.lecturerName}
                                     </span>
+                                    {selectedCourse && (
+                                        <span className="course-weeks">
+                                            <i className="fas fa-calendar-week"></i>
+                                            {weeks.length} Weeks
+                                        </span>
+                                    )}
+                                    {isWeekEnded && (
+                                        <span className="week-ended-badge">
+                                            <i className="fas fa-ban"></i>
+                                            Week Ended
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -264,7 +615,7 @@ const QrCodeRoom = () => {
                                 ) : (
                                     <div className="qr-placeholder">
                                         <i className="fas fa-qrcode"></i>
-                                        <p>Loading QR Code...</p>
+                                        <p>Select a course and week to generate QR Code</p>
                                     </div>
                                 )}
 
@@ -293,6 +644,7 @@ const QrCodeRoom = () => {
                                 <button
                                     className="btn-report"
                                     onClick={handleReportProblem}
+                                    disabled={isWeekEnded}
                                 >
                                     <i className="fas fa-flag"></i>
                                     Report
@@ -305,7 +657,7 @@ const QrCodeRoom = () => {
                                 <button
                                     className={`btn-start-countdown ${isCountdownActive ? 'active' : ''}`}
                                     onClick={startCountdown}
-                                    disabled={isCountdownActive}
+                                    disabled={isCountdownActive || !selectedCourse || !selectedWeek || isWeekEnded}
                                 >
                                     <i className="fas fa-play-circle"></i>
                                     {isCountdownActive ? 'Countdown Active' : 'Start 30-Second Countdown'}
@@ -324,9 +676,10 @@ const QrCodeRoom = () => {
                                 <button
                                     className="btn-end-lecture"
                                     onClick={handleEndLecture}
+                                    disabled={!selectedCourse || !selectedWeek || isWeekEnded}
                                 >
                                     <i className="fas fa-sign-out-alt"></i>
-                                    End Lecture
+                                    End Week
                                 </button>
                             </div>
                         </div>
@@ -346,6 +699,61 @@ const QrCodeRoom = () => {
                                     Room {roomInfo.roomNumber} - {roomInfo.courseCode} - {roomInfo.section}
                                 </p>
                             </div>
+
+                            {/* Week and Course Selection */}
+                            <div className="selection-filters">
+                                <div className="filter-group">
+                                    <label className="filter-label">
+                                        <i className="fas fa-calendar-week"></i>
+                                        Select Week
+                                    </label>
+                                    <select
+                                        className="filter-select"
+                                        value={selectedWeek}
+                                        onChange={(e) => setSelectedWeek(e.target.value)}
+                                        disabled={!selectedCourse}
+                                    >
+                                        <option value="">Select Week</option>
+                                        {weeks.map(week => {
+                                            const isEnded = endedWeeks.includes(week.id);
+                                            return (
+                                                <option 
+                                                    key={week.id} 
+                                                    value={week.id}
+                                                    style={isEnded ? { color: '#dc2626', fontStyle: 'italic' } : {}}
+                                                >
+                                                    {week.name}
+                                                    {week.isCurrent && ' (Current)'}
+                                                    {isEnded && ' - ENDED'}
+                                                </option>
+                                            );
+                                        })}
+                                    </select>
+                                    {selectedCourse && weeks.length === 0 && (
+                                        <p className="filter-note">No weeks available for this course</p>
+                                    )}
+                                </div>
+
+                                <div className="filter-group">
+                                    <label className="filter-label">
+                                        <i className="fas fa-book"></i>
+                                        Select Course
+                                    </label>
+                                    <select
+                                        className="filter-select"
+                                        value={selectedCourse}
+                                        onChange={(e) => setSelectedCourse(e.target.value)}
+                                    >
+                                        <option value="">Select Course</option>
+                                        {courses.map(course => (
+                                            <option key={course.id} value={course.id}>
+                                                {course.code} - {course.name} ({course.weeks || 16} weeks)
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
                             <div className="lecturer-badge">
                                 <i className="fas fa-user-tie"></i>
                                 {roomInfo.lecturerName}
@@ -367,11 +775,13 @@ const QrCodeRoom = () => {
                                         value={manualCollegeId}
                                         onChange={(e) => setManualCollegeId(e.target.value)}
                                         onKeyPress={(e) => e.key === 'Enter' && handleManualAttendance()}
+                                        disabled={!selectedCourse || !selectedWeek || isWeekEnded}
                                     />
                                 </div>
                                 <button
                                     className="btn-manual-attendance"
                                     onClick={handleManualAttendance}
+                                    disabled={!selectedCourse || !selectedWeek || isWeekEnded}
                                 >
                                     <i className="fas fa-check"></i>
                                     Mark as Present-M
@@ -379,7 +789,7 @@ const QrCodeRoom = () => {
                             </div>
                             <p className="manual-note">
                                 <i className="fas fa-info-circle"></i>
-                                Use this for students who couldn't scan the QR code
+                                {isWeekEnded ? 'This week has been ended. No further attendance can be added.' : 'Use this for students who couldn\'t scan the QR code'}
                             </p>
                         </div>
 
@@ -421,7 +831,7 @@ const QrCodeRoom = () => {
                                                 <td className="student-id">{student.collegeId}</td>
                                                 <td className="scan-time">
                                                     <i className="fas fa-clock"></i>
-                                                    {student.scanTime}
+                                                    {student.scanTime || student.timestamp?.toDate().toLocaleTimeString()}
                                                 </td>
                                                 <td>
                                                     <span className={`status-badge ${student.status === 'Present-M' ? 'present-manual' : 'present'}`}>
@@ -435,7 +845,9 @@ const QrCodeRoom = () => {
                                         <tr>
                                             <td colSpan="5" className="no-attendance">
                                                 <i className="fas fa-user-slash"></i>
-                                                No attendance records yet
+                                                {selectedCourse && selectedWeek ? 
+                                                    (isWeekEnded ? 'Week has been ended' : 'No attendance records for this week') 
+                                                    : 'Select course and week to view attendance'}
                                             </td>
                                         </tr>
                                     )}
@@ -450,15 +862,21 @@ const QrCodeRoom = () => {
                             </div>
                             <div className="summary-card">
                                 <h4>Manual Entries</h4>
-                                <p className="manual-count">{attendanceList.filter(s => s.status === 'Present-M').length}</p>
+                                <p className="manual-count">
+                                    {attendanceList.filter(s => s.status === 'Present-M').length}
+                                </p>
                             </div>
                             <div className="summary-card">
-                                <h4>Room Capacity</h4>
-                                <p className="capacity">40 Students</p>
+                                <h4>Week</h4>
+                                <p className="capacity">
+                                    {selectedWeek ? weeks.find(w => w.id === selectedWeek)?.name || 'N/A' : 'Not Selected'}
+                                </p>
                             </div>
                             <div className="summary-card">
-                                <h4>Attendance Rate</h4>
-                                <p className="rate">{(attendanceList.length / 40 * 100).toFixed(1)}%</p>
+                                <h4>Week Status</h4>
+                                <p className="rate" style={{ color: isWeekEnded ? '#dc2626' : '#059669' }}>
+                                    {isWeekEnded ? 'Ended' : 'Active'}
+                                </p>
                             </div>
                         </div>
                     </div>
