@@ -37,6 +37,7 @@ export default function ViewProfessors() {
   const [editing, setEditing] = useState(false);
   const [editFormData, setEditFormData] = useState({
     name: '',
+    username: '', // Added username field
     faculty: '',
     specialization: '',
     email: '',
@@ -47,6 +48,7 @@ export default function ViewProfessors() {
   });
   const [saving, setSaving] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // For password visibility toggle
+  const [showPasswordView, setShowPasswordView] = useState(false); // For viewing password in modal
 
   const faculties = [
     'Computer Science',
@@ -145,6 +147,7 @@ export default function ViewProfessors() {
       const term = searchTerm.toLowerCase();
       result = result.filter(prof =>
         prof.name?.toLowerCase().includes(term) ||
+        prof.username?.toLowerCase().includes(term) || // Added username search
         prof.faculty?.toLowerCase().includes(term) ||
         prof.specialization?.toLowerCase().includes(term) ||
         prof.email?.toLowerCase().includes(term) ||
@@ -174,10 +177,11 @@ export default function ViewProfessors() {
     setFilteredProfessors(result);
   }, [professors, filters, searchTerm, sortConfig]);
 
-  // ⭐ Open professor details
+  // ⭐ Open professor details modal
   const handleProfessorSelect = (professor) => {
     setSelectedProfessor(professor);
     setEditing(false);
+    setShowPasswordView(false); // Reset password visibility
   };
 
   // ⭐ Close modal
@@ -186,6 +190,7 @@ export default function ViewProfessors() {
     setEditing(false);
     setEditFormData({
       name: '',
+      username: '',
       faculty: '',
       specialization: '',
       email: '',
@@ -195,6 +200,7 @@ export default function ViewProfessors() {
       password: ''
     });
     setShowPassword(false);
+    setShowPasswordView(false);
   };
 
   // ⭐ Start editing
@@ -202,6 +208,7 @@ export default function ViewProfessors() {
     setEditing(true);
     setEditFormData({
       name: professor.name || '',
+      username: professor.username || '', // Added username
       faculty: professor.faculty || '',
       specialization: professor.specialization || '',
       email: professor.email || '',
@@ -217,6 +224,7 @@ export default function ViewProfessors() {
     setEditing(false);
     setEditFormData({
       name: '',
+      username: '',
       faculty: '',
       specialization: '',
       email: '',
@@ -237,9 +245,14 @@ export default function ViewProfessors() {
     }));
   };
 
-  // ⭐ Toggle password visibility
+  // ⭐ Toggle password visibility in edit mode
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
+  };
+
+  // ⭐ Toggle password visibility in view mode
+  const togglePasswordViewVisibility = () => {
+    setShowPasswordView(!showPasswordView);
   };
 
   // ⭐ Update professor with password
@@ -266,6 +279,7 @@ export default function ViewProfessors() {
       // Prepare update data
       const updateData = {
         name: editFormData.name.trim(),
+        username: editFormData.username.trim(), // Added username
         faculty: editFormData.faculty,
         specialization: editFormData.specialization,
         email: editFormData.email.toLowerCase().trim(),
@@ -278,8 +292,6 @@ export default function ViewProfessors() {
       // Only update password if a new one is provided
       if (editFormData.password.trim()) {
         updateData.password = editFormData.password.trim();
-        // Note: In a real app, you should hash the password here
-        // Example: updateData.password = await hashPassword(editFormData.password.trim());
       }
 
       await updateDoc(professorRef, updateData);
@@ -371,6 +383,26 @@ export default function ViewProfessors() {
     });
   };
 
+  // ⭐ Add username field to professor cards
+  useEffect(() => {
+    const cards = document.querySelectorAll('.professor-card-details');
+    cards.forEach(card => {
+      const hasUsername = card.querySelector('.username-field');
+      if (!hasUsername) {
+        const detailItem = document.createElement('div');
+        detailItem.className = 'detail-item username-field';
+        detailItem.innerHTML = `
+          <i className="fas fa-user-tag"></i>
+          <div className="detail-content">
+            <span className="detail-label">Username:</span>
+            <span className="detail-value username">${card.dataset.username || 'Not specified'}</span>
+          </div>
+        `;
+        card.insertBefore(detailItem, card.children[1]);
+      }
+    });
+  }, [filteredProfessors]);
+
   return (
     <div className="view-professors-page">
       <div className="page-header">
@@ -420,7 +452,7 @@ export default function ViewProfessors() {
               <i className="fas fa-search"></i>
               <input
                 type="text"
-                placeholder="Search by name, faculty, specialization, email..."
+                placeholder="Search by name, username, faculty, specialization, email..."
                 value={searchTerm}
                 onChange={handleSearch}
                 className="search-input"
@@ -593,7 +625,15 @@ export default function ViewProfessors() {
                       </div>
                     </div>
 
-                    <div className="professor-card-details">
+                    <div className="professor-card-details" data-username={professor.username || 'Not specified'}>
+                      <div className="detail-item">
+                        <i className="fas fa-user-tag"></i>
+                        <div className="detail-content">
+                          <span className="detail-label">Username:</span>
+                          <span className="detail-value username">{professor.username || 'Not specified'}</span>
+                        </div>
+                      </div>
+                      
                       <div className="detail-item">
                         <i className="fas fa-university"></i>
                         <div className="detail-content">
@@ -606,7 +646,7 @@ export default function ViewProfessors() {
                         <i className="fas fa-graduation-cap"></i>
                         <div className="detail-content">
                           <span className="detail-label">Specialization:</span>
-                          <span className="detail-value">{professor.specialization}</span>
+                          <span className="detail-value">{professor.specialization || 'Not specified'}</span>
                         </div>
                       </div>
                       
@@ -657,7 +697,7 @@ export default function ViewProfessors() {
         </div>
       </div>
 
-      {/* Details/Edit Modal */}
+      {/* Details/Edit Modal - Popup Window */}
       {selectedProfessor && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()}>
@@ -701,6 +741,21 @@ export default function ViewProfessors() {
                         className="form-input"
                         placeholder="Enter full name"
                         required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">
+                        <i className="fas fa-user-tag"></i>
+                        Username
+                      </label>
+                      <input
+                        type="text"
+                        name="username"
+                        value={editFormData.username}
+                        onChange={handleEditChange}
+                        className="form-input"
+                        placeholder="Enter username"
                       />
                     </div>
 
@@ -808,7 +863,7 @@ export default function ViewProfessors() {
                       </select>
                     </div>
 
-                    {/* Password Field - Added */}
+                    {/* Password Field */}
                     <div className="form-group">
                       <label className="form-label">
                         <i className="fas fa-lock"></i>
@@ -839,7 +894,7 @@ export default function ViewProfessors() {
                   </div>
                 </div>
               ) : (
-                // View Mode
+                // View Mode with ALL Details including Username and Password
                 <>
                   <div className="detail-section">
                     <h3>
@@ -852,20 +907,26 @@ export default function ViewProfessors() {
                         <span className="detail-value">{selectedProfessor.name}</span>
                       </div>
                       <div className="detail-item">
+                        <span className="detail-label">Username:</span>
+                        <span className="detail-value username-value">{selectedProfessor.username || 'Not specified'}</span>
+                      </div>
+                      <div className="detail-item">
                         <span className="detail-label">Faculty:</span>
                         <span className="detail-value">{selectedProfessor.faculty || 'Not specified'}</span>
                       </div>
                       <div className="detail-item">
                         <span className="detail-label">Specialization:</span>
-                        <span className="detail-value">{selectedProfessor.specialization}</span>
+                        <span className="detail-value">{selectedProfessor.specialization || 'Not specified'}</span>
                       </div>
                       <div className="detail-item">
                         <span className="detail-label">Type:</span>
-                        <span className="detail-value">{selectedProfessor.type === 'theory' ? 'Theory' : 'Practical'}</span>
+                        <span className="detail-value">{selectedProfessor.type === 'theory' ? 'Theory Professor' : 'Practical Engineer'}</span>
                       </div>
                       <div className="detail-item">
                         <span className="detail-label">Status:</span>
-                        <span className="detail-value">{selectedProfessor.status === 'active' ? 'Active' : 'Inactive'}</span>
+                        <span className="detail-value status-value">
+                          {selectedProfessor.status === 'active' ? 'Active' : 'Inactive'}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -883,6 +944,31 @@ export default function ViewProfessors() {
                       <div className="detail-item">
                         <span className="detail-label">Phone Number:</span>
                         <span className="detail-value phone">{selectedProfessor.phone}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="detail-section">
+                    <h3>
+                      <i className="fas fa-lock"></i>
+                      Account Information
+                    </h3>
+                    <div className="detail-grid">
+                      <div className="detail-item">
+                        <span className="detail-label">Password:</span>
+                        <div className="password-display-field">
+                          <span className="detail-value password-value">
+                            {showPasswordView ? selectedProfessor.password : '••••••••'}
+                          </span>
+                          <button
+                            type="button"
+                            className="password-view-toggle"
+                            onClick={togglePasswordViewVisibility}
+                          >
+                            <i className={`fas fa-${showPasswordView ? "eye-slash" : "eye"}`}></i>
+                            {showPasswordView ? ' Hide' : ' Show'}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
