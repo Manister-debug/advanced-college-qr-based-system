@@ -1,119 +1,187 @@
-/* ManageTermTable.css */
+/* ManageTermTable.css - Modern Gradient Theme from #13315c matching AddProfessors */
+:root {
+  --primary-blue: #13315c;
+  --primary-dark: #0a1b35;
+  --primary-light: #1a4375;
+  --accent-blue: #2a5a9c;
+  --success-green: #4caf50;
+  --warning-yellow: #ffb300;
+  --error-red: #f44336;
+  --white: #ffffff;
+  --text-white: #ffffff;
+  --text-light: rgba(255, 255, 255, 0.9);
+  --text-lighter: rgba(255, 255, 255, 0.7);
+  --gradient-primary: linear-gradient(135deg, #13315c 0%, #0a1b35 100%);
+  --gradient-secondary: linear-gradient(135deg, #1a4375 0%, #13315c 100%);
+  --gradient-dark: linear-gradient(135deg, #0a1b35 0%, #051224 100%);
+  --gradient-card: linear-gradient(135deg, #1a3a6c 0%, #0d2a55 100%);
+  --gradient-theory: linear-gradient(135deg, #2a5a9c 0%, #1a4375 100%);
+  --gradient-practical: linear-gradient(135deg, #1a4375 0%, #13315c 100%);
+  --gradient-mixed: linear-gradient(135deg, #ffb300 0%, #ff8f00 100%);
+  --shadow-light: 0 4px 12px rgba(19, 49, 92, 0.15);
+  --shadow-medium: 0 8px 24px rgba(19, 49, 92, 0.2);
+  --shadow-heavy: 0 16px 48px rgba(19, 49, 92, 0.25);
+  --border-color: rgba(42, 90, 156, 0.3);
+  --input-bg: rgba(10, 27, 53, 0.9);
+}
+
+/* Base Styles */
 .manage-term-table-page {
   min-height: 100vh;
-  background: 
-    radial-gradient(ellipse at 20% 20%, rgba(141, 169, 196, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(19, 52, 116, 0.08) 0%, transparent 50%),
-    linear-gradient(180deg, #0b2545 0%, #13315c 100%);
-  color: #eef4ed;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--gradient-dark);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--text-white);
 }
 
 .manage-term-table-page * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Header Styles */
+/* Page Header */
 .manage-term-table-page .page-header {
-  background: rgba(11, 37, 69, 0.95);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
-  padding: 0.875rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
+  background: var(--gradient-primary);
+  color: var(--text-white);
+  padding: 2.5rem 2rem;
+  border-radius: 0 0 24px 24px;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-heavy);
+  position: relative;
+  overflow: hidden;
+  border-bottom: 4px solid var(--accent-blue);
+}
+
+.manage-term-table-page .page-header::before {
+  content: '';
+  position: absolute;
   top: 0;
-  z-index: 100;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(26, 67, 117, 0.2) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .manage-term-table-page .header-content h1 {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 2.25rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
-  color: #eef4ed;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-white);
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .manage-term-table-page .page-subtitle {
-  color: #8da9c4;
-  font-size: 0.8125rem;
+  color: var(--text-light);
+  font-size: 1.1rem;
+  font-weight: 400;
+  max-width: 600px;
+  line-height: 1.6;
 }
 
 .manage-term-table-page .user-info {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .manage-term-table-page .week-selector {
-  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background: rgba(141, 169, 196, 0.1);
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.375rem;
-  border: 1px solid rgba(141, 169, 196, 0.3);
+  gap: 0.75rem;
+  color: var(--text-white);
+  font-weight: 600;
 }
 
 .manage-term-table-page .week-select {
   background: transparent;
   border: none;
-  color: #eef4ed;
-  font-size: 0.875rem;
+  color: var(--text-white);
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   outline: none;
+  min-width: 120px;
 }
 
 .manage-term-table-page .week-select option {
-  background: #0b2545;
-  color: #eef4ed;
+  background: var(--primary-dark);
+  color: var(--text-white);
+  padding: 1rem;
 }
 
 /* Main Content */
 .manage-term-table-page .main-content {
-  padding: 1.5rem;
+  padding: 0 2rem 2rem;
   max-width: 1800px;
   margin: 0 auto;
 }
 
+/* Term Table Container */
 .manage-term-table-page .term-table-container {
-  background: rgba(19, 50, 92, 0.5);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(141, 169, 196, 0.2);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  background: var(--gradient-card);
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: var(--shadow-heavy);
+  border: 2px solid var(--border-color);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.6s ease;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Term Table Header */
 .manage-term-table-page .term-table-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .manage-term-table-page .view-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #eef4ed;
+  font-size: 1.75rem;
+  color: var(--text-white);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1.25rem;
+  font-weight: 800;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.manage-term-table-page .view-title i {
+  color: var(--accent-blue);
+  font-size: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 /* Layout */
 .manage-term-table-page .term-table-layout {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 1.5rem;
-  min-height: 600px;
+  grid-template-columns: 350px 1fr;
+  gap: 2rem;
+  min-height: 700px;
 }
 
 @media (max-width: 1200px) {
@@ -125,214 +193,251 @@
 /* Courses Sidebar */
 .manage-term-table-page .courses-sidebar {
   position: sticky;
-  top: 100px;
+  top: 120px;
   height: fit-content;
-  max-height: calc(100vh - 150px);
+  max-height: calc(100vh - 180px);
   overflow-y: auto;
 }
 
 .manage-term-table-page .courses-card {
-  background: rgba(11, 37, 69, 0.8);
-  border: 1px solid rgba(141, 169, 196, 0.2);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
+  background: rgba(10, 27, 53, 0.9);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
   backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-medium);
 }
 
 .manage-term-table-page .courses-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #eef4ed;
-  margin-bottom: 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-white);
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.manage-term-table-page .courses-title i {
+  color: var(--accent-blue);
+  font-size: 1.4rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 /* Courses List */
 .manage-term-table-page .courses-list {
-  max-height: 500px;
+  max-height: 600px;
   overflow-y: auto;
-  margin: 1rem 0;
-  padding-right: 0.5rem;
+  margin: 1.5rem 0;
+  padding-right: 0.75rem;
 }
 
 .manage-term-table-page .course-section-item {
-  background: rgba(19, 50, 92, 0.5);
-  border: 1px solid rgba(141, 169, 196, 0.2);
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin-bottom: 0.75rem;
+  background: rgba(10, 27, 53, 0.7);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
   cursor: move;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   user-select: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .manage-term-table-page .course-section-item:hover {
-  border-color: #8da9c4;
-  background: rgba(19, 50, 92, 0.7);
-  transform: translateX(4px);
+  border-color: var(--accent-blue);
+  background: rgba(10, 27, 53, 0.9);
+  transform: translateX(8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
 .manage-term-table-page .course-section-item.dragging {
   opacity: 0.5;
+  transform: rotate(5deg);
 }
 
 .manage-term-table-page .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .manage-term-table-page .section-type-badge {
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  background: var(--gradient-theory);
+  color: var(--text-white);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.manage-term-table-page .section-type-badge.practical {
+  background: var(--gradient-practical);
 }
 
 .manage-term-table-page .section-number {
-  background: rgba(141, 169, 196, 0.2);
-  color: #8da9c4;
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-white);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  border: 2px solid var(--border-color);
 }
 
 .manage-term-table-page .section-details {
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .manage-term-table-page .course-code {
-  font-weight: 600;
-  color: #eef4ed;
-  font-size: 1rem;
-  margin-bottom: 0.25rem;
+  font-weight: 800;
+  color: var(--text-white);
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .manage-term-table-page .course-name {
-  color: #8da9c4;
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-  line-height: 1.4;
+  color: var(--text-lighter);
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
 }
 
 .manage-term-table-page .section-meta {
   display: flex;
-  gap: 1rem;
-  font-size: 0.75rem;
-  color: #8da9c4;
+  gap: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-lighter);
+  font-weight: 600;
 }
 
 .manage-term-table-page .section-meta span {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-}
-
-.manage-term-table-page .section-actions {
-  display: flex;
-  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .manage-term-table-page .drag-hint {
-  font-size: 0.75rem;
-  color: #8da9c4;
+  font-size: 0.9rem;
+  color: var(--text-lighter);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  opacity: 0.7;
+  gap: 0.75rem;
+  font-weight: 500;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 2px dashed var(--border-color);
+}
+
+.manage-term-table-page .drag-hint i {
+  color: var(--accent-blue);
+  font-size: 1.2rem;
 }
 
 /* Schedule Grid */
 .manage-term-table-page .schedule-grid {
-  background: rgba(11, 37, 69, 0.6);
-  border: 1px solid rgba(141, 169, 196, 0.2);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
+  background: rgba(10, 27, 53, 0.7);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2rem;
   overflow-x: auto;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Day Tabs */
 .manage-term-table-page .day-tabs {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
-  padding-bottom: 1rem;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1.5rem;
 }
 
 .manage-term-table-page .day-tab {
-  padding: 0.75rem 1.25rem;
-  background: rgba(141, 169, 196, 0.1);
-  border: 1px solid rgba(141, 169, 196, 0.2);
-  border-radius: 0.5rem;
-  color: #8da9c4;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 1rem 1.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--border-color);
+  border-radius: 14px;
+  color: var(--text-lighter);
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .manage-term-table-page .day-tab:hover {
-  background: rgba(141, 169, 196, 0.15);
-  border-color: #8da9c4;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-blue);
+  color: var(--text-white);
 }
 
 .manage-term-table-page .day-tab.active {
-  background: #8da9c4;
-  color: #0b2545;
-  border-color: #8da9c4;
-  font-weight: 600;
+  background: var(--gradient-primary);
+  color: var(--text-white);
+  border-color: var(--accent-blue);
+  font-weight: 800;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(19, 49, 92, 0.3);
 }
 
 /* Time Grid Container */
 .manage-term-table-page .time-grid-container {
   display: grid;
-  grid-template-columns: 80px 1fr;
+  grid-template-columns: 100px 1fr;
   gap: 0;
-  min-height: 400px;
+  min-height: 500px;
+  background: rgba(10, 27, 53, 0.5);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid var(--border-color);
 }
 
 /* Time Labels */
 .manage-term-table-page .time-labels {
-  border-right: 1px solid rgba(141, 169, 196, 0.2);
+  border-right: 2px solid var(--border-color);
 }
 
 .manage-term-table-page .time-label-header {
-  padding: 1rem;
-  background: rgba(19, 50, 92, 0.8);
-  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
-  font-weight: 600;
-  color: #8da9c4;
+  padding: 1.5rem;
+  background: rgba(10, 27, 53, 0.9);
+  border-bottom: 2px solid var(--border-color);
+  font-weight: 800;
+  color: var(--text-white);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  height: 60px;
+  gap: 0.75rem;
+  height: 80px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .manage-term-table-page .time-label {
-  padding: 1rem;
-  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
-  font-size: 0.875rem;
-  color: #8da9c4;
-  height: 40px;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 1rem;
+  color: var(--text-white);
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(11, 37, 69, 0.5);
+  background: rgba(10, 27, 53, 0.7);
+  font-weight: 700;
 }
 
 /* Day Columns */
@@ -344,8 +449,9 @@
 }
 
 .manage-term-table-page .day-column {
-  border-right: 1px solid rgba(141, 169, 196, 0.2);
+  border-right: 2px solid var(--border-color);
   position: relative;
+  background: rgba(10, 27, 53, 0.6);
 }
 
 .manage-term-table-page .day-column:last-child {
@@ -353,27 +459,30 @@
 }
 
 .manage-term-table-page .day-header {
-  padding: 1rem;
-  background: rgba(19, 50, 92, 0.8);
-  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
-  height: 60px;
+  padding: 1.5rem;
+  background: rgba(10, 27, 53, 0.9);
+  border-bottom: 2px solid var(--border-color);
+  height: 80px;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.5rem;
 }
 
 .manage-term-table-page .day-header h4 {
-  font-size: 0.95rem;
-  color: #eef4ed;
+  font-size: 1.1rem;
+  color: var(--text-white);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   margin: 0;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .manage-term-table-page .section-count {
-  font-size: 0.75rem;
-  color: #8da9c4;
+  font-size: 0.9rem;
+  color: var(--text-lighter);
+  font-weight: 600;
 }
 
 /* Time Slots */
@@ -382,20 +491,20 @@
 }
 
 .manage-term-table-page .time-slot {
-  height: 40px;
-  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+  height: 60px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
-  transition: all 0.2s ease;
-  background: rgba(11, 37, 69, 0.3);
+  transition: all 0.3s ease;
+  background: rgba(10, 27, 53, 0.5);
 }
 
 .manage-term-table-page .time-slot:hover {
-  background: rgba(141, 169, 196, 0.1);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .manage-term-table-page .time-slot.drag-over {
-  background: rgba(78, 205, 196, 0.2);
-  border: 2px dashed #4ecdc4;
+  background: rgba(76, 175, 80, 0.2);
+  border: 2px dashed var(--success-green);
 }
 
 .manage-term-table-page .time-slot.occupied {
@@ -403,29 +512,43 @@
 }
 
 .manage-term-table-page .time-slot.section-start {
-  border-top: 2px solid rgba(141, 169, 196, 0.3);
+  border-top: 2px solid var(--border-color);
 }
 
 /* Scheduled Section */
 .manage-term-table-page .scheduled-section {
   position: absolute;
-  left: 2px;
-  right: 2px;
+  left: 4px;
+  right: 4px;
   top: 0;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
+  border-radius: 14px;
+  padding: 1rem;
   z-index: 2;
   cursor: move;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .manage-term-table-page .scheduled-section:hover {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
   z-index: 3;
+  transform: translateY(-2px);
+}
+
+.manage-term-table-page .scheduled-section.theory {
+  background: var(--gradient-theory);
+}
+
+.manage-term-table-page .scheduled-section.practical {
+  background: var(--gradient-practical);
+}
+
+.manage-term-table-page .scheduled-section.mixed {
+  background: var(--gradient-mixed);
 }
 
 .manage-term-table-page .section-info {
@@ -436,87 +559,100 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .manage-term-table-page .section-code-type strong {
-  color: #0b2545;
-  font-size: 1rem;
+  color: var(--text-white);
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .manage-term-table-page .section-type-tag {
   background: rgba(255, 255, 255, 0.9);
-  color: #0b2545;
-  padding: 0.125rem 0.5rem;
-  border-radius: 10px;
-  font-size: 0.7rem;
-  font-weight: 600;
+  color: var(--primary-dark);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .manage-term-table-page .section-time {
-  font-size: 0.85rem;
-  color: #0b2545;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+  color: var(--text-white);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .manage-term-table-page .section-professor,
 .manage-term-table-page .section-duration {
-  font-size: 0.75rem;
-  color: #0b2545;
+  font-size: 0.85rem;
+  color: var(--text-white);
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
   opacity: 0.9;
+  font-weight: 600;
 }
 
 .manage-term-table-page .section-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 0.25rem;
-  margin-top: 0.5rem;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }
 
 .manage-term-table-page .section-action-btn {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   background: rgba(255, 255, 255, 0.9);
   transition: all 0.2s ease;
+  color: var(--primary-dark);
 }
 
 .manage-term-table-page .section-action-btn.edit:hover {
-  background: #ffd166;
-  color: #0b2545;
+  background: var(--warning-yellow);
+  border-color: var(--warning-yellow);
+  color: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
 .manage-term-table-page .section-action-btn.delete:hover {
-  background: #ff6b6b;
-  color: white;
+  background: var(--error-red);
+  border-color: var(--error-red);
+  color: var(--text-white);
+  transform: translateY(-2px);
 }
 
 .manage-term-table-page .resize-handle {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: ns-resize;
-  font-size: 0.75rem;
-  color: #0b2545;
+  font-size: 0.9rem;
+  color: var(--primary-dark);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .manage-term-table-page .resize-handle:hover {
-  background: #8da9c4;
-  color: white;
+  background: var(--accent-blue);
+  color: var(--text-white);
+  border-color: var(--accent-blue);
 }
 
 /* Drop Hint */
@@ -526,10 +662,15 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #8da9c4;
-  font-size: 0.75rem;
+  color: var(--accent-blue);
+  font-size: 0.9rem;
   text-align: center;
-  opacity: 0.7;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 2px dashed var(--accent-blue);
 }
 
 .manage-term-table-page .time-slot:hover:not(.occupied) .drop-hint {
@@ -538,202 +679,250 @@
 
 /* Legend */
 .manage-term-table-page .schedule-legend {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: rgba(11, 37, 69, 0.5);
-  border: 1px solid rgba(141, 169, 196, 0.2);
-  border-radius: 0.5rem;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(10, 27, 53, 0.7);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow-medium);
 }
 
 .manage-term-table-page .legend-title {
-  font-weight: 600;
-  color: #8da9c4;
-  margin-bottom: 0.75rem;
+  font-weight: 800;
+  color: var(--text-white);
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .manage-term-table-page .legend-items {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   flex-wrap: wrap;
 }
 
 .manage-term-table-page .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  color: #8da9c4;
+  gap: 0.75rem;
+  font-size: 1rem;
+  color: var(--text-white);
+  font-weight: 600;
 }
 
 .manage-term-table-page .legend-color {
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .manage-term-table-page .legend-color.theory {
-  background: rgba(141, 169, 196, 0.8);
-  border: 1px solid rgba(141, 169, 196, 1);
+  background: var(--gradient-theory);
 }
 
 .manage-term-table-page .legend-color.practical {
-  background: rgba(78, 205, 196, 0.8);
-  border: 1px solid rgba(78, 205, 196, 1);
+  background: var(--gradient-practical);
 }
 
 .manage-term-table-page .legend-color.conflict {
-  background: rgba(255, 107, 107, 0.8);
-  border: 1px solid rgba(255, 107, 107, 1);
+  background: var(--gradient-error);
 }
 
 /* Schedule Summary */
 .manage-term-table-page .schedule-summary {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
-  background: rgba(11, 37, 69, 0.6);
-  border: 1px solid rgba(141, 169, 196, 0.2);
-  border-radius: 0.75rem;
+  margin-top: 2rem;
+  padding: 2rem;
+  background: var(--gradient-card);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: var(--shadow-medium);
 }
 
 .manage-term-table-page .schedule-summary h3 {
-  font-size: 1.1rem;
-  color: #eef4ed;
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: var(--text-white);
+  margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  font-weight: 800;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .manage-term-table-page .summary-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
 .manage-term-table-page .day-summary {
-  background: rgba(19, 50, 92, 0.5);
-  border: 1px solid rgba(141, 169, 196, 0.1);
-  border-radius: 0.5rem;
-  padding: 1rem;
+  background: rgba(10, 27, 53, 0.7);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.manage-term-table-page .day-summary:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .manage-term-table-page .day-summary-title {
-  font-size: 0.95rem;
-  color: #8da9c4;
-  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+  color: var(--text-white);
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(141, 169, 196, 0.2);
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  font-weight: 800;
 }
 
 .manage-term-table-page .no-sections {
-  color: #8da9c4;
-  font-size: 0.875rem;
+  color: var(--text-lighter);
+  font-size: 1rem;
   text-align: center;
-  padding: 1rem;
+  padding: 1.5rem;
   opacity: 0.7;
+  font-weight: 500;
 }
 
 .manage-term-table-page .day-sections-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .manage-term-table-page .summary-section {
-  background: rgba(141, 169, 196, 0.1);
-  border: 1px solid rgba(141, 169, 196, 0.2);
-  border-radius: 0.5rem;
-  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.manage-term-table-page .summary-section:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-blue);
 }
 
 .manage-term-table-page .summary-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .manage-term-table-page .section-time {
-  font-size: 0.8rem;
-  color: #8da9c4;
-  font-weight: 500;
-}
-
-.manage-term-table-page .summary-remove-btn {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 107, 107, 0.2);
-  color: #ff6b6b;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 0.7rem;
-}
-
-.manage-term-table-page .summary-section-details {
-  font-size: 0.85rem;
-  color: #eef4ed;
-}
-
-.manage-term-table-page .summary-section-meta {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.5rem;
-  font-size: 0.75rem;
-  color: #8da9c4;
-}
-
-/* Instructions */
-.manage-term-table-page .instructions-card {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
-  background: rgba(11, 37, 69, 0.6);
-  border: 1px solid rgba(141, 169, 196, 0.2);
-  border-radius: 0.75rem;
-}
-
-.manage-term-table-page .instructions-card h3 {
-  font-size: 1.1rem;
-  color: #eef4ed;
-  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  color: var(--text-lighter);
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
+.manage-term-table-page .summary-remove-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--error-red);
+  background: rgba(244, 67, 54, 0.2);
+  color: var(--error-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.manage-term-table-page .summary-remove-btn:hover {
+  background: var(--error-red);
+  color: var(--text-white);
+  transform: scale(1.1);
+}
+
+.manage-term-table-page .summary-section-details {
+  font-size: 0.95rem;
+  color: var(--text-white);
+  font-weight: 600;
+}
+
+.manage-term-table-page .summary-section-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-lighter);
+  font-weight: 600;
+}
+
+/* Instructions */
+.manage-term-table-page .instructions-card {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: var(--gradient-card);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: var(--shadow-medium);
+}
+
+.manage-term-table-page .instructions-card h3 {
+  font-size: 1.5rem;
+  color: var(--text-white);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 800;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 .manage-term-table-page .instructions-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
 }
 
 .manage-term-table-page .instruction-step {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: flex-start;
+  background: rgba(10, 27, 53, 0.7);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.manage-term-table-page .instruction-step:hover {
+  border-color: var(--accent-blue);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .manage-term-table-page .step-number {
-  width: 32px;
-  height: 32px;
-  background: #8da9c4;
-  color: #0b2545;
+  width: 40px;
+  height: 40px;
+  background: var(--gradient-primary);
+  color: var(--text-white);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-weight: 800;
+  font-size: 1.1rem;
   flex-shrink: 0;
+  border: 2px solid var(--accent-blue);
 }
 
 .manage-term-table-page .step-content {
@@ -742,87 +931,108 @@
 
 .manage-term-table-page .step-content strong {
   display: block;
-  color: #eef4ed;
-  margin-bottom: 0.25rem;
-  font-size: 0.95rem;
+  color: var(--text-white);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 800;
 }
 
 .manage-term-table-page .step-content p {
-  color: #8da9c4;
-  font-size: 0.85rem;
-  line-height: 1.5;
+  color: var(--text-lighter);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  font-weight: 500;
 }
 
 /* Button Styles */
 .manage-term-table-page .btn {
-  padding: 0.625rem 1.25rem;
+  padding: 1.125rem 2rem;
   border: none;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 600;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  min-width: 180px;
+}
+
+.manage-term-table-page .btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.manage-term-table-page .btn:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .manage-term-table-page .btn-primary {
-  background: #8da9c4;
-  color: #0b2545;
-  border: 1px solid #8da9c4;
+  background: var(--gradient-primary);
+  color: var(--text-white);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.manage-term-table-page .btn-primary:hover {
-  background: #9fb5cc;
-  border-color: #9fb5cc;
+.manage-term-table-page .btn-primary:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(19, 49, 92, 0.4);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .manage-term-table-page .btn-secondary {
-  background: rgba(141, 169, 196, 0.1);
-  color: #8da9c4;
-  border: 1px solid rgba(141, 169, 196, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-white);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
 }
 
-.manage-term-table-page .btn-secondary:hover {
-  background: rgba(141, 169, 196, 0.2);
-  border-color: #8da9c4;
+.manage-term-table-page .btn-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-white);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Loading States */
-.manage-term-table-page .loading-small {
-  text-align: center;
-  padding: 2rem;
-  color: #8da9c4;
-}
-
-.manage-term-table-page .no-courses {
-  text-align: center;
-  padding: 2rem;
-  color: #8da9c4;
-}
-
-.manage-term-table-page .no-courses i {
-  font-size: 2rem;
-  margin-bottom: 0.75rem;
-  opacity: 0.5;
+.manage-term-table-page .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 /* Stats */
 .manage-term-table-page .courses-stats {
-  background: rgba(19, 50, 92, 0.5);
-  border-radius: 0.5rem;
-  padding: 1rem;
+  background: rgba(10, 27, 53, 0.7);
+  border-radius: 16px;
+  padding: 1.5rem;
   margin: 1.5rem 0;
-  border: 1px solid rgba(141, 169, 196, 0.1);
+  border: 2px solid var(--border-color);
+  box-shadow: var(--shadow-light);
 }
 
 .manage-term-table-page .stat-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(141, 169, 196, 0.1);
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .manage-term-table-page .stat-item:last-child {
@@ -830,14 +1040,44 @@
 }
 
 .manage-term-table-page .stat-label {
-  color: #8da9c4;
-  font-size: 0.875rem;
+  color: var(--text-lighter);
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .manage-term-table-page .stat-value {
-  color: #eef4ed;
-  font-weight: 600;
-  font-size: 0.875rem;
+  color: var(--text-white);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+/* Loading States */
+.manage-term-table-page .loading-small {
+  text-align: center;
+  padding: 3rem;
+  color: var(--accent-blue);
+}
+
+.manage-term-table-page .no-courses {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-lighter);
+}
+
+.manage-term-table-page .no-courses i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--accent-blue);
+  opacity: 0.5;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.manage-term-table-page .no-courses h4 {
+  font-size: 1.5rem;
+  color: var(--text-white);
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsive Design */
@@ -849,11 +1089,20 @@
 
 @media (max-width: 768px) {
   .manage-term-table-page .main-content {
-    padding: 1rem;
+    padding: 0 1.5rem 1.5rem;
+  }
+  
+  .manage-term-table-page .page-header {
+    padding: 2rem 1.5rem;
+    border-radius: 0 0 20px 20px;
+  }
+  
+  .manage-term-table-page .header-content h1 {
+    font-size: 1.8rem;
   }
   
   .manage-term-table-page .term-table-container {
-    padding: 1rem;
+    padding: 1.75rem;
   }
   
   .manage-term-table-page .day-columns {
@@ -867,23 +1116,71 @@
   .manage-term-table-page .instructions-content {
     grid-template-columns: 1fr;
   }
+  
+  .manage-term-table-page .time-grid-container {
+    grid-template-columns: 80px 1fr;
+  }
+  
+  .manage-term-table-page .day-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .manage-term-table-page .btn {
+    width: 100%;
+  }
 }
 
 /* Custom Scrollbar */
 .manage-term-table-page ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 12px;
+  height: 12px;
 }
 
 .manage-term-table-page ::-webkit-scrollbar-track {
-  background: rgba(11, 37, 69, 0.5);
+  background: rgba(10, 27, 53, 0.8);
+  border-radius: 6px;
 }
 
 .manage-term-table-page ::-webkit-scrollbar-thumb {
-  background: rgba(141, 169, 196, 0.3);
-  border-radius: 4px;
+  background: var(--gradient-primary);
+  border-radius: 6px;
+  border: 2px solid rgba(10, 27, 53, 0.8);
 }
 
 .manage-term-table-page ::-webkit-scrollbar-thumb:hover {
-  background: #8da9c4;
+  background: var(--primary-light);
+}
+
+/* Selection Color */
+.manage-term-table-page ::selection {
+  background: rgba(42, 90, 156, 0.5);
+  color: var(--text-white);
+  text-shadow: none;
+}
+
+/* Focus States */
+.manage-term-table-page .week-select:focus-visible,
+.manage-term-table-page .day-tab:focus-visible,
+.manage-term-table-page .btn:focus-visible,
+.manage-term-table-page .section-action-btn:focus-visible {
+  outline: 3px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+/* Ensure all icons have proper contrast */
+.manage-term-table-page .fas,
+.manage-term-table-page .far,
+.manage-term-table-page .fab {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Animation for drag and drop */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.manage-term-table-page .course-section-item:hover {
+  animation: pulse 1s ease infinite;
 }
