@@ -6,7 +6,7 @@ import { db } from '../../firebase';
 import { doc, setDoc, collection, getDocs, query, where } from "firebase/firestore";
 
 export default function AddProfessors() {
-  const [userType, setUserType] = useState('professor');
+  const [userType, setUserType] = useState('theory');
   const [professorData, setProfessorData] = useState({
     fullName: '',
     specialization: '',
@@ -138,7 +138,8 @@ export default function AddProfessors() {
         username: professorData.username,
         password: defaultPassword,
         role: "Professor",
-        type: userType === "professor" ? "Theory" : "Practical",
+        // ✅ Fix: Save correct type based on selection
+        type: userType === "theory" ? "theory" : "practical",
         status: "active",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -151,7 +152,7 @@ export default function AddProfessors() {
         show: true,
         type: "success",
         message: `
-          ${userType === 'professor' ? 'Professor' : 'Engineer'} "${professorData.fullName}" has been successfully added!
+          ${userType === 'theory' ? 'Theory Professor' : 'Practical Engineer'} "${professorData.fullName}" has been successfully added!
           LecturerID: ${finalLecturerID}
           Username: ${professorData.username}
           Default Password: ${defaultPassword}
@@ -236,10 +237,10 @@ export default function AddProfessors() {
         <div className="header-content">
           <h1 className="page-title">
             <i className="fas fa-user-plus"></i>
-            Add New {userType === 'professor' ? 'Professor' : 'Engineer'}
+            Add New {userType === 'theory' ? 'Professor' : 'Engineer'}
           </h1>
           <p className="page-subtitle">
-            Add new {userType === 'professor' ? 'professors' : 'engineers'} to the academic system
+            Add new {userType === 'theory' ? 'professors' : 'engineers'} to the academic system
           </p>
         </div>
         <div className="header-actions">
@@ -268,16 +269,16 @@ export default function AddProfessors() {
         <div className="user-type-tabs">
           <div className="tabs-container">
             <button 
-              className={`tab-button ${userType === 'professor' ? 'active' : ''}`}
-              onClick={() => setUserType('professor')}
+              className={`tab-button ${userType === 'theory' ? 'active' : ''}`}
+              onClick={() => setUserType('theory')}
             >
               <i className="fas fa-chalkboard-teacher"></i>
               <span>Theory Professor</span>
               <small>Academic theory instructors</small>
             </button>
             <button 
-              className={`tab-button ${userType === 'engineer' ? 'active' : ''}`}
-              onClick={() => setUserType('engineer')}
+              className={`tab-button ${userType === 'practical' ? 'active' : ''}`}
+              onClick={() => setUserType('practical')}
             >
               <i className="fas fa-cogs"></i>
               <span>Practical Engineer</span>
@@ -290,7 +291,7 @@ export default function AddProfessors() {
           <div className="form-header">
             <h2 className="form-title">
               <i className="fas fa-file-alt"></i>
-              {userType === 'professor' ? 'Professor' : 'Engineer'} Registration Form
+              {userType === 'theory' ? 'Professor' : 'Engineer'} Registration Form
             </h2>
             <div className="form-subtitle">
               All fields marked with (*) are required
@@ -344,7 +345,7 @@ export default function AddProfessors() {
                   value={professorData.fullName}
                   onChange={handleInputChange}
                   className="form-input"
-                  placeholder={`Enter ${userType === 'professor' ? 'professor' : 'engineer'}'s full name`}
+                  placeholder={`Enter ${userType === 'theory' ? 'professor' : 'engineer'}'s full name`}
                   required
                   disabled={loading}
                 />
@@ -488,7 +489,7 @@ export default function AddProfessors() {
                 ) : (
                   <>
                     <i className="fas fa-plus-circle"></i>
-                    Add {userType === 'professor' ? 'Professor' : 'Engineer'}
+                    Add {userType === 'theory' ? 'Professor' : 'Engineer'}
                   </>
                 )}
               </button>
