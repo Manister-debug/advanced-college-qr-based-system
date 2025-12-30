@@ -1,9 +1,9 @@
-/* ViewProfessors.css - Modern Blue Theme with White Text */
+/* ViewProfessors.css - Modern Gradient Theme from #13315c with White Text */
 :root {
-  --primary-blue: #1a73e8;
-  --primary-dark: #0d47a1;
-  --primary-light: #42a5f5;
-  --accent-blue: #2962ff;
+  --primary-blue: #13315c;
+  --primary-dark: #0a1b35;
+  --primary-light: #1a4375;
+  --accent-blue: #2a5a9c;
   --light-bg: #e8f0fe;
   --white: #ffffff;
   --text-white: #ffffff;
@@ -11,18 +11,21 @@
   --text-lighter: rgba(255, 255, 255, 0.7);
   --card-bg: #ffffff;
   --hover-blue: rgba(255, 255, 255, 0.1);
-  --gradient-primary: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
-  --gradient-secondary: linear-gradient(135deg, #42a5f5 0%, #1a73e8 100%);
-  --gradient-dark: linear-gradient(135deg, #0d47a1 0%, #08306b 100%);
-  --shadow-light: 0 4px 12px rgba(26, 115, 232, 0.15);
-  --shadow-medium: 0 8px 24px rgba(26, 115, 232, 0.2);
-  --shadow-heavy: 0 16px 48px rgba(26, 115, 232, 0.25);
+  --gradient-primary: linear-gradient(135deg, #13315c 0%, #0a1b35 100%);
+  --gradient-secondary: linear-gradient(135deg, #1a4375 0%, #13315c 100%);
+  --gradient-dark: linear-gradient(135deg, #0a1b35 0%, #051224 100%);
+  --gradient-card: linear-gradient(135deg, #1a3a6c 0%, #0d2a55 100%);
+  --shadow-light: 0 4px 12px rgba(19, 49, 92, 0.15);
+  --shadow-medium: 0 8px 24px rgba(19, 49, 92, 0.2);
+  --shadow-heavy: 0 16px 48px rgba(19, 49, 92, 0.25);
+  --border-color: rgba(42, 90, 156, 0.3);
+  --input-bg: rgba(10, 27, 53, 0.9);
 }
 
 /* Base Styles */
 .view-professors-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+  background: var(--gradient-dark);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   color: var(--text-white);
 }
@@ -36,7 +39,7 @@
 
 /* Page Header */
 .view-professors-page .page-header {
-  background: var(--gradient-dark);
+  background: var(--gradient-primary);
   color: var(--text-white);
   padding: 2.5rem 2rem;
   border-radius: 0 0 24px 24px;
@@ -44,7 +47,7 @@
   box-shadow: var(--shadow-heavy);
   position: relative;
   overflow: hidden;
-  border-bottom: 4px solid var(--primary-blue);
+  border-bottom: 4px solid var(--accent-blue);
 }
 
 .view-professors-page .page-header::before {
@@ -54,7 +57,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 30% 20%, rgba(26, 115, 232, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle at 30% 20%, rgba(26, 67, 117, 0.2) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -89,7 +92,7 @@
 .view-professors-page .stat-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   padding: 1.75rem;
   display: flex;
@@ -99,7 +102,6 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(66, 165, 245, 0.3);
 }
 
 .view-professors-page .stat-card::before {
@@ -110,14 +112,14 @@
   right: 0;
   height: 4px;
   background: var(--gradient-secondary);
-  box-shadow: 0 0 10px rgba(66, 165, 245, 0.5);
+  box-shadow: 0 0 10px rgba(26, 67, 117, 0.5);
 }
 
 .view-professors-page .stat-card:hover {
   transform: translateY(-8px) scale(1.02);
   background: rgba(255, 255, 255, 0.15);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  border-color: rgba(66, 165, 245, 0.6);
+  border-color: rgba(42, 90, 156, 0.6);
 }
 
 .view-professors-page .stat-icon {
@@ -136,18 +138,18 @@
 }
 
 .view-professors-page .stat-icon.total { 
-  background: linear-gradient(135deg, rgba(26, 115, 232, 0.3) 0%, rgba(13, 71, 161, 0.3) 100%);
-  border-color: rgba(26, 115, 232, 0.4);
+  background: linear-gradient(135deg, rgba(19, 49, 92, 0.3) 0%, rgba(10, 27, 53, 0.3) 100%);
+  border-color: rgba(19, 49, 92, 0.4);
 }
 
 .view-professors-page .stat-icon.theory { 
-  background: linear-gradient(135deg, rgba(102, 187, 255, 0.3) 0%, rgba(33, 150, 243, 0.3) 100%);
-  border-color: rgba(102, 187, 255, 0.4);
+  background: linear-gradient(135deg, rgba(42, 90, 156, 0.3) 0%, rgba(19, 49, 92, 0.3) 100%);
+  border-color: rgba(42, 90, 156, 0.4);
 }
 
 .view-professors-page .stat-icon.practical { 
-  background: linear-gradient(135deg, rgba(66, 165, 245, 0.3) 0%, rgba(26, 115, 232, 0.3) 100%);
-  border-color: rgba(66, 165, 245, 0.4);
+  background: linear-gradient(135deg, rgba(26, 67, 117, 0.3) 0%, rgba(19, 49, 92, 0.3) 100%);
+  border-color: rgba(26, 67, 117, 0.4);
 }
 
 .view-professors-page .stat-info {
@@ -185,12 +187,12 @@
 
 /* Controls Section */
 .view-professors-page .controls-section {
-  background: rgba(19, 38, 58, 0.95);
+  background: var(--gradient-card);
   border-radius: 24px;
   padding: 2.25rem;
   margin-bottom: 2.5rem;
   box-shadow: var(--shadow-heavy);
-  border: 1px solid rgba(66, 165, 245, 0.2);
+  border: 2px solid var(--border-color);
   backdrop-filter: blur(10px);
 }
 
@@ -223,7 +225,7 @@
   left: 1.5rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--primary-light);
+  color: var(--accent-blue);
   font-size: 1.5rem;
   z-index: 1;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
@@ -232,11 +234,11 @@
 .view-professors-page .search-input {
   width: 100%;
   padding: 1.25rem 1.5rem 1.25rem 4rem;
-  border: 2px solid rgba(66, 165, 245, 0.3);
+  border: 2px solid var(--border-color);
   border-radius: 16px;
   font-size: 1.1rem;
   font-weight: 500;
-  background: rgba(13, 27, 42, 0.9);
+  background: var(--input-bg);
   color: var(--text-white);
   transition: all 0.3s ease;
   box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2), 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -244,9 +246,9 @@
 
 .view-professors-page .search-input:focus {
   outline: none;
-  border-color: var(--primary-light);
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(66, 165, 245, 0.15), 0 4px 20px rgba(0, 0, 0, 0.4);
-  background: rgba(13, 27, 42, 1);
+  border-color: var(--accent-blue);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(42, 90, 156, 0.15), 0 4px 20px rgba(0, 0, 0, 0.4);
+  background: rgba(10, 27, 53, 1);
 }
 
 .view-professors-page .search-input::placeholder {
@@ -297,8 +299,8 @@
 
 .view-professors-page .sort-button {
   padding: 1rem 1.5rem;
-  border: 2px solid rgba(66, 165, 245, 0.4);
-  background: rgba(19, 38, 58, 0.8);
+  border: 2px solid var(--border-color);
+  background: rgba(10, 27, 53, 0.8);
   border-radius: 14px;
   cursor: pointer;
   font-size: 1rem;
@@ -312,18 +314,18 @@
 }
 
 .view-professors-page .sort-button:hover {
-  border-color: var(--primary-light);
-  background: rgba(26, 115, 232, 0.2);
+  border-color: var(--accent-blue);
+  background: rgba(19, 49, 92, 0.2);
   color: var(--text-white);
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(66, 165, 245, 0.3);
+  box-shadow: 0 8px 24px rgba(42, 90, 156, 0.3);
 }
 
 .view-professors-page .sort-button.active {
   background: var(--gradient-primary);
-  border-color: var(--primary-light);
+  border-color: var(--accent-blue);
   color: var(--text-white);
-  box-shadow: 0 4px 20px rgba(66, 165, 245, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(42, 90, 156, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 /* Filters Container */
@@ -355,15 +357,15 @@
 
 .view-professors-page .filter-label i {
   font-size: 1.1rem;
-  color: var(--primary-light);
+  color: var(--accent-blue);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .view-professors-page .filter-select {
   padding: 1rem 1.25rem 1rem 1.25rem;
-  border: 2px solid rgba(66, 165, 245, 0.4);
+  border: 2px solid var(--border-color);
   border-radius: 14px;
-  background: rgba(13, 27, 42, 0.9);
+  background: var(--input-bg);
   color: var(--text-white);
   font-size: 1rem;
   font-weight: 600;
@@ -371,7 +373,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2342a5f5' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%232a5a9c' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1.25rem center;
   background-size: 16px;
@@ -381,13 +383,13 @@
 
 .view-professors-page .filter-select:focus {
   outline: none;
-  border-color: var(--primary-light);
-  background: rgba(13, 27, 42, 1);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(66, 165, 245, 0.15), 0 4px 20px rgba(0, 0, 0, 0.3);
+  border-color: var(--accent-blue);
+  background: rgba(10, 27, 53, 1);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(42, 90, 156, 0.15), 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .view-professors-page .filter-select option {
-  background: #1b263b;
+  background: #0a1b35;
   color: var(--text-white);
   font-weight: 600;
   padding: 1rem;
@@ -440,7 +442,7 @@
 
 .view-professors-page .btn-primary:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(26, 115, 232, 0.4);
+  box-shadow: 0 12px 30px rgba(19, 49, 92, 0.4);
   border-color: rgba(255, 255, 255, 0.3);
 }
 
@@ -474,11 +476,11 @@
 
 /* Professors Container */
 .view-professors-page .professors-container {
-  background: rgba(19, 38, 58, 0.95);
+  background: var(--gradient-card);
   border-radius: 24px;
   padding: 2.5rem;
   box-shadow: var(--shadow-heavy);
-  border: 1px solid rgba(66, 165, 245, 0.2);
+  border: 2px solid var(--border-color);
   backdrop-filter: blur(10px);
   animation: fadeIn 0.6s ease;
 }
@@ -514,7 +516,7 @@
 
 .view-professors-page .spinner {
   font-size: 3.5rem;
-  color: var(--primary-light);
+  color: var(--accent-blue);
   margin-bottom: 2rem;
   animation: spin 1s linear infinite;
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
@@ -535,7 +537,7 @@
 
 .view-professors-page .no-results-icon {
   font-size: 5rem;
-  color: rgba(66, 165, 245, 0.3);
+  color: rgba(42, 90, 156, 0.3);
   margin-bottom: 2rem;
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
 }
@@ -566,10 +568,21 @@
   animation: gridFadeIn 0.8s ease;
 }
 
+@keyframes gridFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Professor Card */
 .view-professors-page .professor-card {
-  background: rgba(13, 27, 42, 0.9);
-  border: 2px solid rgba(66, 165, 245, 0.3);
+  background: rgba(10, 27, 53, 0.9);
+  border: 2px solid var(--border-color);
   border-radius: 22px;
   overflow: hidden;
   cursor: pointer;
@@ -580,8 +593,8 @@
 
 .view-professors-page .professor-card:hover {
   transform: translateY(-15px) scale(1.02);
-  border-color: var(--primary-light);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(66, 165, 245, 0.4);
+  border-color: var(--accent-blue);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(42, 90, 156, 0.4);
 }
 
 .view-professors-page .professor-card::before {
@@ -594,11 +607,11 @@
   background: var(--gradient-primary);
   opacity: 1;
   transition: opacity 0.3s ease;
-  box-shadow: 0 0 15px rgba(66, 165, 245, 0.6);
+  box-shadow: 0 0 15px rgba(42, 90, 156, 0.6);
 }
 
 .view-professors-page .professor-card-header {
-  background: linear-gradient(135deg, rgba(26, 115, 232, 0.2) 0%, rgba(13, 71, 161, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(19, 49, 92, 0.2) 0%, rgba(10, 27, 53, 0.2) 100%);
   padding: 2rem;
   display: flex;
   align-items: center;
@@ -623,6 +636,24 @@
   border: 3px solid rgba(255, 255, 255, 0.3);
 }
 
+.view-professors-page .professor-avatar .status-indicator {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-dark);
+}
+
+.view-professors-page .professor-avatar .status-indicator.active {
+  background: #4caf50;
+}
+
+.view-professors-page .professor-avatar .status-indicator.inactive {
+  background: #f44336;
+}
+
 .view-professors-page .professor-name {
   margin: 0 0 0.75rem 0;
   font-size: 1.6rem;
@@ -635,6 +666,50 @@
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+.view-professors-page .professor-type {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.view-professors-page .type-badge {
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.view-professors-page .type-badge.theory {
+  background: linear-gradient(135deg, #2a5a9c 0%, #1a4375 100%);
+  color: white;
+}
+
+.view-professors-page .type-badge.practical {
+  background: linear-gradient(135deg, #1a4375 0%, #13315c 100%);
+  color: white;
+}
+
+.view-professors-page .status-badge {
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.view-professors-page .status-badge.active {
+  background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+  color: white;
+}
+
+.view-professors-page .status-badge.inactive {
+  background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
+  color: white;
+}
+
 .view-professors-page .professor-date {
   font-size: 1rem;
   color: var(--text-lighter);
@@ -642,11 +717,12 @@
   align-items: center;
   gap: 0.75rem;
   font-weight: 600;
+  margin-left: auto;
 }
 
 .view-professors-page .professor-date i {
   font-size: 1.1rem;
-  color: var(--primary-light);
+  color: var(--accent-blue);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
@@ -664,7 +740,7 @@
 }
 
 .view-professors-page .detail-item i {
-  color: var(--primary-light);
+  color: var(--accent-blue);
   font-size: 1.4rem;
   width: 28px;
   flex-shrink: 0;
@@ -692,9 +768,13 @@
 }
 
 .view-professors-page .detail-value.email {
-  color: var(--primary-light);
+  color: var(--accent-blue);
   word-break: break-all;
   font-weight: 600;
+}
+
+.view-professors-page .detail-value.username {
+  color: #4fc3f7;
 }
 
 /* Professor Card Actions */
@@ -704,9 +784,96 @@
   gap: 1.25rem;
 }
 
+.view-professors-page .action-btn {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.view-professors-page .view-btn {
+  background: var(--gradient-primary);
+  color: var(--text-white);
+}
+
+.view-professors-page .view-btn:hover {
+  background: var(--gradient-secondary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(19, 49, 92, 0.3);
+}
+
+.view-professors-page .delete-btn {
+  background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
+  color: var(--text-white);
+}
+
+.view-professors-page .delete-btn:hover {
+  background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(198, 40, 40, 0.3);
+}
+
+/* Modal Overlay */
+.view-professors-page .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container */
+.view-professors-page .modal-container {
+  background: var(--gradient-card);
+  border-radius: 24px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  border: 2px solid var(--border-color);
+  animation: modalSlideIn 0.4s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* Modal Header */
 .view-professors-page .modal-header {
-  background: var(--gradient-dark);
+  background: var(--gradient-primary);
   color: var(--text-white);
   padding: 2.25rem;
   border-bottom: 2px solid rgba(255, 255, 255, 0.1);
@@ -718,6 +885,10 @@
   top: 0;
   z-index: 10;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.view-professors-page .modal-title {
+  flex: 1;
 }
 
 .view-professors-page .modal-title h2 {
@@ -732,21 +903,59 @@
 }
 
 .view-professors-page .modal-title h2 i {
-  color: var(--primary-light);
+  color: var(--accent-blue);
   font-size: 1.75rem;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.view-professors-page .modal-subtitle {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.view-professors-page .modal-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-white);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.view-professors-page .modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
 }
 
 /* Modal Content */
 .view-professors-page .modal-content {
   padding: 2.5rem;
-  background: rgba(19, 38, 58, 0.95);
+  background: transparent;
 }
 
 /* Detail Section */
 .view-professors-page .detail-section {
   margin-bottom: 3rem;
   animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .view-professors-page .detail-section h3 {
@@ -761,9 +970,15 @@
 }
 
 .view-professors-page .detail-section h3 i {
-  color: var(--primary-light);
+  color: var(--accent-blue);
   font-size: 1.4rem;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.view-professors-page .detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
 .view-professors-page .detail-grid .detail-item {
@@ -772,16 +987,16 @@
   gap: 0.75rem;
   margin: 0;
   padding: 1.5rem;
-  background: rgba(13, 27, 42, 0.7);
+  background: rgba(10, 27, 53, 0.7);
   border-radius: 16px;
-  border: 1px solid rgba(66, 165, 245, 0.2);
+  border: 1px solid var(--border-color);
   transition: all 0.3s ease;
   box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .view-professors-page .detail-grid .detail-item:hover {
-  background: rgba(13, 27, 42, 0.9);
-  border-color: var(--primary-light);
+  background: rgba(10, 27, 53, 0.9);
+  border-color: var(--accent-blue);
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
@@ -803,10 +1018,83 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+.view-professors-page .detail-grid .username-value {
+  color: #4fc3f7;
+}
+
+.view-professors-page .detail-grid .status-value.active {
+  color: #4caf50;
+}
+
+.view-professors-page .detail-grid .status-value.inactive {
+  color: #f44336;
+}
+
+.view-professors-page .detail-grid .email {
+  color: var(--accent-blue);
+}
+
+.view-professors-page .detail-grid .phone {
+  color: #4fc3f7;
+}
+
+.view-professors-page .detail-grid .id {
+  color: var(--text-lighter);
+  font-size: 0.9rem;
+  font-family: monospace;
+}
+
+/* Password Display Field */
+.view-professors-page .password-display-field {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.view-professors-page .password-display-field .detail-value {
+  flex: 1;
+}
+
+.view-professors-page .password-view-toggle {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
+  color: var(--text-white);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.view-professors-page .password-view-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--accent-blue);
+}
+
 /* Edit Form Styles */
 .view-professors-page .edit-form {
   padding: 1.5rem 0;
   animation: formSlideIn 0.4s ease;
+}
+
+@keyframes formSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.view-professors-page .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
 .view-professors-page .edit-form .form-label {
@@ -822,7 +1110,7 @@
 }
 
 .view-professors-page .edit-form .form-label i {
-  color: var(--primary-light);
+  color: var(--accent-blue);
   font-size: 1.2rem;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
@@ -830,11 +1118,11 @@
 .view-professors-page .edit-form .form-input {
   width: 100%;
   padding: 1.25rem 1.5rem;
-  border: 2px solid rgba(66, 165, 245, 0.3);
+  border: 2px solid var(--border-color);
   border-radius: 16px;
   font-size: 1.1rem;
   transition: all 0.3s ease;
-  background: rgba(13, 27, 42, 0.9);
+  background: var(--input-bg);
   color: var(--text-white);
   font-weight: 600;
   box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
@@ -842,9 +1130,13 @@
 
 .view-professors-page .edit-form .form-input:focus {
   outline: none;
-  border-color: var(--primary-light);
-  background: rgba(13, 27, 42, 1);
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(66, 165, 245, 0.15);
+  border-color: var(--accent-blue);
+  background: rgba(10, 27, 53, 1);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(42, 90, 156, 0.15);
+}
+
+.view-professors-page .edit-form .form-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Password Field */
@@ -890,7 +1182,7 @@
 }
 
 .view-professors-page .form-hint i {
-  color: var(--primary-light);
+  color: var(--accent-blue);
   font-size: 1rem;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
@@ -901,8 +1193,10 @@
   border-top: 2px solid rgba(255, 255, 255, 0.1);
   display: flex;
   gap: 1.25rem;
-  background: rgba(13, 27, 42, 0.95);
+  background: rgba(10, 27, 53, 0.95);
   border-radius: 0 0 24px 24px;
+  position: sticky;
+  bottom: 0;
 }
 
 /* Responsive Design Updates */
@@ -932,6 +1226,32 @@
     max-height: 90vh;
     margin: 1rem;
   }
+  
+  .view-professors-page .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .view-professors-page .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .view-professors-page .filter-select {
+    min-width: 100%;
+  }
+  
+  .view-professors-page .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .view-professors-page .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .view-professors-page .modal-actions {
+    flex-direction: column;
+  }
 }
 
 /* Custom Scrollbar */
@@ -941,14 +1261,14 @@
 }
 
 .view-professors-page ::-webkit-scrollbar-track {
-  background: rgba(13, 27, 42, 0.8);
+  background: rgba(10, 27, 53, 0.8);
   border-radius: 6px;
 }
 
 .view-professors-page ::-webkit-scrollbar-thumb {
   background: var(--gradient-primary);
   border-radius: 6px;
-  border: 2px solid rgba(13, 27, 42, 0.8);
+  border: 2px solid rgba(10, 27, 53, 0.8);
 }
 
 .view-professors-page ::-webkit-scrollbar-thumb:hover {
@@ -957,7 +1277,7 @@
 
 /* Selection Color */
 .view-professors-page ::selection {
-  background: rgba(66, 165, 245, 0.5);
+  background: rgba(42, 90, 156, 0.5);
   color: var(--text-white);
   text-shadow: none;
 }
@@ -968,40 +1288,8 @@
 .view-professors-page .btn:focus-visible,
 .view-professors-page .modal-close:focus-visible,
 .view-professors-page .form-input:focus-visible {
-  outline: 3px solid var(--primary-light);
+  outline: 3px solid var(--accent-blue);
   outline-offset: 2px;
-}
-
-/* Badge Colors */
-.view-professors-page .type-badge,
-.view-professors-page .status-badge {
-  color: var(--text-white);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  font-weight: 700;
-}
-
-/* Additional White Text Elements */
-.view-professors-page .professor-card .detail-label,
-.view-professors-page .detail-section .detail-label,
-.view-professors-page .edit-form .form-label,
-.view-professors-page .filters-container .filter-label,
-.view-professors-page .sort-controls .sort-label,
-.view-professors-page .results-info .results-count,
-.view-professors-page .loading-container p,
-.view-professors-page .no-results h3,
-.view-professors-page .no-results p,
-.view-professors-page .modal-title h2,
-.view-professors-page .detail-section h3,
-.view-professors-page .stat-label,
-.view-professors-page .page-subtitle {
-  color: var(--text-white) !important;
-}
-
-/* For text that should be slightly lighter */
-.view-professors-page .professor-date,
-.view-professors-page .last-update,
-.view-professors-page .form-hint {
-  color: var(--text-light) !important;
 }
 
 /* Ensure all icons have proper contrast */
@@ -1011,27 +1299,29 @@
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
-/* Darken background slightly for better text contrast */
-.view-professors-page .professors-container,
-.view-professors-page .controls-section,
-.view-professors-page .modal-content {
-  background: rgba(13, 27, 42, 0.95);
+/* Spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-/* Enhance border contrast */
-.view-professors-page .professor-card,
-.view-professors-page .controls-section,
-.view-professors-page .modal-container {
-  border: 2px solid rgba(66, 165, 245, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+/* Additional utility classes */
+.view-professors-page .text-center {
+  text-align: center;
 }
 
-/* Improve hover states for better visibility */
-.view-professors-page .professor-card:hover,
-.view-professors-page .stat-card:hover,
-.view-professors-page .btn:hover,
-.view-professors-page .sort-button:hover,
-.view-professors-page .detail-grid .detail-item:hover {
-  border-color: var(--primary-light);
-  box-shadow: 0 0 20px rgba(66, 165, 245, 0.4);
+.view-professors-page .text-right {
+  text-align: right;
 }
+
+.view-professors-page .mt-1 { margin-top: 0.5rem; }
+.view-professors-page .mt-2 { margin-top: 1rem; }
+.view-professors-page .mt-3 { margin-top: 1.5rem; }
+.view-professors-page .mt-4 { margin-top: 2rem; }
+.view-professors-page .mt-5 { margin-top: 2.5rem; }
+
+.view-professors-page .mb-1 { margin-bottom: 0.5rem; }
+.view-professors-page .mb-2 { margin-bottom: 1rem; }
+.view-professors-page .mb-3 { margin-bottom: 1.5rem; }
+.view-professors-page .mb-4 { margin-bottom: 2rem; }
+.view-professors-page .mb-5 { margin-bottom: 2.5rem; }
