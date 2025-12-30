@@ -365,7 +365,7 @@ export default function AddProfessors() {
                   value={professorData.username}
                   onChange={handleInputChange}
                   className="form-input"
-                  placeholder="Enter your usuer name"
+                  placeholder="Enter your user name"
                   required
                   disabled={loading}
                 />

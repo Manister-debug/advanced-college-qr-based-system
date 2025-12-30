@@ -4,8 +4,8 @@ import { useAuth } from "../../context/AuthContext";
 import "./Home.css";
 import { Link } from "react-router-dom";
 import { db } from "../../firebase";
-import { 
-  collection, 
+import {
+  collection,
   query,
   where,
   onSnapshot
@@ -24,25 +24,25 @@ const Home = () => {
       try {
         // Fetch professors with real-time updates
         const professorsQuery = query(
-          collection(db, "users"), 
+          collection(db, "users"),
           where("role", "in", ["Professor", "professor"])
         );
-        
+
         const unsubscribe = onSnapshot(professorsQuery, (snapshot) => {
           let theoryCount = 0;
           let practicalCount = 0;
           const recent = [];
-          
+
           snapshot.forEach((doc) => {
             const data = doc.data();
-            
+
             // Count by type
             if (data.type === "theory") {
               theoryCount++;
             } else if (data.type === "practical") {
               practicalCount++;
             }
-            
+
             // Get recent professors (last 5)
             if (recent.length < 5) {
               recent.push({
@@ -56,7 +56,7 @@ const Home = () => {
               });
             }
           });
-          
+
           setTotalTheoryProfessors(theoryCount);
           setTotalPracticalProfessors(practicalCount);
           setRecentProfessors(recent);
@@ -92,7 +92,7 @@ const Home = () => {
 
   // Professor type badge color
   const getProfessorTypeBadge = (type) => {
-    switch(type) {
+    switch (type) {
       case "theory":
         return { color: "#4ecdc4", label: "Theory" };
       case "practical":
@@ -233,15 +233,9 @@ const Home = () => {
       <footer className="page-footer">
         <div className="footer-content">
           <div className="footer-info">
-            <p>© 2024 College Management System. All rights reserved.</p>
-            <p className="footer-version">Version 2.1.0</p>
+            <p>© 2026 Student attendance tracking system using QR code.</p>
           </div>
-          <div className="footer-actions">
-            <button className="btn btn-secondary" onClick={logout}>
-              <i className="fas fa-sign-out-alt"></i>
-              Logout
-            </button>
-          </div>
+          {/* تم حذف زر تسجيل الخروج */}
         </div>
       </footer>
     </div>

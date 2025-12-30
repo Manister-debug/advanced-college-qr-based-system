@@ -14,7 +14,7 @@ import Home from "./Sub-Admin Pages/Home/Home.jsx";
 import Dashboard from "./Sub-Admin Pages/Dashboard/Dashboard.jsx";
 import RegisterStudents from "./Sub-Admin Pages/RegisterStudents/RegisterStudents.jsx";
 import ViewStudents from "./Sub-Admin Pages/ViewStudents/ViewStudents.jsx";
-import AddCourse from "./Sub-Admin Pages/AddCourses/AddCourses.jsx";
+import AddCourses from "./Sub-Admin Pages/AddCourses/AddCourses.jsx"; // تم التعديل هنا
 import ViewCourses from "./Sub-Admin Pages/ViewCourses/ViewCourses.jsx";
 import ManageTermTable from "./Sub-Admin Pages/Manage Term Table/ManageTermTable.jsx";
 import AddProfessors from "./Sub-Admin Pages/AddProfessors/AddProfessors.jsx";
@@ -113,27 +113,22 @@ const ProfessionalProtectedRoute = ({ children }) => {
   return children;
 };
 
-// Protected Route Component for Professor routes - UPDATED WITH DEBUG LOGS
+// Protected Route Component for Professor routes
 const ProfessorProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-
-  console.log("ProfessorProtectedRoute - User:", user); // Debug log
 
   if (loading) {
     return <div className="loading-container">Loading...</div>;
   }
 
   if (!user) {
-    console.log("No user, redirecting to login");
     return <Navigate to="/login" replace />;
   }
 
   // Check for professor role (case-insensitive)
   const normalizedRole = user?.role?.toLowerCase();
-  console.log("Checking role:", normalizedRole);
 
   if (normalizedRole !== 'professor') {
-    console.log("Not a professor, redirecting. Role was:", user?.role);
     if (normalizedRole === 'student') {
       return <Navigate to="/student/home" replace />;
     } else if (normalizedRole === 'sub-admin' || normalizedRole === 'admin') {
@@ -142,7 +137,6 @@ const ProfessorProtectedRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  console.log("Professor authorized, rendering children");
   return children;
 };
 
@@ -254,13 +248,13 @@ function App() {
 
           {/* Course Management */}
           <Route
-            path="/add-course"
+            path="/add-courses" // تم التعديل هنا: تغيير من /add-course إلى /add-courses
             element={
               <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
                   <Navbar />
                   <main className="main-content">
-                    <AddCourse />
+                    <AddCourses />
                   </main>
                 </div>
               </ProtectedRoute>
@@ -280,6 +274,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/manage-term-table"
             element={
@@ -413,6 +408,7 @@ function App() {
               </ProfessorProtectedRoute>
             }
           />
+
           {/* Professor QR Code Gate */}
           <Route
             path="/professor/qr-code-gate"
@@ -427,6 +423,7 @@ function App() {
               </ProfessorProtectedRoute>
             }
           />
+
           {/* Professor Profile */}
           <Route
             path="/professor/profile"

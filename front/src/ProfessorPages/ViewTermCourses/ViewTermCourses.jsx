@@ -250,8 +250,6 @@ function ViewTermCourses() {
             </div>
 
             <div className="main-content">
-                {/* تم حذف قسم Term Selector بالكامل */}
-
                 {/* Courses Table */}
                 <div className="courses-table-container">
                     {assignedCourses.length === 0 ? (
@@ -274,7 +272,7 @@ function ViewTermCourses() {
                                         <th>Academic Hours</th>
                                         <th>Semester Weeks</th>
                                         <th>Total Sections</th>
-                                        <th>Actions</th>
+                                        {/* تم حذف عمود Actions */}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -350,16 +348,7 @@ function ViewTermCourses() {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <div className="course-actions">
-                                                    <button className="action-btn view-btn" title="View Details">
-                                                        <i className="fas fa-eye"></i>
-                                                    </button>
-                                                    <button className="action-btn schedule-btn" title="View Schedule">
-                                                        <i className="fas fa-calendar"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
+                                            {/* تم حذف خلية الأزرار */}
                                         </tr>
                                     ))}
                                 </tbody>
