@@ -14,7 +14,7 @@ import Home from "./Sub-Admin Pages/Home/Home.jsx";
 import Dashboard from "./Sub-Admin Pages/Dashboard/Dashboard.jsx";
 import RegisterStudents from "./Sub-Admin Pages/RegisterStudents/RegisterStudents.jsx";
 import ViewStudents from "./Sub-Admin Pages/ViewStudents/ViewStudents.jsx";
-import AddCourses from "./Sub-Admin Pages/AddCourses/AddCourses.jsx"; // تم التعديل هنا
+import AddCourse from "./Sub-Admin Pages/AddCourses/AddCourses.jsx"
 import ViewCourses from "./Sub-Admin Pages/ViewCourses/ViewCourses.jsx";
 import ManageTermTable from "./Sub-Admin Pages/Manage Term Table/ManageTermTable.jsx";
 import AddProfessors from "./Sub-Admin Pages/AddProfessors/AddProfessors.jsx";
@@ -248,13 +248,13 @@ function App() {
 
           {/* Course Management */}
           <Route
-            path="/add-courses" // تم التعديل هنا: تغيير من /add-course إلى /add-courses
+            path="/add-course" // تم التعديل هنا: تغيير من /add-course إلى /add-courses
             element={
               <ProtectedRoute requiredRole="sub-admin">
                 <div className="App">
                   <Navbar />
                   <main className="main-content">
-                    <AddCourses />
+                    <AddCourse />
                   </main>
                 </div>
               </ProtectedRoute>

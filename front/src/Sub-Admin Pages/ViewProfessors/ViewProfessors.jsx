@@ -5,13 +5,11 @@ import './ViewProfessors.css';
 import { db } from "../../firebase";
 import { 
   collection, 
-  getDocs, 
+  onSnapshot,
   doc, 
   deleteDoc, 
   updateDoc,
-  onSnapshot,
   query,
-  where,
   orderBy 
 } from "firebase/firestore";
 
@@ -27,29 +25,24 @@ export default function ViewProfessors() {
     status: 'all'
   });
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    total: 0,
-    theory: 0,
-    practical: 0,
-    active: 0
-  });
   const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
   const [editing, setEditing] = useState(false);
   const [editFormData, setEditFormData] = useState({
     name: '',
-    username: '', // Added username field
+    username: '',
     faculty: '',
     specialization: '',
     email: '',
     phone: '',
     type: 'theory',
     status: 'active',
-    password: '' // Added password field
+    password: ''
   });
   const [saving, setSaving] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // For password visibility toggle
-  const [showPasswordView, setShowPasswordView] = useState(false); // For viewing password in modal
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordView, setShowPasswordView] = useState(false);
 
+  // Available filters
   const faculties = [
     'Computer Science',
     'Software Engineering',
@@ -85,7 +78,7 @@ export default function ViewProfessors() {
     'Bioinformatics'
   ];
 
-  // ⭐ Fetch real-time data from Firestore
+  // Fetch real-time data from Firestore
   useEffect(() => {
     const professorsRef = collection(db, "professors");
     const q = query(professorsRef, orderBy('createdAt', 'desc'));
@@ -98,30 +91,16 @@ export default function ViewProfessors() {
 
       setProfessors(data);
       setFilteredProfessors(data);
-      
-      // Calculate statistics
-      const theoryCount = data.filter(p => p.type === 'theory').length;
-      const practicalCount = data.filter(p => p.type === 'practical').length;
-      const activeCount = data.filter(p => p.status === 'active').length;
-      
-      setStats({
-        total: data.length,
-        theory: theoryCount,
-        practical: practicalCount,
-        active: activeCount
-      });
-      
       setLoading(false);
     }, (error) => {
       console.error("Error loading professors:", error);
       setLoading(false);
     });
 
-    // Cleanup on unmount
     return () => unsubscribe();
   }, []);
 
-  // ⭐ Filter and sort professors
+  // Filter and sort professors
   useEffect(() => {
     let result = [...professors];
 
@@ -147,7 +126,7 @@ export default function ViewProfessors() {
       const term = searchTerm.toLowerCase();
       result = result.filter(prof =>
         prof.name?.toLowerCase().includes(term) ||
-        prof.username?.toLowerCase().includes(term) || // Added username search
+        prof.username?.toLowerCase().includes(term) ||
         prof.faculty?.toLowerCase().includes(term) ||
         prof.specialization?.toLowerCase().includes(term) ||
         prof.email?.toLowerCase().includes(term) ||
@@ -177,14 +156,18 @@ export default function ViewProfessors() {
     setFilteredProfessors(result);
   }, [professors, filters, searchTerm, sortConfig]);
 
-  // ⭐ Open professor details modal
+  // Get available filter options from current data
+  const availableFaculties = [...new Set(professors.map(p => p.faculty).filter(Boolean))].sort();
+  const availableSpecializations = [...new Set(professors.map(p => p.specialization).filter(Boolean))].sort();
+
+  // Open professor details modal
   const handleProfessorSelect = (professor) => {
     setSelectedProfessor(professor);
     setEditing(false);
-    setShowPasswordView(false); // Reset password visibility
+    setShowPasswordView(false);
   };
 
-  // ⭐ Close modal
+  // Close modal
   const closeModal = () => {
     setSelectedProfessor(null);
     setEditing(false);
@@ -203,23 +186,23 @@ export default function ViewProfessors() {
     setShowPasswordView(false);
   };
 
-  // ⭐ Start editing
+  // Start editing
   const startEditing = (professor) => {
     setEditing(true);
     setEditFormData({
       name: professor.name || '',
-      username: professor.username || '', // Added username
+      username: professor.username || '',
       faculty: professor.faculty || '',
       specialization: professor.specialization || '',
       email: professor.email || '',
       phone: professor.phone || '',
       type: professor.type || 'theory',
       status: professor.status || 'active',
-      password: '' // Always empty for security
+      password: ''
     });
   };
 
-  // ⭐ Cancel editing
+  // Cancel editing
   const cancelEditing = () => {
     setEditing(false);
     setEditFormData({
@@ -236,7 +219,7 @@ export default function ViewProfessors() {
     setShowPassword(false);
   };
 
-  // ⭐ Handle edit form input changes
+  // Handle edit form input changes
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditFormData(prev => ({
@@ -245,17 +228,11 @@ export default function ViewProfessors() {
     }));
   };
 
-  // ⭐ Toggle password visibility in edit mode
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  // Toggle password visibility
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const togglePasswordViewVisibility = () => setShowPasswordView(!showPasswordView);
 
-  // ⭐ Toggle password visibility in view mode
-  const togglePasswordViewVisibility = () => {
-    setShowPasswordView(!showPasswordView);
-  };
-
-  // ⭐ Update professor with password
+  // Update professor
   const updateProfessor = async () => {
     if (!selectedProfessor) return;
 
@@ -276,10 +253,9 @@ export default function ViewProfessors() {
     try {
       const professorRef = doc(db, "professors", selectedProfessor.id);
       
-      // Prepare update data
       const updateData = {
         name: editFormData.name.trim(),
-        username: editFormData.username.trim(), // Added username
+        username: editFormData.username.trim(),
         faculty: editFormData.faculty,
         specialization: editFormData.specialization,
         email: editFormData.email.toLowerCase().trim(),
@@ -289,7 +265,6 @@ export default function ViewProfessors() {
         updatedAt: new Date().toISOString()
       };
 
-      // Only update password if a new one is provided
       if (editFormData.password.trim()) {
         updateData.password = editFormData.password.trim();
       }
@@ -303,12 +278,7 @@ export default function ViewProfessors() {
           : p
       ));
 
-      // Update selected professor
-      setSelectedProfessor(prev => ({ 
-        ...prev, 
-        ...updateData
-      }));
-
+      setSelectedProfessor(prev => ({ ...prev, ...updateData }));
       setEditing(false);
       alert('Professor details updated successfully!');
     } catch (error) {
@@ -319,18 +289,16 @@ export default function ViewProfessors() {
     }
   };
 
-  // ⭐ Delete professor
+  // Delete professor
   const deleteProfessor = async (professorId, professorName) => {
     if (window.confirm(`Are you sure you want to delete professor "${professorName}"?\nThis action cannot be undone.`)) {
       try {
         await deleteDoc(doc(db, "professors", professorId));
         
-        // Close modal if open
         if (selectedProfessor && selectedProfessor.id === professorId) {
           closeModal();
         }
         
-        // Success notification
         alert(`Professor "${professorName}" has been successfully deleted`);
         
       } catch (error) {
@@ -340,12 +308,7 @@ export default function ViewProfessors() {
     }
   };
 
-  // ⭐ Search handler
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  // ⭐ Reset filters
+  // Reset filters
   const resetFilters = () => {
     setFilters({
       type: 'all',
@@ -356,13 +319,7 @@ export default function ViewProfessors() {
     setSearchTerm('');
   };
 
-  // ⭐ Available faculties
-  const availableFaculties = [...new Set(professors.map(p => p.faculty).filter(Boolean))].sort();
-
-  // ⭐ Available specializations
-  const availableSpecializations = [...new Set(professors.map(p => p.specialization).filter(Boolean))].sort();
-
-  // ⭐ Sort handler
+  // Sort handler
   const handleSort = (key) => {
     setSortConfig(prevConfig => ({
       key,
@@ -370,38 +327,16 @@ export default function ViewProfessors() {
     }));
   };
 
-  // ⭐ Format date
+  // Format date
   const formatDate = (dateString) => {
     if (!dateString) return 'Not specified';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      day: 'numeric'
     });
   };
-
-  // ⭐ Add username field to professor cards
-  useEffect(() => {
-    const cards = document.querySelectorAll('.professor-card-details');
-    cards.forEach(card => {
-      const hasUsername = card.querySelector('.username-field');
-      if (!hasUsername) {
-        const detailItem = document.createElement('div');
-        detailItem.className = 'detail-item username-field';
-        detailItem.innerHTML = `
-          <i className="fas fa-user-tag"></i>
-          <div className="detail-content">
-            <span className="detail-label">Username:</span>
-            <span className="detail-value username">${card.dataset.username || 'Not specified'}</span>
-          </div>
-        `;
-        card.insertBefore(detailItem, card.children[1]);
-      }
-    });
-  }, [filteredProfessors]);
 
   return (
     <div className="view-professors-page">
@@ -413,194 +348,217 @@ export default function ViewProfessors() {
           </h1>
           <p className="page-subtitle">Manage and view academic and administrative staff</p>
         </div>
-        <div className="header-stats">
-          <div className="stat-card">
-            <div className="stat-icon total">
-              <i className="fas fa-users"></i>
-            </div>
-            <div className="stat-info">
-              <span className="stat-number">{stats.total}</span>
-              <span className="stat-label">Total Staff</span>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon theory">
-              <i className="fas fa-chalkboard-teacher"></i>
-            </div>
-            <div className="stat-info">
-              <span className="stat-number">{stats.theory}</span>
-              <span className="stat-label">Theory Professors</span>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon practical">
-              <i className="fas fa-cogs"></i>
-            </div>
-            <div className="stat-info">
-              <span className="stat-number">{stats.practical}</span>
-              <span className="stat-label">Practical Engineers</span>
-            </div>
-          </div>
-        </div>
       </div>
 
       <div className="main-content">
-        {/* Search and Filters Bar */}
-        <div className="controls-section">
-          <div className="search-container">
+        {/* Left Sidebar - Filters */}
+        <div className="filters-sidebar">
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">
+              <i className="fas fa-search"></i>
+              Search Professors
+            </h3>
             <div className="search-box">
               <i className="fas fa-search"></i>
               <input
                 type="text"
-                placeholder="Search by name, username, faculty, specialization, email..."
+                placeholder="Search by name, username, faculty..."
                 value={searchTerm}
-                onChange={handleSearch}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="search-input"
               />
-              {searchTerm && (
-                <button 
-                  className="clear-search"
-                  onClick={() => setSearchTerm('')}
-                >
-                  <i className="fas fa-times"></i>
-                </button>
-              )}
             </div>
-            
-            <div className="sort-controls">
-              <span className="sort-label">Sort by:</span>
+          </div>
+
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">
+              <i className="fas fa-filter"></i>
+              Filter by Type
+            </h3>
+            <div className="filter-options">
               <button 
-                className={`sort-button ${sortConfig.key === 'name' ? 'active' : ''}`}
+                className={`filter-option ${filters.type === 'all' ? 'active' : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, type: 'all' }))}
+              >
+                <i className="fas fa-layer-group"></i>
+                All Types
+              </button>
+              <button 
+                className={`filter-option ${filters.type === 'theory' ? 'active' : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, type: 'theory' }))}
+              >
+                <i className="fas fa-chalkboard-teacher"></i>
+                Theory
+              </button>
+              <button 
+                className={`filter-option ${filters.type === 'practical' ? 'active' : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, type: 'practical' }))}
+              >
+                <i className="fas fa-flask"></i>
+                Practical
+              </button>
+            </div>
+          </div>
+
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">
+              <i className="fas fa-university"></i>
+              Filter by Faculty
+            </h3>
+            <div className="filter-scroll">
+              <div className="filter-options vertical">
+                <button 
+                  className={`filter-option ${filters.faculty === 'all' ? 'active' : ''}`}
+                  onClick={() => setFilters(prev => ({ ...prev, faculty: 'all' }))}
+                >
+                  <i className="fas fa-th-list"></i>
+                  All Faculties
+                </button>
+                {availableFaculties.map(faculty => (
+                  <button 
+                    key={faculty}
+                    className={`filter-option ${filters.faculty === faculty ? 'active' : ''}`}
+                    onClick={() => setFilters(prev => ({ ...prev, faculty }))}
+                  >
+                    <i className="fas fa-graduation-cap"></i>
+                    {faculty}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">
+              <i className="fas fa-graduation-cap"></i>
+              Filter by Specialization
+            </h3>
+            <div className="filter-scroll">
+              <div className="filter-options vertical">
+                <button 
+                  className={`filter-option ${filters.specialization === 'all' ? 'active' : ''}`}
+                  onClick={() => setFilters(prev => ({ ...prev, specialization: 'all' }))}
+                >
+                  <i className="fas fa-th-list"></i>
+                  All Specializations
+                </button>
+                {availableSpecializations.map(spec => (
+                  <button 
+                    key={spec}
+                    className={`filter-option ${filters.specialization === spec ? 'active' : ''}`}
+                    onClick={() => setFilters(prev => ({ ...prev, specialization: spec }))}
+                  >
+                    <i className="fas fa-code"></i>
+                    {spec}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">
+              <i className="fas fa-circle"></i>
+              Filter by Status
+            </h3>
+            <div className="filter-options">
+              <button 
+                className={`filter-option ${filters.status === 'all' ? 'active' : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, status: 'all' }))}
+              >
+                <i className="fas fa-layer-group"></i>
+                All Status
+              </button>
+              <button 
+                className={`filter-option ${filters.status === 'active' ? 'active' : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, status: 'active' }))}
+              >
+                <i className="fas fa-check-circle"></i>
+                Active
+              </button>
+              <button 
+                className={`filter-option ${filters.status === 'inactive' ? 'active' : ''}`}
+                onClick={() => setFilters(prev => ({ ...prev, status: 'inactive' }))}
+              >
+                <i className="fas fa-times-circle"></i>
+                Inactive
+              </button>
+            </div>
+          </div>
+
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">
+              <i className="fas fa-sort"></i>
+              Sort Options
+            </h3>
+            <div className="filter-options">
+              <button 
+                className={`filter-option ${sortConfig.key === 'name' ? 'active' : ''}`}
                 onClick={() => handleSort('name')}
               >
+                <i className="fas fa-sort-alpha-down"></i>
                 Name {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
               </button>
               <button 
-                className={`sort-button ${sortConfig.key === 'createdAt' ? 'active' : ''}`}
+                className={`filter-option ${sortConfig.key === 'createdAt' ? 'active' : ''}`}
                 onClick={() => handleSort('createdAt')}
               >
+                <i className="fas fa-calendar-alt"></i>
                 Date {sortConfig.key === 'createdAt' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
               </button>
             </div>
           </div>
 
-          <div className="filters-container">
-            <div className="filter-group">
-              <label className="filter-label">
-                <i className="fas fa-filter"></i>
-                Type:
-              </label>
-              <select
-                className="filter-select"
-                value={filters.type}
-                onChange={(e) => setFilters(prev => ({ ...prev, type: e.target.value }))}
-              >
-                <option value="all">All Types</option>
-                <option value="theory">Theory</option>
-                <option value="practical">Practical</option>
-              </select>
-            </div>
-
-            <div className="filter-group">
-              <label className="filter-label">
-                <i className="fas fa-university"></i>
-                Faculty:
-              </label>
-              <select
-                className="filter-select"
-                value={filters.faculty}
-                onChange={(e) => setFilters(prev => ({ ...prev, faculty: e.target.value }))}
-              >
-                <option value="all">All Faculties</option>
-                {availableFaculties.map(faculty => (
-                  <option key={faculty} value={faculty}>{faculty}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="filter-group">
-              <label className="filter-label">
-                <i className="fas fa-graduation-cap"></i>
-                Specialization:
-              </label>
-              <select
-                className="filter-select"
-                value={filters.specialization}
-                onChange={(e) => setFilters(prev => ({ ...prev, specialization: e.target.value }))}
-              >
-                <option value="all">All Specializations</option>
-                {availableSpecializations.map(spec => (
-                  <option key={spec} value={spec}>{spec}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="filter-group">
-              <label className="filter-label">
-                <i className="fas fa-circle"></i>
-                Status:
-              </label>
-              <select
-                className="filter-select"
-                value={filters.status}
-                onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
-              >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-
-            <button
-              className="btn btn-secondary"
-              onClick={resetFilters}
-            >
+          <div className="sidebar-actions">
+            <button className="btn btn-secondary reset-btn" onClick={resetFilters}>
               <i className="fas fa-redo"></i>
-              Reset Filters
+              Reset All Filters
             </button>
           </div>
         </div>
 
-        {/* Professors Display */}
-        <div className="professors-container">
-          {loading ? (
-            <div className="loading-container">
-              <div className="spinner">
-                <i className="fas fa-spinner fa-spin"></i>
-              </div>
-              <p>Loading professors data...</p>
+        {/* Right Content - Professors List */}
+        <div className="professors-content">
+          <div className="content-header">
+            <div className="results-info">
+              <span className="results-count">
+                Showing {filteredProfessors.length} of {professors.length} professors
+              </span>
+              <span className="last-update">
+                Last updated: {new Date().toLocaleTimeString()}
+              </span>
             </div>
-          ) : filteredProfessors.length === 0 ? (
-            <div className="no-results">
-              <div className="no-results-icon">
-                <i className="fas fa-user-slash"></i>
-              </div>
-              <h3>No Results Found</h3>
-              <p>No professors match your search or filter criteria.</p>
-              <button 
-                className="btn btn-primary"
-                onClick={resetFilters}
-              >
-                <i className="fas fa-eye"></i>
-                View All Professors
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className="results-info">
-                <span className="results-count">
-                  Showing {filteredProfessors.length} of {professors.length} professors
-                </span>
-                <span className="last-update">
-                  Last updated: {new Date().toLocaleTimeString()}
-                </span>
-              </div>
+          </div>
 
-              <div className="professors-grid">
+          <div className="professors-container">
+            {loading ? (
+              <div className="loading-container">
+                <div className="spinner">
+                  <i className="fas fa-spinner fa-spin"></i>
+                </div>
+                <p>Loading professors data...</p>
+              </div>
+            ) : filteredProfessors.length === 0 ? (
+              <div className="no-results">
+                <div className="no-results-icon">
+                  <i className="fas fa-user-slash"></i>
+                </div>
+                <h3>No Results Found</h3>
+                <p>No professors match your search or filter criteria.</p>
+                <button 
+                  className="btn btn-primary"
+                  onClick={resetFilters}
+                >
+                  <i className="fas fa-eye"></i>
+                  View All Professors
+                </button>
+              </div>
+            ) : (
+              <div className="professors-grid compact">
                 {filteredProfessors.map(professor => (
                   <div
                     key={professor.id}
-                    className="professor-card"
+                    className="professor-card compact"
                     onClick={() => handleProfessorSelect(professor)}
                   >
                     <div className="professor-card-header">
@@ -619,55 +577,45 @@ export default function ViewProfessors() {
                           </span>
                         </div>
                       </div>
-                      <div className="professor-date">
-                        <i className="fas fa-calendar"></i>
-                        {formatDate(professor.createdAt)}
-                      </div>
                     </div>
 
-                    <div className="professor-card-details" data-username={professor.username || 'Not specified'}>
-                      <div className="detail-item">
-                        <i className="fas fa-user-tag"></i>
-                        <div className="detail-content">
+                    <div className="professor-card-details compact">
+                      <div className="detail-row">
+                        <div className="detail-item">
+                          <i className="fas fa-user-tag"></i>
                           <span className="detail-label">Username:</span>
-                          <span className="detail-value username">{professor.username || 'Not specified'}</span>
+                          <span className="detail-value">{professor.username || 'Not set'}</span>
                         </div>
-                      </div>
-                      
-                      <div className="detail-item">
-                        <i className="fas fa-university"></i>
-                        <div className="detail-content">
+                        <div className="detail-item">
+                          <i className="fas fa-university"></i>
                           <span className="detail-label">Faculty:</span>
                           <span className="detail-value">{professor.faculty || 'Not specified'}</span>
                         </div>
                       </div>
                       
-                      <div className="detail-item">
-                        <i className="fas fa-graduation-cap"></i>
-                        <div className="detail-content">
-                          <span className="detail-label">Specialization:</span>
-                          <span className="detail-value">{professor.specialization || 'Not specified'}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="detail-item">
-                        <i className="fas fa-envelope"></i>
-                        <div className="detail-content">
+                      <div className="detail-row">
+                        <div className="detail-item">
+                          <i className="fas fa-envelope"></i>
                           <span className="detail-label">Email:</span>
                           <span className="detail-value email">{professor.email}</span>
                         </div>
-                      </div>
-                      
-                      <div className="detail-item">
-                        <i className="fas fa-phone"></i>
-                        <div className="detail-content">
+                        <div className="detail-item">
+                          <i className="fas fa-phone"></i>
                           <span className="detail-label">Phone:</span>
                           <span className="detail-value">{professor.phone}</span>
                         </div>
                       </div>
+                      
+                      <div className="detail-row">
+                        <div className="detail-item">
+                          <i className="fas fa-calendar"></i>
+                          <span className="detail-label">Added:</span>
+                          <span className="detail-value">{formatDate(professor.createdAt)}</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="professor-card-actions">
+                    <div className="professor-card-actions compact">
                       <button
                         className="action-btn view-btn"
                         onClick={(e) => {
@@ -676,7 +624,17 @@ export default function ViewProfessors() {
                         }}
                       >
                         <i className="fas fa-eye"></i>
-                        View Details
+                        View
+                      </button>
+                      <button
+                        className="action-btn edit-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditing(professor);
+                        }}
+                      >
+                        <i className="fas fa-edit"></i>
+                        Edit
                       </button>
                       <button
                         className="action-btn delete-btn"
@@ -692,12 +650,12 @@ export default function ViewProfessors() {
                   </div>
                 ))}
               </div>
-            </>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Details/Edit Modal - Popup Window */}
+      {/* Details/Edit Modal */}
       {selectedProfessor && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()}>
@@ -725,7 +683,6 @@ export default function ViewProfessors() {
 
             <div className="modal-content">
               {editing ? (
-                // Edit Form
                 <div className="edit-form">
                   <div className="form-grid">
                     <div className="form-group">
@@ -863,7 +820,6 @@ export default function ViewProfessors() {
                       </select>
                     </div>
 
-                    {/* Password Field */}
                     <div className="form-group">
                       <label className="form-label">
                         <i className="fas fa-lock"></i>
@@ -894,7 +850,6 @@ export default function ViewProfessors() {
                   </div>
                 </div>
               ) : (
-                // View Mode with ALL Details including Username and Password
                 <>
                   <div className="detail-section">
                     <h3>

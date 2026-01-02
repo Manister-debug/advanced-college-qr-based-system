@@ -554,17 +554,6 @@ const QrCodeRoom = () => {
     return (
         <div className="qr-code-room-page">
             <div className="page-header">
-                <div className="header-content">
-                    <h1>
-                        <i className="fas fa-qrcode"></i>
-                        QR Code Attendance System
-                    </h1>
-                    <p className="page-subtitle">Room {roomInfo.roomNumber} - {roomInfo.courseCode}</p>
-                </div>
-                <div className="user-info">
-                    <i className="fas fa-user-circle"></i>
-                    <span>{roomInfo.lecturerName}</span>
-                </div>
             </div>
 
             <div className="content-container">
@@ -752,11 +741,6 @@ const QrCodeRoom = () => {
                                         ))}
                                     </select>
                                 </div>
-                            </div>
-
-                            <div className="lecturer-badge">
-                                <i className="fas fa-user-tie"></i>
-                                {roomInfo.lecturerName}
                             </div>
                         </div>
 

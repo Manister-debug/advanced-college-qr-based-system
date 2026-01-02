@@ -1,4 +1,4 @@
-/* AddCourses.css - Modern Gradient Theme from #13315c matching AddProfessors */
+/* AddCourses.css - Modern Gradient Theme */
 :root {
   --primary-blue: #13315c;
   --primary-dark: #0a1b35;
@@ -29,13 +29,14 @@
   background: var(--gradient-dark);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   color: var(--text-white);
+  transition: all 0.3s ease;
 }
 
 .add-courses-page * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
 }
 
 /* Page Header */
@@ -82,10 +83,9 @@
   line-height: 1.6;
 }
 
-.add-courses-page .admin-info {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.add-courses-page .user-info {
+  background: rgba(26, 67, 117, 0.3);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1rem 1.5rem;
   display: inline-flex;
@@ -93,11 +93,7 @@
   gap: 0.75rem;
   color: var(--text-white);
   font-weight: 600;
-}
-
-.add-courses-page .admin-info i {
-  color: var(--accent-blue);
-  font-size: 1.2rem;
+  margin-top: 1rem;
 }
 
 /* Main Content */
@@ -119,71 +115,21 @@
   gap: 1.25rem;
   box-shadow: var(--shadow-medium);
   animation: slideIn 0.3s ease;
-  position: relative;
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.add-courses-page .alert-success {
-  border-left: 4px solid var(--success-green);
-}
+.add-courses-page .alert-success { border-left: 4px solid var(--success-green); }
+.add-courses-page .alert-error { border-left: 4px solid var(--error-red); }
 
-.add-courses-page .alert-error {
-  border-left: 4px solid var(--error-red);
-}
+.add-courses-page .alert i { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.25rem; }
+.add-courses-page .alert-success i { color: var(--success-green); }
+.add-courses-page .alert-error i { color: var(--error-red); }
 
-.add-courses-page .alert i {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-  margin-top: 0.25rem;
-}
-
-.add-courses-page .alert-success i {
-  color: var(--success-green);
-}
-
-.add-courses-page .alert-error i {
-  color: var(--error-red);
-}
-
-.add-courses-page .alert span {
-  flex: 1;
-  line-height: 1.6;
-  color: var(--text-white);
-  font-weight: 500;
-  white-space: pre-line;
-}
-
-.add-courses-page .alert-close {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: var(--text-lighter);
-  cursor: pointer;
-  font-size: 1rem;
-  padding: 0.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-
-.add-courses-page .alert-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--text-white);
-}
+.add-courses-page .alert span { flex: 1; line-height: 1.6; color: var(--text-white); font-weight: 500; }
 
 /* Form Container */
 .add-courses-page .form-container {
@@ -198,42 +144,22 @@
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.add-courses-page .form-header {
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.75rem;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .add-courses-page .form-title {
   font-size: 1.75rem;
   color: var(--text-white);
-  margin-bottom: 0.75rem;
+  margin-bottom: 1.75rem;
   display: flex;
   align-items: center;
   gap: 1.25rem;
   font-weight: 800;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
-.add-courses-page .form-title i {
-  color: var(--accent-blue);
-  font-size: 1.5rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-}
-
-.add-courses-page .form-subtitle {
-  font-size: 1.1rem;
-  color: var(--text-lighter);
-  font-weight: 500;
-}
+.add-courses-page .form-title i { color: var(--accent-blue); font-size: 1.5rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
 
 /* Form Grid */
 .add-courses-page .form-grid {
@@ -243,600 +169,75 @@
   margin-bottom: 2.5rem;
 }
 
-/* Form Group */
-.add-courses-page .form-group {
-  margin-bottom: 0;
-}
-
-.add-courses-page .form-label {
-  display: block;
-  margin-bottom: 0.75rem;
-  font-weight: 700;
-  color: var(--text-white);
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.add-courses-page .form-label i {
-  color: var(--accent-blue);
-  font-size: 1.2rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-}
+/* Form Inputs */
+.add-courses-page .form-group { margin-bottom: 0; }
+.add-courses-page .form-label { display: flex; align-items: center; gap: 1rem; font-weight: 700; color: var(--text-white); font-size: 1.1rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+.add-courses-page .form-label i { color: var(--accent-blue); font-size: 1.2rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
 
 .add-courses-page .form-input {
-  width: 100%;
-  padding: 1.25rem 1.5rem;
-  border: 2px solid var(--border-color);
-  border-radius: 16px;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  background: var(--input-bg);
-  color: var(--text-white);
-  font-weight: 600;
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+  width: 100%; padding: 1.25rem 1.5rem; border: 2px solid var(--border-color); border-radius: 16px;
+  font-size: 1.1rem; font-weight: 600; background: var(--input-bg); color: var(--text-white);
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
 }
-
-.add-courses-page .form-input:focus {
-  outline: none;
-  border-color: var(--accent-blue);
-  background: rgba(10, 27, 53, 1);
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3), 0 0 0 4px rgba(42, 90, 156, 0.15);
-}
-
-.add-courses-page .form-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.add-courses-page .form-input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.add-courses-page select.form-input {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%232a5a9c' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1.5rem center;
-  background-size: 16px;
-  padding-right: 3.5rem;
-}
-
-.add-courses-page .form-hint {
-  font-size: 0.95rem;
-  color: var(--text-lighter);
-  margin-top: 0.5rem;
-  margin-left: 0.25rem;
-  font-weight: 500;
-  line-height: 1.4;
-}
+.add-courses-page .form-input:focus { outline: none; border-color: var(--accent-blue); background: rgba(10,27,53,1); box-shadow: inset 0 2px 10px rgba(0,0,0,0.3), 0 0 0 4px rgba(42,90,156,0.15); }
+.add-courses-page .form-input::placeholder { color: rgba(255,255,255,0.5); }
 
 /* Professor Assignment Sections */
-.add-courses-page .professor-assignment-section {
-  margin: 3rem 0;
-  animation: fadeInUp 0.6s ease;
-}
+.add-courses-page .professor-assignment-section { margin: 3rem 0; animation: fadeInUp 0.6s ease; }
+@keyframes fadeInUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+.add-courses-page .section-title { font-size: 1.5rem; color: var(--text-white); margin-bottom: 2rem; display: flex; align-items: center; gap: 1.25rem; font-weight: 800; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.add-courses-page .section-title i { color: var(--accent-blue); font-size: 1.4rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+.add-courses-page .professor-count { font-size:0.9rem;color:var(--text-light);margin-left:auto;background:rgba(255,255,255,0.1);padding:0.25rem 0.75rem;border-radius:12px;font-weight:600; }
 
-.add-courses-page .professor-assignment-section h3 {
-  font-size: 1.5rem;
-  color: var(--text-white);
-  margin-bottom: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  font-weight: 800;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
+.add-courses-page .professor-assignment-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; background: rgba(10,27,53,0.7); padding: 2.5rem; border-radius:20px; border:2px solid var(--border-color); box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);}
+.add-courses-page .professor-list-container { display:flex; flex-direction:column; gap:1.5rem; }
+.add-courses-page .list-title { font-size:1.25rem; font-weight:800; color:var(--text-white); margin-bottom:1rem; text-shadow:0 2px 4px rgba(0,0,0,0.3);}
+.add-courses-page .professor-list { max-height:350px; overflow-y:auto; background:rgba(10,27,53,0.9); border-radius:16px; padding:1.5rem; border:2px solid var(--border-color); box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);}
+.add-courses-page .professor-list.practical-assigned-list { background: rgba(19,49,92,0.3); }
 
-.add-courses-page .professor-assignment-section h3 i {
-  color: var(--accent-blue);
-  font-size: 1.4rem;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-}
+.add-courses-page .professor-details, .add-courses-page .professor-id, .add-courses-page .professor-faculty, .add-courses-page .professor-specialization { color: var(--text-white) !important; font-size:0.85rem; display:flex; gap:4px; flex-direction:column; margin-top:4px; }
+.add-courses-page .professor-details span, .add-courses-page .professor-details i { color: var(--text-white) !important; opacity:0.8; font-size:0.8rem; display:flex; gap:6px; align-items:center; }
 
-.add-courses-page .professor-assignment-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2.5rem;
-  background: rgba(10, 27, 53, 0.7);
-  padding: 2.5rem;
-  border-radius: 20px;
-  border: 2px solid var(--border-color);
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+.add-courses-page .available-professor-item, .add-courses-page .assigned-professor-item {
+  display:flex; justify-content:space-between; align-items:center; padding:1.25rem; margin-bottom:1rem; border-radius:14px; transition:all 0.3s ease;
 }
+.add-courses-page .available-professor-item { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.1); }
+.add-courses-page .available-professor-item:hover { background:rgba(255,255,255,0.1); border-color:var(--accent-blue); transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.add-courses-page .assigned-professor-item { background: rgba(76,175,80,0.1); border:2px solid var(--success-green);}
+.add-courses-page .assigned-professor-item.unassigned { background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.1);}
+.add-courses-page .unassigned-text { color:var(--text-lighter); font-style:italic; }
 
-@media (max-width: 1024px) {
-  .add-courses-page .professor-assignment-container {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
+.add-courses-page .assign-arrow-button {
+  background: transparent; border:none; color:var(--accent-blue); cursor:pointer; font-size:1.2rem; padding:8px 12px; border-radius:8px; display:flex; align-items:center; justify-content:center; transition:all 0.3s ease;
 }
+.add-courses-page .assign-arrow-button:hover:not(:disabled) { background: rgba(42,90,156,0.2); transform:scale(1.1);}
+.add-courses-page .assign-arrow-button:disabled { color: var(--text-lighter); cursor:not-allowed; opacity:0.5;}
 
-.add-courses-page .professor-list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.add-courses-page .professor-list-container h4 {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--text-white);
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.add-courses-page .professor-list {
-  max-height: 350px;
-  overflow-y: auto;
-  background: rgba(10, 27, 53, 0.9);
-  border-radius: 16px;
-  padding: 1.5rem;
-  border: 2px solid var(--border-color);
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Custom Scrollbar for Professor Lists */
-.add-courses-page .professor-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.add-courses-page .professor-list::-webkit-scrollbar-track {
-  background: rgba(10, 27, 53, 0.3);
-  border-radius: 4px;
-}
-
-.add-courses-page .professor-list::-webkit-scrollbar-thumb {
-  background: var(--accent-blue);
-  border-radius: 4px;
-}
-
-.add-courses-page .professor-list::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-light);
-}
-
-.add-courses-page .available-professor-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
-}
-
-.add-courses-page .available-professor-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--accent-blue);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-.add-courses-page .available-professor-item span {
-  color: var(--text-white);
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.add-courses-page .assign-button {
-  background: var(--gradient-primary);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  color: var(--text-white);
-  cursor: pointer;
-  font-size: 1.1rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-weight: 700;
-  transition: all 0.3s ease;
-}
-
-.add-courses-page .assign-button:hover:not(:disabled) {
-  background: var(--gradient-secondary);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(19, 49, 92, 0.3);
-  border-color: var(--accent-blue);
-}
-
-.add-courses-page .assign-button:disabled {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.1);
-  cursor: not-allowed;
-}
-
-.add-courses-page .assigned-professor-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
-  background: rgba(76, 175, 80, 0.1);
-  border-radius: 14px;
-  border: 2px solid var(--success-green);
-  transition: all 0.3s ease;
-}
-
-.add-courses-page .assigned-professor-item.unassigned {
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-}
-
-.add-courses-page .assigned-professor-item.unassigned .professor-name {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.add-courses-page .professor-slot-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.add-courses-page .professor-slot-title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-lighter);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.add-courses-page .professor-name {
-  color: var(--text-white);
-  font-size: 1.15rem;
-  font-weight: 800;
-}
-
-.add-courses-page .remove-button {
-  background: rgba(244, 67, 54, 0.2);
-  border: 2px solid var(--error-red);
-  color: var(--error-red);
-  cursor: pointer;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  transition: all 0.3s ease;
-}
-
-.add-courses-page .remove-button:hover {
-  background: rgba(244, 67, 54, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(244, 67, 54, 0.3);
-}
+.add-courses-page .remove-button { background: rgba(244,67,54,0.2); border:2px solid var(--error-red); color:var(--error-red); cursor:pointer; padding:0.5rem 1rem; border-radius:8px; font-size:0.9rem; font-weight:600; transition:all 0.3s ease; }
+.add-courses-page .remove-button:hover { background: rgba(244,67,54,0.3); transform:translateY(-2px); }
 
 /* Form Actions */
-.add-courses-page .form-actions {
-  display: flex;
-  gap: 1.25rem;
-  justify-content: flex-end;
-  padding-top: 2.5rem;
-  border-top: 2px solid rgba(255, 255, 255, 0.1);
-  margin-top: 2rem;
-}
+.add-courses-page .form-actions { display:flex; gap:1.25rem; justify-content:flex-end; padding-top:2.5rem; border-top:2px solid rgba(255,255,255,0.1); margin-top:2rem; }
+.add-courses-page .btn { padding:1.125rem 2rem; border:none; border-radius:16px; font-size:1.1rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:0.75rem; transition:all 0.3s ease; text-transform:uppercase; letter-spacing:1px; box-shadow: var(--shadow-medium); min-width:180px;}
+.add-courses-page .btn-primary { background: var(--gradient-primary); color: var(--text-white); border:2px solid rgba(255,255,255,0.2);}
+.add-courses-page .btn-primary:hover:not(:disabled) { transform:translateY(-4px); box-shadow: var(--shadow-heavy); border-color:var(--accent-blue);}
+.add-courses-page .btn-secondary { background: rgba(255,255,255,0.1); color: var(--text-white); border:2px solid rgba(255,255,255,0.2);}
+.add-courses-page .btn-secondary:hover:not(:disabled) { background: rgba(255,255,255,0.2); transform:translateY(-4px);}
+.add-courses-page .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none !important; }
 
-/* Button Styles */
-.add-courses-page .btn {
-  padding: 1.125rem 2rem;
-  border: none;
-  border-radius: 16px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  min-width: 180px;
+/* Responsive */
+@media (max-width: 1024px) {
+  .add-courses-page .professor-assignment-container { grid-template-columns:1fr; gap:2rem; }
 }
-
-.add-courses-page .btn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.add-courses-page .btn:hover::before {
-  width: 300px;
-  height: 300px;
-}
-
-.add-courses-page .btn-primary {
-  background: var(--gradient-primary);
-  color: var(--text-white);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.add-courses-page .btn-primary:hover:not(:disabled) {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(19, 49, 92, 0.4);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.add-courses-page .btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-white);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-}
-
-.add-courses-page .btn-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--text-white);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.add-courses-page .btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-/* Info Card (Recently Added Courses) */
-.add-courses-page .info-card {
-  background: var(--gradient-card);
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: var(--shadow-heavy);
-  border: 2px solid var(--border-color);
-  backdrop-filter: blur(10px);
-  margin-top: 2.5rem;
-}
-
-.add-courses-page .info-card-header {
-  background: var(--gradient-primary);
-  padding: 1.75rem;
-  color: var(--text-white);
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-}
-
-.add-courses-page .info-card-header i {
-  font-size: 1.75rem;
-  color: var(--accent-blue);
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-}
-
-.add-courses-page .info-card-header h3 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--text-white);
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.add-courses-page .info-card-body {
-  padding: 2rem;
-}
-
-.add-courses-page table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.add-courses-page thead {
-  background: rgba(10, 27, 53, 0.9);
-}
-
-.add-courses-page th {
-  padding: 1.25rem 1.5rem;
-  text-align: left;
-  color: var(--text-white);
-  font-size: 1rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-bottom: 2px solid var(--border-color);
-}
-
-.add-courses-page td {
-  padding: 1.25rem 1.5rem;
-  text-align: left;
-  color: var(--text-white);
-  font-size: 1.05rem;
-  font-weight: 600;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.add-courses-page tbody tr {
-  background: rgba(10, 27, 53, 0.7);
-  transition: all 0.3s ease;
-}
-
-.add-courses-page tbody tr:hover {
-  background: rgba(10, 27, 53, 0.9);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.add-courses-page tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.add-courses-page table strong {
-  color: var(--accent-blue);
-  font-weight: 800;
-}
-
-.add-courses-page table div {
-  margin: 0.25rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.add-courses-page table .professor-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(76, 175, 80, 0.1);
-  border: 1px solid var(--success-green);
-  border-radius: 8px;
-  margin: 0.25rem;
-}
-
-.add-courses-page table .professor-item i {
-  color: var(--success-green);
-  font-size: 0.9rem;
-}
-
-/* Loading Spinner */
-.add-courses-page .fa-spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-  .add-courses-page .page-header {
-    padding: 2rem 1.5rem;
-    border-radius: 0 0 20px 20px;
-  }
-  
-  .add-courses-page .header-content h1 {
-    font-size: 1.8rem;
-  }
-  
-  .add-courses-page .main-content {
-    padding: 0 1.5rem 1.5rem;
-  }
-  
-  .add-courses-page .form-container {
-    padding: 1.75rem;
-  }
-  
-  .add-courses-page .form-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .add-courses-page .form-actions {
-    flex-direction: column;
-  }
-  
-  .add-courses-page .btn {
-    width: 100%;
-  }
-  
-  .add-courses-page .professor-assignment-section {
-    margin: 2rem 0;
-  }
-  
-  .add-courses-page table {
-    display: block;
-    overflow-x: auto;
-  }
-  
-  .add-courses-page th,
-  .add-courses-page td {
-    padding: 1rem;
-    font-size: 0.95rem;
-  }
+  .add-courses-page .page-header { padding:2rem 1.5rem; border-radius:0 0 20px 20px; }
+  .add-courses-page .header-content h1 { font-size:1.8rem; }
+  .add-courses-page .main-content { padding:0 1.5rem 1.5rem; }
+  .add-courses-page .form-container { padding:1.75rem; }
+  .add-courses-page .form-grid { grid-template-columns:1fr; }
+  .add-courses-page .form-actions { flex-direction:column; }
+  .add-courses-page .btn { width:100%; min-width:auto; }
+  .add-courses-page .section-title { flex-direction:column; align-items:flex-start; gap:0.5rem; }
+  .add-courses-page .professor-count { margin-left:0; }
 }
-
-/* Custom Scrollbar */
-.add-courses-page ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
-}
-
-.add-courses-page ::-webkit-scrollbar-track {
-  background: rgba(10, 27, 53, 0.8);
-  border-radius: 6px;
-}
-
-.add-courses-page ::-webkit-scrollbar-thumb {
-  background: var(--gradient-primary);
-  border-radius: 6px;
-  border: 2px solid rgba(10, 27, 53, 0.8);
-}
-
-.add-courses-page ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-light);
-}
-
-/* Selection Color */
-.add-courses-page ::selection {
-  background: rgba(42, 90, 156, 0.5);
-  color: var(--text-white);
-  text-shadow: none;
-}
-
-/* Focus States */
-.add-courses-page .form-input:focus-visible,
-.add-courses-page .btn:focus-visible,
-.add-courses-page .assign-button:focus-visible,
-.add-courses-page .remove-button:focus-visible {
-  outline: 3px solid var(--accent-blue);
-  outline-offset: 2px;
-}
-
-/* Ensure all icons have proper contrast */
-.add-courses-page .fas,
-.add-courses-page .far,
-.add-courses-page .fab {
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-}
-
-/* Additional utility classes */
-.add-courses-page .text-center {
-  text-align: center;
-}
-
-.add-courses-page .text-right {
-  text-align: right;
-}
-
-.add-courses-page .mt-1 { margin-top: 0.5rem; }
-.add-courses-page .mt-2 { margin-top: 1rem; }
-.add-courses-page .mt-3 { margin-top: 1.5rem; }
-.add-courses-page .mt-4 { margin-top: 2rem; }
-.add-courses-page .mt-5 { margin-top: 2.5rem; }
-
-.add-courses-page .mb-1 { margin-bottom: 0.5rem; }
-.add-courses-page .mb-2 { margin-bottom: 1rem; }
-.add-courses-page .mb-3 { margin-bottom: 1.5rem; }
-.add-courses-page .mb-4 { margin-bottom: 2rem; }
-.add-courses-page .mb-5 { margin-bottom: 2.5rem; }

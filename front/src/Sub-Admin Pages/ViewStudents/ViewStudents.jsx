@@ -115,9 +115,6 @@ export default function ViewStudents() {
           </h1>
           <p className="page-subtitle">Manage and view all registered students</p>
         </div>
-        <div className="user-info">
-          <span>Secretary Name</span>
-        </div>
       </div>
 
       {/* Main */}

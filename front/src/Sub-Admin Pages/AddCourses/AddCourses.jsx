@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './AddCourses.css';
 import { db } from "../../firebase";
-import { collection, addDoc, setDoc, doc, getDocs, onSnapshot } from "firebase/firestore";
-
-// ... previous imports ...
+import { collection, setDoc, doc, getDocs, onSnapshot } from "firebase/firestore";
 
 function AddCourse() {
     const [courses, setCourses] = useState([]);
@@ -342,7 +340,7 @@ function AddCourse() {
                                 />
                             </div>
 
-                            {/* New: Subject Academic Hours */}
+                            {/* Subject Academic Hours */}
                             <div className="form-group">
                                 <label className="form-label">
                                     <i className="fas fa-clock"></i>
@@ -359,7 +357,7 @@ function AddCourse() {
                                     <option value="3">3 hours</option>
                                     <option value="4">4 hours</option>
                                 </select>
-                                <small style={{ color: 'var(--primary-light)', display: 'block', marginTop: '5px' }}>
+                                <small className="form-hint">
                                     Weekly academic hours for this subject
                                 </small>
                             </div>
@@ -379,7 +377,7 @@ function AddCourse() {
                                     <option value="practical-only">Practical Only</option>
                                     <option value="theory-practical">Theory + Practical</option>
                                 </select>
-                                <small style={{ color: 'var(--primary-light)', display: 'block', marginTop: '5px' }}>
+                                <small className="form-hint">
                                     {courseType === 'theory-only' && 'Theory lectures only, no practical sessions'}
                                     {courseType === 'practical-only' && 'Practical sessions only, no theory lectures'}
                                     {courseType === 'theory-practical' && 'Both theory lectures and practical sessions'}
@@ -403,7 +401,7 @@ function AddCourse() {
                                     }}
                                     disabled={loading}
                                 />
-                                <small style={{ color: 'var(--primary-light)', display: 'block', marginTop: '5px' }}>
+                                <small className="form-hint">
                                     Maximum: 15 weeks
                                 </small>
                             </div>
@@ -450,14 +448,14 @@ function AddCourse() {
                                         disabled={loading}
                                     />
                                     {courseType === 'theory-practical' && (
-                                        <small style={{ color: 'var(--primary-light)', display: 'block', marginTop: '5px' }}>
+                                        <small className="form-hint">
                                             (Auto) = Theory Sections × 2
                                         </small>
                                     )}
                                 </div>
                             )}
 
-                            {/* Number of Theory Professors - Only show for theory-only and theory-practical */}
+                            {/* Number of Theory Professors */}
                             {(courseType === 'theory-only' || courseType === 'theory-practical') && (
                                 <div className="form-group">
                                     <label className="form-label">
@@ -473,13 +471,13 @@ function AddCourse() {
                                         onChange={(e) => setNumTheoryProfessors(Number(e.target.value) || 1)}
                                         disabled={loading}
                                     />
-                                    <small style={{ color: 'var(--primary-light)', display: 'block', marginTop: '5px' }}>
+                                    <small className="form-hint">
                                         How many professors will teach theory sections?
                                     </small>
                                 </div>
                             )}
 
-                            {/* Number of Practical Professors - Only show for practical-only and theory-practical */}
+                            {/* Number of Practical Professors */}
                             {(courseType === 'practical-only' || courseType === 'theory-practical') && (
                                 <div className="form-group">
                                     <label className="form-label">
@@ -495,191 +493,122 @@ function AddCourse() {
                                         onChange={(e) => setNumPracticalProfessors(Number(e.target.value) || 1)}
                                         disabled={loading}
                                     />
-                                    <small style={{ color: 'var(--primary-light)', display: 'block', marginTop: '5px' }}>
+                                    <small className="form-hint">
                                         How many professors will teach practical sections?
                                     </small>
                                 </div>
                             )}
                         </div>
 
-                        {/* Professor Assignment Sections */}
+                        {/* Theory Professor Assignment Section */}
                         {(courseType === 'theory-only' || courseType === 'theory-practical') && (
-                            <div className="professor-assignment-section" style={{ marginTop: '2rem', marginBottom: '2rem' }}>
-                                <h3 style={{ color: 'var(--accent)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div className="professor-assignment-section">
+                                <h3 className="section-title">
                                     <i className="fas fa-user-tie"></i>
                                     Theory Professors Assignment
-                                    <span style={{ fontSize: '0.9rem', color: 'var(--primary-light)', marginLeft: 'auto' }}>
+                                    <span className="professor-count">
                                         {theoryProfessors.length} professors available
                                     </span>
                                 </h3>
 
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '1fr 1fr',
-                                    gap: '2rem',
-                                    backgroundColor: 'rgba(11, 37, 69, 0.5)',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '1px solid rgba(141, 169, 196, 0.3)'
-                                }}>
-                                    {/* Left List - All Available Theory Professors */}
-                                    <div>
-                                        <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', fontSize: '1.1rem' }}>
-                                            Available Theory Professors
-                                        </h4>
-                                        <div style={{
-                                            maxHeight: '300px',
-                                            overflowY: 'auto',
-                                            backgroundColor: 'rgba(19, 49, 92, 0.3)',
-                                            borderRadius: '6px',
-                                            padding: '1rem'
-                                        }}>
+                                <div className="professor-assignment-container">
+                                    {/* Available Theory Professors */}
+                                    <div className="professor-list-container">
+                                        <h4 className="list-title">Available Theory Professors</h4>
+                                        <div className="professor-list">
                                             {theoryProfessors.length === 0 ? (
-                                                <div style={{ color: 'var(--primary-light)', textAlign: 'center', padding: '1rem' }}>
+                                                <div className="no-professors">
                                                     No theory professors available in database
                                                 </div>
                                             ) : (
-                                                theoryProfessors.map((professor) => {
-                                                    const profDetails = getProfessorDetails(professor.LecturerID || professor.id);
-                                                    return (
-                                                        <div
-                                                            key={professor.LecturerID || professor.id}
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-between',
-                                                                alignItems: 'center',
-                                                                padding: '0.75rem',
-                                                                marginBottom: '0.5rem',
-                                                                backgroundColor: 'rgba(141, 169, 196, 0.1)',
-                                                                borderRadius: '6px',
-                                                                border: '1px solid rgba(141, 169, 196, 0.2)'
-                                                            }}
-                                                        >
-                                                            <div style={{ flex: 1 }}>
-                                                                <div style={{ fontWeight: '600', color: 'var(--accent)', marginBottom: '4px' }}>
-                                                                    {professor.name}
-                                                                </div>
-                                                                <div style={{ fontSize: '0.85rem', color: 'var(--primary-light)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                                                    <span>
-                                                                        <i className="fas fa-id-card" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
-                                                                        ID: {professor.LecturerID}
+                                                theoryProfessors.map((professor) => (
+                                                    <div key={professor.LecturerID || professor.id} className="available-professor-item">
+                                                        <div className="professor-info">
+                                                            <div className="professor-name">{professor.name}</div>
+                                                            <div className="professor-details">
+                                                                <span className="professor-id">
+                                                                    <i className="fas fa-id-card"></i>
+                                                                    ID: {professor.LecturerID}
+                                                                </span>
+                                                                {professor.faculty && (
+                                                                    <span className="professor-faculty">
+                                                                        <i className="fas fa-university"></i>
+                                                                        {professor.faculty}
                                                                     </span>
-                                                                    {professor.faculty && (
-                                                                        <span>
-                                                                            <i className="fas fa-university" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
-                                                                            {professor.faculty}
-                                                                        </span>
-                                                                    )}
-                                                                    {professor.specialization && (
-                                                                        <span>
-                                                                            <i className="fas fa-graduation-cap" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
-                                                                            {professor.specialization}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
+                                                                )}
+                                                                {professor.specialization && (
+                                                                    <span className="professor-specialization">
+                                                                        <i className="fas fa-graduation-cap"></i>
+                                                                        {professor.specialization}
+                                                                    </span>
+                                                                )}
                                                             </div>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    // Find first empty slot
-                                                                    const emptySlotIndex = assignedTheoryProfessors.findIndex(p => p === null);
-                                                                    if (emptySlotIndex !== -1) {
-                                                                        assignTheoryProfessor(professor.LecturerID || professor.id, emptySlotIndex);
-                                                                    }
-                                                                }}
-                                                                disabled={assignedTheoryProfessors.includes(professor.LecturerID || professor.id)}
-                                                                style={{
-                                                                    background: 'transparent',
-                                                                    border: 'none',
-                                                                    color: assignedTheoryProfessors.includes(professor.LecturerID || professor.id) ? 'var(--primary-light)' : 'var(--accent)',
-                                                                    cursor: assignedTheoryProfessors.includes(professor.LecturerID || professor.id) ? 'not-allowed' : 'pointer',
-                                                                    fontSize: '1.2rem',
-                                                                    padding: '5px 10px',
-                                                                    borderRadius: '4px',
-                                                                    minWidth: '40px'
-                                                                }}
-                                                                title={assignedTheoryProfessors.includes(professor.LecturerID || professor.id) ? 'Already assigned' : 'Assign to next available slot'}
-                                                            >
-                                                                →
-                                                            </button>
                                                         </div>
-                                                    );
-                                                })
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const emptySlotIndex = assignedTheoryProfessors.findIndex(p => p === null);
+                                                                if (emptySlotIndex !== -1) {
+                                                                    assignTheoryProfessor(professor.LecturerID || professor.id, emptySlotIndex);
+                                                                }
+                                                            }}
+                                                            disabled={assignedTheoryProfessors.includes(professor.LecturerID || professor.id)}
+                                                            className="assign-arrow-button"
+                                                            title={assignedTheoryProfessors.includes(professor.LecturerID || professor.id) ? 'Already assigned' : 'Assign to next available slot'}
+                                                        >
+                                                            →
+                                                        </button>
+                                                    </div>
+                                                ))
                                             )}
                                         </div>
                                     </div>
 
-                                    {/* Right List - Assigned Theory Professors */}
-                                    <div>
-                                        <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', fontSize: '1.1rem' }}>
+                                    {/* Assigned Theory Professors */}
+                                    <div className="professor-list-container">
+                                        <h4 className="list-title">
                                             Assigned Theory Professors ({assignedTheoryProfessors.filter(p => p !== null).length}/{numTheoryProfessors})
                                         </h4>
-                                        <div style={{
-                                            maxHeight: '300px',
-                                            overflowY: 'auto',
-                                            backgroundColor: 'rgba(19, 49, 92, 0.3)',
-                                            borderRadius: '6px',
-                                            padding: '1rem'
-                                        }}>
+                                        <div className="professor-list">
                                             {assignedTheoryProfessors.map((lecturerId, index) => {
                                                 const professor = getProfessorDetails(lecturerId);
                                                 return (
-                                                    <div
-                                                        key={index}
-                                                        style={{
-                                                            display: 'flex',
-                                                            justifyContent: 'space-between',
-                                                            alignItems: 'center',
-                                                            padding: '0.75rem',
-                                                            marginBottom: '0.5rem',
-                                                            backgroundColor: lecturerId ? 'rgba(78, 205, 196, 0.1)' : 'rgba(141, 169, 196, 0.05)',
-                                                            borderRadius: '6px',
-                                                            border: `1px solid ${lecturerId ? 'var(--success)' : 'rgba(141, 169, 196, 0.2)'}`
-                                                        }}
-                                                    >
-                                                        <div style={{ flex: 1 }}>
-                                                            <div style={{ fontWeight: '600', color: 'var(--accent)', marginBottom: '4px' }}>
-                                                                Theory Professor {index + 1}
-                                                            </div>
-                                                            <div style={{ color: lecturerId ? 'var(--accent)' : 'var(--primary-light)' }}>
+                                                    <div key={index} className={`assigned-professor-item ${!lecturerId ? 'unassigned' : ''}`}>
+                                                        <div className="professor-slot-info">
+                                                            <div className="professor-slot-title">Theory Professor {index + 1}</div>
+                                                            <div className="professor-assignment-details">
                                                                 {professor ? (
                                                                     <>
-                                                                        <div>{professor.name}</div>
-                                                                        <div style={{ fontSize: '0.85rem', color: 'var(--primary-light)', marginTop: '2px' }}>
-                                                                            <span style={{ marginRight: '10px' }}>
-                                                                                <i className="fas fa-id-card" style={{ marginRight: '3px' }}></i>
+                                                                        <div className="professor-name">{professor.name}</div>
+                                                                        <div className="professor-details">
+                                                                            <span className="professor-id">
+                                                                                <i className="fas fa-id-card"></i>
                                                                                 ID: {professor.LecturerID}
                                                                             </span>
                                                                             {professor.faculty && (
-                                                                                <span style={{ marginRight: '10px' }}>
-                                                                                    <i className="fas fa-university" style={{ marginRight: '3px' }}></i>
+                                                                                <span className="professor-faculty">
+                                                                                    <i className="fas fa-university"></i>
                                                                                     {professor.faculty}
                                                                                 </span>
                                                                             )}
                                                                             {professor.specialization && (
-                                                                                <span>
-                                                                                    <i className="fas fa-graduation-cap" style={{ marginRight: '3px' }}></i>
+                                                                                <span className="professor-specialization">
+                                                                                    <i className="fas fa-graduation-cap"></i>
                                                                                     {professor.specialization}
                                                                                 </span>
                                                                             )}
                                                                         </div>
                                                                     </>
-                                                                ) : 'Not assigned'}
+                                                                ) : (
+                                                                    <span className="unassigned-text">Not assigned</span>
+                                                                )}
                                                             </div>
                                                         </div>
                                                         {lecturerId && (
                                                             <button
                                                                 type="button"
                                                                 onClick={() => removeTheoryProfessor(index)}
-                                                                style={{
-                                                                    background: 'rgba(255, 107, 107, 0.2)',
-                                                                    border: '1px solid var(--error)',
-                                                                    color: 'var(--error)',
-                                                                    cursor: 'pointer',
-                                                                    padding: '5px 10px',
-                                                                    borderRadius: '4px',
-                                                                    fontSize: '0.9rem'
-                                                                }}
+                                                                className="remove-button"
                                                                 title="Remove professor"
                                                             >
                                                                 Remove
@@ -694,183 +623,115 @@ function AddCourse() {
                             </div>
                         )}
 
+                        {/* Practical Professor Assignment Section */}
                         {(courseType === 'practical-only' || courseType === 'theory-practical') && (
-                            <div className="professor-assignment-section" style={{ marginTop: '2rem', marginBottom: '2rem' }}>
-                                <h3 style={{ color: 'var(--accent)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div className="professor-assignment-section">
+                                <h3 className="section-title">
                                     <i className="fas fa-user-graduate"></i>
                                     Practical Professors Assignment
-                                    <span style={{ fontSize: '0.9rem', color: 'var(--primary-light)', marginLeft: 'auto' }}>
+                                    <span className="professor-count">
                                         {practicalProfessors.length} professors available
                                     </span>
                                 </h3>
 
-                                <div style={{
-                                    display: 'grid',
-                                    gridTemplateColumns: '1fr 1fr',
-                                    gap: '2rem',
-                                    backgroundColor: 'rgba(11, 37, 69, 0.5)',
-                                    padding: '1.5rem',
-                                    borderRadius: '8px',
-                                    border: '1px solid rgba(141, 169, 196, 0.3)'
-                                }}>
-                                    {/* Left List - All Available Practical Professors */}
-                                    <div>
-                                        <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', fontSize: '1.1rem' }}>
-                                            Available Practical Professors
-                                        </h4>
-                                        <div style={{
-                                            maxHeight: '300px',
-                                            overflowY: 'auto',
-                                            backgroundColor: 'rgba(19, 49, 92, 0.3)',
-                                            borderRadius: '6px',
-                                            padding: '1rem'
-                                        }}>
+                                <div className="professor-assignment-container">
+                                    {/* Available Practical Professors */}
+                                    <div className="professor-list-container">
+                                        <h4 className="list-title">Available Practical Professors</h4>
+                                        <div className="professor-list">
                                             {practicalProfessors.length === 0 ? (
-                                                <div style={{ color: 'var(--primary-light)', textAlign: 'center', padding: '1rem' }}>
+                                                <div className="no-professors">
                                                     No practical professors available in database
                                                 </div>
                                             ) : (
-                                                practicalProfessors.map((professor) => {
-                                                    const profDetails = getProfessorDetails(professor.LecturerID || professor.id);
-                                                    return (
-                                                        <div
-                                                            key={professor.LecturerID || professor.id}
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-between',
-                                                                alignItems: 'center',
-                                                                padding: '0.75rem',
-                                                                marginBottom: '0.5rem',
-                                                                backgroundColor: 'rgba(141, 169, 196, 0.1)',
-                                                                borderRadius: '6px',
-                                                                border: '1px solid rgba(141, 169, 196, 0.2)'
-                                                            }}
-                                                        >
-                                                            <div style={{ flex: 1 }}>
-                                                                <div style={{ fontWeight: '600', color: 'var(--accent)', marginBottom: '4px' }}>
-                                                                    {professor.name}
-                                                                </div>
-                                                                <div style={{ fontSize: '0.85rem', color: 'var(--primary-light)', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                                                                    <span>
-                                                                        <i className="fas fa-id-card" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
-                                                                        ID: {professor.LecturerID}
+                                                practicalProfessors.map((professor) => (
+                                                    <div key={professor.LecturerID || professor.id} className="available-professor-item">
+                                                        <div className="professor-info">
+                                                            <div className="professor-name">{professor.name}</div>
+                                                            <div className="professor-details">
+                                                                <span className="professor-id">
+                                                                    <i className="fas fa-id-card"></i>
+                                                                    ID: {professor.LecturerID}
+                                                                </span>
+                                                                {professor.faculty && (
+                                                                    <span className="professor-faculty">
+                                                                        <i className="fas fa-university"></i>
+                                                                        {professor.faculty}
                                                                     </span>
-                                                                    {professor.faculty && (
-                                                                        <span>
-                                                                            <i className="fas fa-university" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
-                                                                            {professor.faculty}
-                                                                        </span>
-                                                                    )}
-                                                                    {professor.specialization && (
-                                                                        <span>
-                                                                            <i className="fas fa-graduation-cap" style={{ marginRight: '5px', fontSize: '0.8rem' }}></i>
-                                                                            {professor.specialization}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
+                                                                )}
+                                                                {professor.specialization && (
+                                                                    <span className="professor-specialization">
+                                                                        <i className="fas fa-graduation-cap"></i>
+                                                                        {professor.specialization}
+                                                                    </span>
+                                                                )}
                                                             </div>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    // Find first empty slot
-                                                                    const emptySlotIndex = assignedPracticalProfessors.findIndex(p => p === null);
-                                                                    if (emptySlotIndex !== -1) {
-                                                                        assignPracticalProfessor(professor.LecturerID || professor.id, emptySlotIndex);
-                                                                    }
-                                                                }}
-                                                                disabled={assignedPracticalProfessors.includes(professor.LecturerID || professor.id)}
-                                                                style={{
-                                                                    background: 'transparent',
-                                                                    border: 'none',
-                                                                    color: assignedPracticalProfessors.includes(professor.LecturerID || professor.id) ? 'var(--primary-light)' : 'var(--accent)',
-                                                                    cursor: assignedPracticalProfessors.includes(professor.LecturerID || professor.id) ? 'not-allowed' : 'pointer',
-                                                                    fontSize: '1.2rem',
-                                                                    padding: '5px 10px',
-                                                                    borderRadius: '4px',
-                                                                    minWidth: '40px'
-                                                                }}
-                                                                title={assignedPracticalProfessors.includes(professor.LecturerID || professor.id) ? 'Already assigned' : 'Assign to next available slot'}
-                                                            >
-                                                                →
-                                                            </button>
                                                         </div>
-                                                    );
-                                                })
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const emptySlotIndex = assignedPracticalProfessors.findIndex(p => p === null);
+                                                                if (emptySlotIndex !== -1) {
+                                                                    assignPracticalProfessor(professor.LecturerID || professor.id, emptySlotIndex);
+                                                                }
+                                                            }}
+                                                            disabled={assignedPracticalProfessors.includes(professor.LecturerID || professor.id)}
+                                                            className="assign-arrow-button"
+                                                            title={assignedPracticalProfessors.includes(professor.LecturerID || professor.id) ? 'Already assigned' : 'Assign to next available slot'}
+                                                        >
+                                                            →
+                                                        </button>
+                                                    </div>
+                                                ))
                                             )}
                                         </div>
                                     </div>
 
-                                    {/* Right List - Assigned Practical Professors */}
-                                    <div>
-                                        <h4 style={{ color: 'var(--accent)', marginBottom: '1rem', fontSize: '1.1rem' }}>
+                                    {/* Assigned Practical Professors */}
+                                    <div className="professor-list-container">
+                                        <h4 className="list-title">
                                             Assigned Practical Professors ({assignedPracticalProfessors.filter(p => p !== null).length}/{numPracticalProfessors})
                                         </h4>
-                                        <div style={{
-                                            maxHeight: '300px',
-                                            overflowY: 'auto',
-                                            backgroundColor: 'rgba(19, 49, 92, 0.3)',
-                                            borderRadius: '6px',
-                                            padding: '1rem'
-                                        }}>
+                                        <div className="professor-list practical-assigned-list">
                                             {assignedPracticalProfessors.map((lecturerId, index) => {
                                                 const professor = getProfessorDetails(lecturerId);
                                                 return (
-                                                    <div
-                                                        key={index}
-                                                        style={{
-                                                            display: 'flex',
-                                                            justifyContent: 'space-between',
-                                                            alignItems: 'center',
-                                                            padding: '0.75rem',
-                                                            marginBottom: '0.5rem',
-                                                            backgroundColor: lecturerId ? 'rgba(78, 205, 196, 0.1)' : 'rgba(141, 169, 196, 0.05)',
-                                                            borderRadius: '6px',
-                                                            border: `1px solid ${lecturerId ? 'var(--success)' : 'rgba(141, 169, 196, 0.2)'}`
-                                                        }}
-                                                    >
-                                                        <div style={{ flex: 1 }}>
-                                                            <div style={{ fontWeight: '600', color: 'var(--accent)', marginBottom: '4px' }}>
-                                                                Practical Professor {index + 1}
-                                                            </div>
-                                                            <div style={{ color: lecturerId ? 'var(--accent)' : 'var(--primary-light)' }}>
+                                                    <div key={index} className={`assigned-professor-item ${!lecturerId ? 'unassigned' : ''}`}>
+                                                        <div className="professor-slot-info">
+                                                            <div className="professor-slot-title">Practical Professor {index + 1}</div>
+                                                            <div className="professor-assignment-details">
                                                                 {professor ? (
                                                                     <>
-                                                                        <div>{professor.name}</div>
-                                                                        <div style={{ fontSize: '0.85rem', color: 'var(--primary-light)', marginTop: '2px' }}>
-                                                                            <span style={{ marginRight: '10px' }}>
-                                                                                <i className="fas fa-id-card" style={{ marginRight: '3px' }}></i>
+                                                                        <div className="professor-name">{professor.name}</div>
+                                                                        <div className="professor-details">
+                                                                            <span className="professor-id">
+                                                                                <i className="fas fa-id-card"></i>
                                                                                 ID: {professor.LecturerID}
                                                                             </span>
                                                                             {professor.faculty && (
-                                                                                <span style={{ marginRight: '10px' }}>
-                                                                                    <i className="fas fa-university" style={{ marginRight: '3px' }}></i>
+                                                                                <span className="professor-faculty">
+                                                                                    <i className="fas fa-university"></i>
                                                                                     {professor.faculty}
                                                                                 </span>
                                                                             )}
                                                                             {professor.specialization && (
-                                                                                <span>
-                                                                                    <i className="fas fa-graduation-cap" style={{ marginRight: '3px' }}></i>
+                                                                                <span className="professor-specialization">
+                                                                                    <i className="fas fa-graduation-cap"></i>
                                                                                     {professor.specialization}
                                                                                 </span>
                                                                             )}
                                                                         </div>
                                                                     </>
-                                                                ) : 'Not assigned'}
+                                                                ) : (
+                                                                    <span className="unassigned-text">Not assigned</span>
+                                                                )}
                                                             </div>
                                                         </div>
                                                         {lecturerId && (
                                                             <button
                                                                 type="button"
                                                                 onClick={() => removePracticalProfessor(index)}
-                                                                style={{
-                                                                    background: 'rgba(255, 107, 107, 0.2)',
-                                                                    border: '1px solid var(--error)',
-                                                                    color: 'var(--error)',
-                                                                    cursor: 'pointer',
-                                                                    padding: '5px 10px',
-                                                                    borderRadius: '4px',
-                                                                    fontSize: '0.9rem'
-                                                                }}
+                                                                className="remove-button"
                                                                 title="Remove professor"
                                                             >
                                                                 Remove
@@ -918,73 +779,6 @@ function AddCourse() {
                         </div>
                     </form>
                 </div>
-
-                {/* Show recently added courses */}
-                {courses.length > 0 && (
-                    <div className="info-card" style={{ marginTop: '2rem' }}>
-                        <h3>
-                            <i className="fas fa-list"></i>
-                            Recently Added Courses ({courses.length})
-                        </h3>
-                        <div style={{ overflowX: 'auto' }}>
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr>
-                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Code</th>
-                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Course Name</th>
-                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Academic Hours</th>
-                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Type</th>
-                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Sections</th>
-                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Professors</th>
-                                        <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid rgba(141, 169, 196, 0.3)' }}>Weeks</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {courses.slice(-5).reverse().map((course) => (
-                                        <tr key={course.id} style={{ borderBottom: '1px solid rgba(141, 169, 196, 0.1)' }}>
-                                            <td style={{ padding: '12px', textAlign: 'left' }}>
-                                                <strong>{course.code}</strong>
-                                            </td>
-                                            <td style={{ padding: '12px', textAlign: 'left' }}>{course.name}</td>
-                                            <td style={{ padding: '12px', textAlign: 'left' }}>
-                                                {course.academicHours} hour{course.academicHours !== 1 ? 's' : ''}
-                                            </td>
-                                            <td style={{ padding: '12px', textAlign: 'left' }}>
-                                                {course.type === 'theory-only' && 'Theory Only'}
-                                                {course.type === 'practical-only' && 'Practical Only'}
-                                                {course.type === 'theory-practical' && 'Theory + Practical'}
-                                            </td>
-                                            <td style={{ padding: '12px', textAlign: 'left' }}>
-                                                {course.type === 'theory-only' && `Theory: ${course.theorySections}`}
-                                                {course.type === 'practical-only' && `Practical: ${course.practicalSections}`}
-                                                {course.type === 'theory-practical' && `Theory: ${course.theorySections} | Practical: ${course.practicalSections}`}
-                                            </td>
-                                            <td style={{ padding: '12px', textAlign: 'left', fontSize: '0.9rem' }}>
-                                                {course.theoryProfessors && course.theoryProfessors.length > 0 && (
-                                                    <div>
-                                                        <strong>Theory:</strong> {course.theoryProfessors.map(lecturerId => {
-                                                            const prof = getProfessorDetails(lecturerId);
-                                                            return prof ? prof.name : `ID: ${lecturerId}`;
-                                                        }).filter(name => name).join(', ')}
-                                                    </div>
-                                                )}
-                                                {course.practicalProfessors && course.practicalProfessors.length > 0 && (
-                                                    <div>
-                                                        <strong>Practical:</strong> {course.practicalProfessors.map(lecturerId => {
-                                                            const prof = getProfessorDetails(lecturerId);
-                                                            return prof ? prof.name : `ID: ${lecturerId}`;
-                                                        }).filter(name => name).join(', ')}
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td style={{ padding: '12px', textAlign: 'left' }}>{course.weeks} weeks</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );
