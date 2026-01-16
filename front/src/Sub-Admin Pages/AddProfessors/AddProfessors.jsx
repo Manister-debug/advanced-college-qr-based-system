@@ -243,29 +243,9 @@ export default function AddProfessors() {
             Add new {userType === 'theory' ? 'professors' : 'engineers'} to the academic system
           </p>
         </div>
-        <div className="header-actions">
-          <div className="admin-info">
-            <i className="fas fa-user-shield"></i>
-            <span>System Administrator</span>
-          </div>
-        </div>
       </div>
 
-      <div className="main-content">
-        {alert.show && (
-          <div className={`alert alert-${alert.type}`}>
-            <i className={`fas ${alert.type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}`}></i>
-            <span style={{ whiteSpace: 'pre-line' }}>{alert.message}</span>
-            <button 
-              className="alert-close" 
-              onClick={() => setAlert({ ...alert, show: false })}
-            >
-              <i className="fas fa-times"></i>
-            </button>
-          </div>
-        )}
-
-        {/* User Type Tabs */}
+      {/* User Type Tabs */}
         <div className="user-type-tabs">
           <div className="tabs-container">
             <button 
@@ -286,6 +266,22 @@ export default function AddProfessors() {
             </button>
           </div>
         </div>
+
+      <div className="main-content">
+        {alert.show && (
+          <div className={`alert alert-${alert.type}`}>
+            <i className={`fas ${alert.type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}`}></i>
+            <span style={{ whiteSpace: 'pre-line' }}>{alert.message}</span>
+            <button 
+              className="alert-close" 
+              onClick={() => setAlert({ ...alert, show: false })}
+            >
+              <i className="fas fa-times"></i>
+            </button>
+          </div>
+        )}
+
+        
 
         <div className="form-container">
           <div className="form-header">

@@ -208,9 +208,6 @@ function ViewCourses() {
                     </h1>
                     <p className="page-subtitle">View and manage all registered courses</p>
                 </div>
-                <div className="user-info">
-                    <span>Total Courses: {courses.length}</span>
-                </div>
             </div>
 
             <div className="main-content">

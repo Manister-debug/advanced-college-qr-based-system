@@ -196,8 +196,7 @@ export default function Navbar() {
               <li><NavLink to="/attendance-log" className="nav-item">Attendance Log</NavLink></li>
 
               {/* REMOVED: QR Code Room link from here */}
-              {/* Added back Support link */}
-              <li><NavLink to="/support" className="nav-item">Support</NavLink></li>
+              
             </>
           )}
 
@@ -205,7 +204,6 @@ export default function Navbar() {
           {user && user.role === 'student' && (
             <>
               <li><NavLink to="/student/attendance-log" className="nav-item">Attendance Log</NavLink></li>
-              <li><NavLink to="/student/support" className="nav-item">Support</NavLink></li>
             </>
           )}
 

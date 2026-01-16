@@ -171,7 +171,6 @@ export default function Navbar() {
           </li>
 
           <li><NavLink to="/attendance-log" className="nav-item">Attendance Log</NavLink></li>        
-          <li><NavLink to="/support" className="nav-item">Support</NavLink></li>
           
           <li className="nav-auth-item" ref={dropdownRef}>
             {user ? (

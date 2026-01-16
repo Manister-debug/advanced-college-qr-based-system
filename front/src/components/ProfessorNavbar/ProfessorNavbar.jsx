@@ -129,13 +129,6 @@ function ProfessorNavbar() {
                                         Profile
                                     </NavLink>
                                     <NavLink
-                                        to="/professor/support"
-                                        className="dropdown-item"
-                                        onClick={() => setIsDropdownOpen(false)}
-                                    >
-                                        Support
-                                    </NavLink>
-                                    <NavLink
                                         to="/professor/settings"
                                         className="dropdown-item"
                                         onClick={() => setIsDropdownOpen(false)}

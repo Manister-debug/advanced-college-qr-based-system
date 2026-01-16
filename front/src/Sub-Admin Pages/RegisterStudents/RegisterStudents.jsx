@@ -191,9 +191,6 @@ export default function RegisterStudents() {
           </h1>
           <p className="page-subtitle">Add new students to the college system</p>
         </div>
-        <div className="user-info">
-          <span>Secretary Name</span>
-        </div>
       </div>
 
       <div className="main-content">
@@ -225,7 +222,6 @@ export default function RegisterStudents() {
                   required
                 />
               </div>
-
               <div className="form-group">
                 <label htmlFor="universityId" className="form-label">
                   Student University ID *

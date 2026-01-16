@@ -287,9 +287,6 @@ function AddCourse() {
                     </h1>
                     <p className="page-subtitle">Add new courses to the academic system</p>
                 </div>
-                <div className="user-info">
-                    <span>College System</span>
-                </div>
             </div>
 
             <div className="main-content">
